@@ -21,9 +21,13 @@ from prose_auto.reconcile import reconcile
 from prose_auto.repository import sdrf_evidence
 from prose_auto.spectra import load_mzml
 
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+# OpenMS test data (share/OpenMS/examples, src/tests/topp) from an OpenMS checkout; CI fetches one into openms/.
+ROOT = os.environ.get("PROSE_AUTO_OPENMS_ROOT",
+                      os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "openms")))
 TOPP = os.path.join(ROOT, "src", "tests", "topp")
 BSA = os.path.join(ROOT, "share", "OpenMS", "examples", "BSA")
+pytestmark = pytest.mark.skipif(not os.path.exists(os.path.join(BSA, "BSA1.mzML")),
+                                reason="OpenMS test data not found; set PROSE_AUTO_OPENMS_ROOT")
 
 
 def first(evs, p):

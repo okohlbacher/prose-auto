@@ -1,6 +1,6 @@
 # prose-auto: an Auto Mode prototype for ProSE
 
-[![prose_auto](https://github.com/okohlbacher/OpenMS/actions/workflows/prose_auto.yml/badge.svg?branch=prose-auto)](https://github.com/okohlbacher/OpenMS/actions/workflows/prose_auto.yml)
+[![tests](https://github.com/okohlbacher/prose-auto/actions/workflows/tests.yml/badge.svg)](https://github.com/okohlbacher/prose-auto/actions/workflows/tests.yml)
 
 
 `prose-auto` proposes ProSE search settings from an mzML file. It uses the
@@ -18,8 +18,7 @@ Auto Mode report.
 ## Install and run
 
 ```bash
-pip install pyopenms numpy pyyaml          # or: pip install -e tools/prose_auto
-cd tools/prose_auto
+pip install pyopenms numpy pyyaml          # or: pip install -e .
 python -m prose_auto.cli panel proteomes/  # once: UniProt Swiss-Prot of 12 model organisms
 python -m prose_auto.cli analyze run.mzML --panel proteomes/ \
     --description "HeLa, TMTpro 16plex, IAA, Exploris 480" \
@@ -144,7 +143,9 @@ python -m prose_auto.tune out/run.auto.json --prose ProSE --database td_entrap.f
 ## Tests
 
 ```bash
-cd tools/prose_auto && python -m pytest tests -q
+git clone --depth 1 --filter=blob:none --sparse https://github.com/OpenMS/OpenMS openms
+git -C openms sparse-checkout set share/OpenMS/examples/BSA share/OpenMS/examples/TOPPAS/data src/tests/topp
+python -m pytest tests -q                 # or set PROSE_AUTO_OPENMS_ROOT to an OpenMS checkout
 ```
 
 The tests use OpenMS test data: BSA1 (LTQ Orbitrap XL, CID/ion trap), the
