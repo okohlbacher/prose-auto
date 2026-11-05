@@ -140,8 +140,8 @@ def _head_question(h: S.Head, priors=False):
                    + (PROTOCOL_ONLY if h.name in PROTOCOL_HEADS else WEIGH_ALL), criteria)
 
 
-def study_questions(priors=False):
-    qs = {h.name: _head_question(h, priors) for h in S.HEADS}
+def study_questions(priors=False, skip=()):
+    qs = {h.name: _head_question(h, priors) for h in S.HEADS if h.name not in skip}
     for mod, desc in S.VARIABLE_MOD_FLAGS.items():
         qs["var:" + mod] = {"type": "noul", "instructions": READ_INSTRUCTIONS +
                             f"Did the authors search {desc} as a variable modification?" + PROTOCOL_ONLY}
@@ -164,8 +164,8 @@ def _map_answer(h: S.Head, a: dict):
     return {"choice": choice, "probabilities": probs}
 
 
-def read_study(jev: Jev, texts: dict, user=False, min_p=0.5, priors=False):
-    """All texts of a study, all heads, one request.
+def read_study(jev: Jev, texts: dict, user=False, min_p=0.5, priors=False, skip=()):
+    """All texts of a study, all heads but those in skip (fast mode: the organism is given), one request.
 
     Returns (evidence, report) where report holds the decoded heads, the
     per-head probabilities, flags, rules that fire on the text alone, and the
@@ -174,7 +174,7 @@ def read_study(jev: Jev, texts: dict, user=False, min_p=0.5, priors=False):
     if not jev or not state:
         return [], {}
     try:
-        ans = jev.decide(state, study_questions(priors))
+        ans = jev.decide(state, study_questions(priors, skip))
     except Exception as e:
         return [], {"error": str(e)}
     # with the measured block in the state Jev's answers are not text-only: they must not count as independent

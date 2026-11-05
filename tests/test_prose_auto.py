@@ -531,6 +531,125 @@ def test_organism_from_metadata_searches_only_the_given_db(tmp_path):
     assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # hypotheses ran on the given DB
 
 
+def test_fast_mode_takes_the_given_organisms(tmp_path):
+    import shutil
+    from prose_auto import cli
+    mix = os.path.join(ROOT, "share", "OpenMS", "examples", "TOPPAS", "data", "BSA_Identification",
+                       "18Protein_SoCe_Tr_detergents_trace.fasta")
+    panel = tmp_path / "panel"
+    panel.mkdir()
+    for name in ("Bos_taurus", "Homo_sapiens"):
+        shutil.copy(mix, panel / f"{name}.fasta")
+    out = tmp_path / "out"
+    cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "--organism", "Bos taurus", "--organism",
+              "Homo sapiens", "--panel", str(panel), "--description", "yeast lysate", "--spectra", "1200",
+              "-o", str(out)])
+    rep = json.load(open(out / "BSA1.auto.json"))
+    org = rep["decisions"]["organism"]
+    assert rep["mode"] == "fast" and org["status"] == "given"
+    assert [e["method"] for e in org["evidence"]] == ["fast mode"]       # the description's yeast is dropped
+    assert rep["organisms"] == ["Bos_taurus", "Homo_sapiens"] and rep["organism_mix"] is None
+    assert rep["search_database"]["union"].endswith("Bos_taurus+Homo_sapiens.fasta")
+    assert rep["sdrf"]["characteristics[organism]"] == "Bos taurus;Homo sapiens"
+    assert "organism" not in rep["agreement"]["parameters"]
+    assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # the mini-search ran on the union
+    assert not {"organism_prose", "organism_tier2", "mixture_candidates"} & set(rep["timings_s"])
+    assert "given (fast mode)" in (out / "BSA1.auto.md").read_text()
+    with pytest.raises(SystemExit):
+        cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "-o", str(out)])
+
+
+def test_fast_mode_searches_a_relative_or_stops(tmp_path, monkeypatch):
+    from prose_auto import cli
+    mix = os.path.join(ROOT, "share", "OpenMS", "examples", "TOPPAS", "data", "BSA_Identification",
+                       "18Protein_SoCe_Tr_detergents_trace.fasta")
+    # no reference proteome for the species; its genus (a parent taxon) has one
+    monkeypatch.setattr(cli, "_taxon_id", lambda name, log=print: 4111)
+    monkeypatch.setattr(cli, "fetch_proteome", lambda o, cache, log=print, taxid=None:
+                        ("Solanum_tuberosum", mix) if taxid == 4111 else None)
+    out = tmp_path / "out"
+    cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "--organism", "solanum melongena",
+              "--panel", str(tmp_path), "--spectra", "600", "-o", str(out)])
+    rep = json.load(open(out / "BSA1.auto.json"))
+    assert rep["decisions"]["organism"]["value"] == "Solanum_melongena"       # the organism stays as given
+    assert rep["search_database"]["relatives"] == {"Solanum melongena": "Solanum_tuberosum"}
+    assert "no reference proteome for Solanum melongena" in (out / "BSA1.auto.md").read_text()
+    # nothing within 3 parents (or the download failed after the retries): stop, never infer the organism
+    monkeypatch.setattr(cli, "fetch_proteome", lambda *x, **k: None)
+    with pytest.raises(SystemExit, match="no proteome for Solanum lycopersicum"):
+        cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "--organism", "solanum lycopersicum",
+                  "--panel", str(tmp_path), "-o", str(out)])
+
+
+def test_proteome_lookup_prefers_the_queried_taxon_over_its_viruses():
+    from prose_auto import cli
+    names = ["Oryctolagus cuniculus papillomavirus 1", "Tomato torrado virus (isolate Solanum lycopersicum)",
+             "Oryctolagus cuniculus"]
+    assert sorted(names, key=lambda n: cli._name_rank(n, "Oryctolagus cuniculus"))[0] == "Oryctolagus cuniculus"
+    assert cli._name_rank("Escherichia coli (strain K12)", "Escherichia coli") == 0
+
+
+def test_fetch_proteome_never_takes_a_virus_of_the_species(tmp_path, monkeypatch):
+    """Triticum aestivum without its own hit: the Triticum mosaic virus is not taken, the taxon id is tried instead"""
+    from prose_auto import cli
+    virus = {"id": "UP1", "taxonomy": {"scientificName": "Triticum mosaic virus"}}
+    monkeypatch.setattr(cli, "_reference_proteomes", lambda q, log: [virus] if "name" in q else [])
+    assert cli.fetch_proteome("Triticum aestivum", str(tmp_path), log=lambda *x: None) is None
+
+
+def test_fetch_proteome_finds_a_renamed_species(tmp_path, monkeypatch):
+    from prose_auto import cli
+    (tmp_path / "Lactiplantibacillus_plantarum.fasta").write_text(">sp|P1|X\nPEPTIDEK\n")
+    hit = lambda n: {"id": "UP2", "taxonomy": {"scientificName": n}}
+    monkeypatch.setattr(cli, "_reference_proteomes", lambda q, log: [
+        hit("Lactobacillus phage LP65"), hit("Lactiplantibacillus plantarum (strain ATCC BAA-793 / NCIMB 8826 / WCFS1)")])
+    assert cli.fetch_proteome("Lactobacillus plantarum", str(tmp_path), log=lambda *x: None)[0] == \
+        "Lactiplantibacillus_plantarum"
+
+
+def test_fetch_proteome_falls_back_to_the_ftp_mirror(tmp_path, monkeypatch):
+    """REST stream refused (429): the FTP file under the right kingdom, checked against the taxon id"""
+    import gzip, io, urllib.request
+    from prose_auto import cli
+    hit = {"id": "UP000002281", "taxonomy": {"scientificName": "Equus caballus", "taxonId": 9796}}
+    monkeypatch.setattr(cli, "_reference_proteomes", lambda q, log: [hit])
+    heads = []
+
+    def urlopen(req, timeout=0):   # only the HEAD of the Eukaryota file exists
+        heads.append(req.full_url)
+        if "/Eukaryota/" not in req.full_url:
+            raise OSError("404")
+        return io.BytesIO()
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    body = {"9796": ">tr|F6X|F6X_HORSE Protein OS=Equus caballus OX=9796 GN=X\nPEPTIDEK\n"}
+
+    def download(url, dst, log=print, attempts=5):
+        if "rest.uniprot.org" in url:
+            return False
+        with gzip.open(dst, "wt") as fh:
+            fh.write(body["9796"])
+        return True
+    monkeypatch.setattr(cli, "_download", download)
+    name, path = cli.fetch_proteome("Equus caballus", str(tmp_path), log=lambda *x: None)
+    assert name == "Equus_caballus" and "OX=9796" in open(path).read() and heads[0].endswith("UP000002281_9796.fasta.gz")
+    body["9796"] = ">tr|V1|V1 Protein OS=Equus caballus papillomavirus 1 OX=654918\nPEPTIDEK\n"   # the wrong taxon
+    assert not cli._ftp_proteome("UP000002281", 9796, str(tmp_path / "x.fasta"), log=lambda *x: None)
+    assert not (tmp_path / "x.fasta").exists()
+
+
+def test_fetch_proteome_resolves_from_the_local_index(tmp_path, monkeypatch):
+    from prose_auto import cli
+    (tmp_path / "Homo_sapiens.fasta").write_text(">sp|P1|X OS=Homo sapiens\nPEPTIDEK\n")
+    (tmp_path / "resolved.tsv").write_text("Homo sapiens\t\tHomo_sapiens\tHomo_sapiens.fasta\n")
+    monkeypatch.setattr(cli, "_reference_proteomes", lambda *x: 1 / 0)   # no UniProt request
+    assert cli.fetch_proteome("Homo sapiens", str(tmp_path)) == ("Homo_sapiens", str(tmp_path / "Homo_sapiens.fasta"))
+
+
+def test_jev_skips_the_organism_question_in_fast_mode():
+    from prose_auto import jev as J
+    assert "organism" in J.study_questions() and "organism" not in J.study_questions(skip=("organism",))
+
+
 @pytest.mark.skipif(sys.platform == "win32", reason="the DIAspeXtract and FileConverter stand-ins are shell scripts")
 def test_diaspextract_exit_11_falls_back_to_dda(tmp_path):
     """frames that look diaPASEF, a DIAspeXtract that answers 'this is DDA' (exit 11): FileConverter takes over"""

@@ -14,6 +14,8 @@ import argparse
 import atexit
 import contextlib
 import csv
+import gzip
+import http.client
 import json
 import os
 import re
@@ -264,7 +266,7 @@ class _Run:
     hr2: bool = True
     fastag_sp: object = None  # the FASTag species call (list, or the exception it raised): it runs once
     gap_ev: list = field(default_factory=list)   # mass-gap evidence, redone when tier 2 changes the database
-    union: str = None         # the concatenated FASTA of a suspected mixture (_union)
+    union: str = None         # the search database of a mixture union (_union) or of fast mode (_organism_given)
 
     @property
     def ftol(self):           # FASTag fragment tolerance
@@ -450,6 +452,7 @@ def _texts_and_readers(c):
         if texts.get(k):
             c.ev += tx.extract(texts[k], source="text", base_conf=0.5)
     c.ev += tx.from_file_name(a.mzml)
+    c.ev += [Evidence("organism", o, 0.9, "user", "--organism", f"stated by the user: {o}") for o in a.organism or []]
     study = {"user's description": desc, "methods section": methods,
              "PRIDE title": texts.get("title", ""), "PRIDE description": texts.get("description", ""),
              "PRIDE sample protocol": texts.get("sample_protocol", ""),
@@ -485,7 +488,8 @@ def _jev_last(c, study, hint_stats, term_stats):
     jev_study = {**study, "run": run_info, "measured from the spectra": measured + ("\n" + found if found else "")}
     with _timed(c, "jev"):
         c.log(f"  Jev: {jev.name} (one multi-head request over {len(jev_study)} sources, one of them the data)")
-        e, report = J.read_study(jev, jev_study, user=bool(_arg_text(a.description)), priors=a.jev_priors)
+        e, report = J.read_study(jev, jev_study, user=bool(_arg_text(a.description)), priors=a.jev_priors,
+                                 skip=("organism",) if a.fast else ())
     c.ev += e
     return jev, jev_study, report
 
@@ -709,6 +713,57 @@ def _tier2(c, h, panel):
                 c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter == "organism")] + new
 
 
+def _union_fasta(paths, extra):
+    """The concatenated FASTA of several proteomes, written once as <extra>/union/A+B.fasta."""
+    dst = os.path.join(extra, "union", "+".join(paths) + ".fasta")
+    if not os.path.exists(dst):
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        with open(f"{dst}.{os.getpid()}.part", "wb") as out:
+            for p in paths.values():
+                with open(p, "rb") as fh:
+                    b = fh.read()
+                out.write(b if b.endswith(b"\n") else b + b"\n")
+        os.replace(f"{dst}.{os.getpid()}.part", dst)
+    return dst
+
+
+def _organism_given(c):
+    """Fast mode: the organisms the user gives (--organism, --fasta) are taken as true. Their proteomes (panel, else
+    UniProt, cached under <panel>/extra; then --fasta), concatenated when there are several, are the one search
+    database, and every other organism statement is dropped. A species without a UniProt reference proteome is
+    searched against its nearest relative's (by taxon id, up to 3 parents up: fetch_proteome); the organism stays as
+    given. Nothing within 3 parents, or a download that fails after the retries, stops the run. Returns (organisms,
+    {name: FASTA}, search database report)."""
+    a = c.a
+    panel, extra, dbs, names, relatives = _panel(a), os.path.join(a.panel or a.out, "extra"), {}, [], {}
+    with _timed(c, "proteome"):
+        for o in a.organism or []:
+            o = o.strip()
+            o = o[:1].upper() + o[1:]   # SDRFs write "felis catus"; fetch_proteome wants a capitalised genus
+            hit = _panel_match(o, panel)
+            got = (hit, panel[hit]) if hit else (fetch_proteome(o, extra, c.log)
+                                                 or fetch_proteome(o, extra, c.log, taxid=_taxon_id(o, c.log)))
+            if not got:   # never search without the given organism, nor infer it instead
+                raise SystemExit(f"fast mode: no proteome for {o} (not in --panel, none from UniProt within 3 parent "
+                                 "taxa, or the download failed); give its FASTA with --fasta")
+            if _species_key(got[0]) != _species_key(o):
+                relatives[o] = got[0]
+                c.log(f"  database: {got[0]} proteome; no reference proteome for {o}")
+            dbs[got[0]] = got[1]
+            names.append(o.replace(" ", "_"))
+        if a.fasta:
+            dbs[_fasta_name(a)] = a.fasta
+            names.append(_fasta_name(a))
+        c.ev = [e for e in c.ev if e.parameter != "organism"]
+        c.ev.append(Evidence("organism", names[0], 1.0, "user", "fast mode", "given (fast mode): " + ", ".join(names)
+                             + "".join(f"; database {v} for {k}" for k, v in relatives.items())))
+        c.log(f"  organism given (fast mode): {', '.join(names)}")
+        c.union = _union_fasta(dbs, extra) if len(dbs) > 1 else next(iter(dbs.values()))
+    return names, {"+".join(dbs): c.union}, {"organisms": names, "fasta": list(dbs.values()),
+                                             "union": c.union if len(dbs) > 1 else None, "own_spectra": {},
+                                             "given": True, "relatives": relatives}
+
+
 def _union(c, h, panel, mix, decided):
     """A suspected mixture searches the union of the organisms the data support: every organism an indicator names
     (reconcile.union_candidates) is mini-searched, fetched from UniProt when the panel lacks it, and joins
@@ -749,15 +804,7 @@ def _union(c, h, panel, mix, decided):
     if not pick:
         return None
     paths = {k: paths[k] for k, _ in pick}
-    dst = os.path.join(extra, "union", "+".join(paths) + ".fasta")
-    if not os.path.exists(dst):
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        with open(f"{dst}.{os.getpid()}.part", "wb") as out:
-            for p in paths.values():
-                with open(p, "rb") as fh:
-                    b = fh.read()
-                out.write(b if b.endswith(b"\n") else b + b"\n")
-        os.replace(f"{dst}.{os.getpid()}.part", dst)
+    dst = _union_fasta(paths, extra)
     own = dict(pick)
     c.log(f"  organism mix: searching the union of {', '.join(paths)}")
     with _timed(c, "mixture_union"):
@@ -777,7 +824,7 @@ def _confirm_with_prose(c, decisions, prose, panel, h):
     a = c.a
     exe = find_prose(a.prose)
     org = decisions["organism"].value
-    db = a.fasta or c.union or (h.best_db[1] if h is not None and h.best_db and h.best_db[0] == org else None) \
+    db = (c.union if a.fast else None) or a.fasta or c.union or (h.best_db[1] if h is not None and h.best_db and h.best_db[0] == org else None) \
         or (panel.get(org) if panel else None)
     if exe and db:
         c.log(f"  confirming with ProSE ({exe})")
@@ -846,6 +893,67 @@ def analyze(a, log=print):
     with _timed(c, "text"):
         study, backend, llm_rejected, llm_text_conflicts = _texts_and_readers(c)
 
+    if a.fast:   # the organism is given: no organism detector runs (README "Fast and full mode")
+        organisms, panel, db = _organism_given(c)
+        h = _mini_search(c, panel, org_fixed=True)
+        if a.fastag:
+            _fastag_stage(c, h, org_fixed=True)
+    else:
+        panel, h = _organism_detected(c, hint, hint_stats, term_stats)
+
+    jev, jev_study, jev_report = _jev_last(c, study, hint_stats, term_stats)
+
+    log("[7/7] reconciling")
+    decisions = reconcile(c.ev)
+    if a.fast:
+        mix = None
+        decisions["organism"].status = "given"
+    else:
+        mix = organism_mix(c.ev, jev_report, tx.file_organisms(a.mzml))
+        db = _union(c, h, panel, mix, decisions["organism"].value) if "organism" in decisions else None
+        if db:
+            c.union = db["union"]
+            decisions = reconcile(c.ev)
+        org = decisions.get("organism")
+        organisms = db["organisms"] if db else [org.value] if org and org.value not in ("unknown", "not in panel") \
+            else []
+    prose = pp.to_prose(decisions)
+    if a.prose is not None:   # a bare --prose means ProSE from PATH
+        decisions, prose = _confirm_with_prose(c, decisions, prose, panel, h)
+    review = L.review(backend, decisions) if backend and a.llm_review else []
+    # Jev judges each setting against the texts and against the indicators; the agreement score is the
+    # deterministic counterpart over all evidence. A given organism is neither judged nor scored.
+    judged = {k: d for k, d in decisions.items() if not (a.fast and k == "organism")}
+    jev_issues, jev_verdicts = J.cross_check(jev, jev_study, judged) if jev and jev_study else ([], {})
+    consistency = J.consistency(decisions)
+    agreement = indicator_agreement(judged, jev_verdicts)
+    c.timings["total"] = round(time.time() - t0, 1)
+    return {
+        "tool": "prose-auto 0.1 (prototype)",
+        "mode": "fast" if a.fast else "full",
+        "input": {**c.run.summary(), "given": a.mzml, "pseudo_spectra": c.spectra_file if c.pseudo else None},
+        "decisions": {k: d.to_dict() for k, d in decisions.items()},
+        "prose": prose,
+        "prose_cli": pp.to_cli(prose["params"]),
+        "organisms": organisms,
+        "search_database": db,
+        "sdrf": pp.to_sdrf_technical(decisions, organisms),
+        "llm": {"backend": backend.name if backend else None, "rejected": llm_rejected, "review": review},
+        "jev": {"model": jev.name if jev else None, "cross_check": jev_issues, "study": jev_report,
+                "calls": jev.calls if jev else 0, "cost_usd": round(jev.cost_usd, 5) if jev else 0},
+        "consistency": consistency,
+        "agreement": agreement,
+        "organism_mix": mix,
+        "text_conflicts": llm_text_conflicts + (jev_report.get("text_rules", []) if jev_report else []),
+        "timings_s": c.timings,
+        "digest_hint": {"hint": hint, **hint_stats, "termini": term_stats},
+    }
+
+
+def _organism_detected(c, hint, hint_stats, term_stats):
+    """Full mode, the organism detectors: metadata, the ProSE organism search, or the panel mini-search with FASTag
+    and tier 2. Returns (panel, mini-search); the union comes after reconciling (_union)."""
+    a = c.a
     # organism: from the metadata or one ProSE search fixes it (org_panel = the one database); otherwise the panel
     # mini-search, FASTag and tier 2 decide, with the stated organisms as evidence. auto: something stated and a
     # panel -> data (the spectra check the record: data_jev 174/180 against 165/180 for metadata only; it catches
@@ -869,50 +977,10 @@ def analyze(a, log=print):
         _fastag_stage(c, h, org_fixed)
     if not org_fixed:
         _tier2(c, h, panel)
-
-    jev, jev_study, jev_report = _jev_last(c, study, hint_stats, term_stats)
-
-    log("[7/7] reconciling")
-    decisions = reconcile(c.ev)
-    mix = organism_mix(c.ev, jev_report, tx.file_organisms(a.mzml))
-    db = _union(c, h, panel, mix, decisions["organism"].value) if "organism" in decisions else None
-    if db:
-        c.union = db["union"]
-        decisions = reconcile(c.ev)
-    org = decisions.get("organism")
-    organisms = db["organisms"] if db else [org.value] if org and org.value not in ("unknown", "not in panel") else []
-    prose = pp.to_prose(decisions)
-    if a.prose is not None:   # a bare --prose means ProSE from PATH
-        decisions, prose = _confirm_with_prose(c, decisions, prose, panel, h)
-    review = L.review(backend, decisions) if backend and a.llm_review else []
-    # Jev judges each setting against the texts and against the indicators; the agreement score is the
-    # deterministic counterpart over all evidence
-    jev_issues, jev_verdicts = J.cross_check(jev, jev_study, decisions) if jev and jev_study else ([], {})
-    consistency = J.consistency(decisions)
-    agreement = indicator_agreement(decisions, jev_verdicts)
-    c.timings["total"] = round(time.time() - t0, 1)
-    return {
-        "tool": "prose-auto 0.1 (prototype)",
-        "input": {**c.run.summary(), "given": a.mzml, "pseudo_spectra": c.spectra_file if c.pseudo else None},
-        "decisions": {k: d.to_dict() for k, d in decisions.items()},
-        "prose": prose,
-        "prose_cli": pp.to_cli(prose["params"]),
-        "organisms": organisms,
-        "search_database": db,
-        "sdrf": pp.to_sdrf_technical(decisions, organisms),
-        "llm": {"backend": backend.name if backend else None, "rejected": llm_rejected, "review": review},
-        "jev": {"model": jev.name if jev else None, "cross_check": jev_issues, "study": jev_report,
-                "calls": jev.calls if jev else 0, "cost_usd": round(jev.cost_usd, 5) if jev else 0},
-        "consistency": consistency,
-        "agreement": agreement,
-        "organism_mix": mix,
-        "text_conflicts": llm_text_conflicts + (jev_report.get("text_rules", []) if jev_report else []),
-        "timings_s": c.timings,
-        "digest_hint": {"hint": hint, **hint_stats, "termini": term_stats},
-    }
+    return panel, h
 
 
-STATUS = {"auto": "auto", "review": "REVIEW", "default": "default", "unknown": "unknown"}
+STATUS = {"auto": "auto", "review": "REVIEW", "default": "default", "unknown": "unknown", "given": "given (fast mode)"}
 
 
 def _fmt(v):
@@ -929,7 +997,8 @@ def markdown(rep):
     i = rep["input"]
     L_ = [f"# prose-auto report: {os.path.basename(i['path'])}", "",
           f"{i['instrument'] or 'unknown instrument'}, {i['ms1']} MS1 / {i['ms2']} MS2 / {i['ms3']} MS3 spectra. "
-          f"Run time {rep['timings_s'].get('total')} s.", "",
+          f"Run time {rep['timings_s'].get('total')} s."
+          + (" Fast mode: the organism is given, not inferred." if rep.get("mode") == "fast" else ""), "",
           "| Parameter | Value | Confidence | Status | From |", "|---|---|---|---|---|"]
     order = ["acquisition", "instrument", "ms1_analyzer", "ms2_analyzer", "fragmentation", "precursor_tolerance",
              "precursor_offset", "fragment_tolerance", "fragment_offset", "charge_range", "label", "cys_alkylation",
@@ -972,7 +1041,10 @@ def markdown(rep):
         L_ += [f"- {i['indicator']}: {', '.join(i['species'])} ({i['strength']:.2f})"
                + (f" — {i['detail']}" if i.get("detail") else "") for i in mix["indicators"]]
     db = rep.get("search_database")
-    if db:
+    if db and db.get("given"):
+        L_ += ["", f"**Search database (given, fast mode): {', '.join(db['organisms'])}**: {', '.join(db['fasta'])}"]
+        L_ += [f"- no reference proteome for {k}: the {v} proteome is searched" for k, v in db["relatives"].items()]
+    elif db:
         L_ += ["", f"**Search database: the union of {', '.join(db['organisms'])}** (spectra of their own in the "
                "mini-search: " + ", ".join(f"{k} {v}" for k, v in db["own_spectra"].items() if v is not None)
                + f"): {', '.join(db['fasta'])}"]
@@ -1015,8 +1087,8 @@ def _download(url, dst, log=print, attempts=5):
         except BaseException as e:
             with contextlib.suppress(OSError):
                 os.remove(part)
-            if not isinstance(e, OSError):  # URLError and HTTPError are OSErrors
-                raise
+            if not isinstance(e, (OSError, http.client.HTTPException)):  # URLError and HTTPError are OSErrors;
+                raise                                                       # a cut chunked stream is IncompleteRead
             log(f"    attempt {attempt + 1} failed: {e}")
             time.sleep(10 * 2 ** attempt)
             continue
@@ -1050,11 +1122,26 @@ def fetch_proteome(organism, cache, log=print, taxid=None):
         return None
     query = " ".join(words[:2]) if len(words) > 1 and words[1].islower() and words[1].isalpha() else words[0]
     os.makedirs(cache, exist_ok=True)
+    # <cache>/resolved.tsv: query, taxon id -> cached file, so a cached proteome needs no UniProt request
+    index, key = os.path.join(cache, "resolved.tsv"), f"{query}\t{taxid or ''}"
+    own = os.path.join(cache, query.replace(" ", "_") + ".fasta")   # cached before the index existed
+    if not taxid and " " in query and os.path.exists(own) and os.path.getsize(own):
+        return query.replace(" ", "_"), own
+    if os.path.exists(index):
+        for line in open(index, encoding="utf-8"):
+            q, t, name, f = (line.rstrip("\n").split("\t") + ["", "", "", ""])[:4]
+            if f"{q}\t{t}" == key and os.path.exists(os.path.join(cache, f)):
+                return name, os.path.join(cache, f)
     # taxonomy_name matches a genus or a species with all its strains; the proteome_type query field returns nothing,
     # so reference proteomes are picked from the results
     hits = _reference_proteomes(f'taxonomy_name:"{query}"', log)
+    # the name search also returns taxa that only mention it (Solanum lycopersicum -> Tomato torrado virus first,
+    # Oryctolagus cuniculus -> Oryctolagus cuniculus papillomavirus 1): the queried taxon first, then its strains
+    hits.sort(key=lambda h: _name_rank(h["taxonomy"]["scientificName"], query))
+    if " " in query:   # a species without a reference proteome of its own: its taxon id below, never its virus
+        hits = [h for h in hits if _name_rank(h["taxonomy"]["scientificName"], query) < 1]
     if hits:
-        up, sci = hits[0]["id"], hits[0]["taxonomy"]["scientificName"]
+        up, sci, tax = hits[0]["id"], hits[0]["taxonomy"]["scientificName"], hits[0]["taxonomy"].get("taxonId")
         name = "_".join(sci.split()[:2])
     else:
         for _ in range(4 if taxid else 0):
@@ -1071,14 +1158,80 @@ def fetch_proteome(organism, cache, log=print, taxid=None):
         if not hits:
             log(f"  no UniProt reference proteome for {query}")
             return None
-        up, sci = hits[0]["id"], hits[0]["taxonomy"]["scientificName"]
+        up, sci, tax = hits[0]["id"], hits[0]["taxonomy"]["scientificName"], hits[0]["taxonomy"].get("taxonId")
         name = re.sub(r"\W+", "_", sci).strip("_")
     dst = os.path.join(cache, f"{name}.fasta")
     if not (os.path.exists(dst) and os.path.getsize(dst)):
         log(f"  fetching {sci} reference proteome {up} for {organism}")
-        if not _download(f"https://rest.uniprot.org/uniprotkb/stream?format=fasta&query=(proteome:{up})", dst, log):
+        if not (_download(f"https://rest.uniprot.org/uniprotkb/stream?format=fasta&query=(proteome:{up})", dst, log,
+                          attempts=3) or _ftp_proteome(up, tax, dst, log)):
             return None
+    with open(index, "a", encoding="utf-8") as fh:   # one short line per append: parallel runs do not interleave
+        fh.write(f"{key}\t{name}\t{os.path.basename(dst)}\n")
     return name, dst
+
+
+FTP_PROTEOMES = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes"
+
+
+def _ftp_proteome(up, taxid, dst, log=print):
+    """The reference proteome from UniProt's FTP mirror, when the REST stream refuses (HTTP 429 for every client for
+    hours on 2026-11-05, or 5xx): <kingdom>/<UP>/<UP>_<taxid>.fasta.gz, canonical entries as the stream gives them.
+    The first header must name the taxon (OX=<taxid>)."""
+    if not taxid:
+        return False
+    for kingdom in ("Eukaryota", "Bacteria", "Archaea", "Viruses"):
+        url = f"{FTP_PROTEOMES}/{kingdom}/{up}/{up}_{taxid}.fasta.gz"
+        try:
+            urllib.request.urlopen(urllib.request.Request(url, method="HEAD"), timeout=60).close()
+        except (OSError, http.client.HTTPException):
+            continue
+        log(f"  REST refused: {up} from the FTP mirror ({kingdom})")
+        if not _download(url, dst + ".gz", log):
+            return False
+        part = f"{dst}.{os.getpid()}.part"
+        with gzip.open(dst + ".gz", "rt") as fi, open(part, "w") as fo:
+            shutil.copyfileobj(fi, fo)
+        os.remove(dst + ".gz")
+        with open(part) as fh:
+            ok = re.search(rf"\bOX={taxid}\b", fh.readline())
+        if not ok:
+            os.remove(part)
+            log(f"  {up}: the FTP file does not name taxon {taxid}")
+            return False
+        os.replace(part, dst)
+        return True
+    return False
+
+
+def _name_rank(sci, query):
+    """0 the queried taxon itself (or one of its strains), 0.5 the same species under a new genus name, 1 another
+    taxon whose name starts with it (a virus of that host), 2 the rest"""
+    s, q = sci.lower(), query.lower()
+    if s == q or s.startswith(q + " (") or s.startswith(q + " str"):
+        return 0
+    if s.startswith(q):
+        return 1
+    # a renamed genus keeps the species epithet (Lactobacillus -> Lactiplantibacillus plantarum, Physcomitrella ->
+    # Physcomitrium patens): that species, but no virus or phage named after it
+    sw, qw = s.split(), q.split()
+    renamed = len(sw) > 1 and len(qw) > 1 and sw[1] == qw[1] and not re.search(r"virus|phage|viroid", s)
+    return 0.5 if renamed and sw[0] != qw[0] else 2
+
+
+def _taxon_id(name, log=print):
+    """NCBI taxon id of a species name, synonyms included (Ruminococcus gnavus -> a Mediterraneibacter gnavus
+    taxon): the exact scientific name first, else UniProt's best match."""
+    q = urllib.parse.quote(f'"{name}"')
+    url = f"https://rest.uniprot.org/taxonomy/search?query={q}&fields=id,scientific_name&format=json&size=25"
+    try:
+        with urllib.request.urlopen(url, timeout=120) as r:
+            res = json.load(r).get("results", [])
+    except (OSError, ValueError, http.client.HTTPException) as e:
+        log(f"  taxon lookup {name} failed: {e}")
+        return None
+    hit = next((t for t in res if t.get("scientificName", "").lower() == name.lower()), res[0] if res else None)
+    return hit and hit.get("taxonId")
 
 
 def _reference_proteomes(query, log):
@@ -1137,6 +1290,13 @@ def main(argv=None):
                          "study) or the highest-TIC ones")
     an.add_argument("--max-ms2", type=int, default=20000, help="MS2 spectra read for the detectors")
     an.add_argument("--no-search", action="store_true", help="skip the mini-search")
+    an.add_argument("--organism", action="append",
+                    help="the organism the sample comes from (Latin name; repeat for a mixture): a user statement, "
+                         "or with --fast the given organism")
+    an.add_argument("--fast", action="store_true",
+                    help="fast mode: take --organism and/or --fasta as given and run no organism detector (no ProSE "
+                         "or panel organism search, FASTag species, tier 2, mixture test, Jev organism question); "
+                         "several organisms are searched as one union")
     an.add_argument("--organism-source", choices=("auto", "data", "prose", "metadata"), default="auto",
                     help="auto (default): data when an organism is stated and --panel is given (the spectra check the "
                          "stated organism), metadata with --fasta or without a panel, else prose with "
@@ -1159,6 +1319,8 @@ def main(argv=None):
     if a.cmd == "panel":
         fetch_panel(a.out, reviewed=not a.all_entries)
     if a.cmd == "analyze":
+        if a.fast and not (a.organism or a.fasta):
+            ap.error("--fast needs --organism and/or --fasta")
         log = (lambda *x: print(*x, file=sys.stderr)) if a.json else print
         rep = analyze(a, log)
         os.makedirs(a.out, exist_ok=True)

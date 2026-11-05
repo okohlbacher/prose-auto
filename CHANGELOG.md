@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.1.8 (2026-11-05)
+
+Fast mode
+- `--fast` with `--organism` (repeatable) and/or `--fasta`: the given organisms are taken as true. Skipped:
+  - the ProSE signature-panel organism search;
+  - the panel mini-search organism competition;
+  - the FASTag species call;
+  - tier 2;
+  - mixture detection and union building;
+  - Jev's organism question.
+
+  Every other detector runs against the given proteome, or against the union of several. The report shows the
+  organism as "given (fast mode)" and leaves it out of the agreement score. See README "Fast and full mode" and
+  docs/decision_flow.md.
+- Database: the `--panel` file, else the UniProt reference proteome by name. Without one, the nearest relative's
+  proteome within 3 parent taxa is used, named in the report and on the console. If nothing is found, fast mode
+  stops with an error and never infers the organism.
+- `--organism` without `--fast` is a user statement (confidence 0.9) for full mode.
+- Fast against full on 217 validation runs:
+  - the organism-dependent steps take 75 % less time;
+  - the whole run takes 66 % less on DDA, 56 % less on DIA, and 13 % less on timsTOF, where reading the .d files
+    dominates;
+  - with the same database, PSMs change by −0.12 % and protein groups by −0.09 %;
+  - on non-organism parameters, fast mode is right exactly where full mode is (curated SDRF).
+  - The remaining decision differences come from the database: mass accuracy from the PSMs of the given proteome,
+    not of full mode's search winner (median offset change 0.05 ppm).
+
+Proteome cache
+- UniProt's name search lists viruses of a host before the host itself. For 12 host species, 0.1.0–0.1.7 searched a
+  virus proteome: Tomato torrado virus for tomato, Triticum mosaic virus for wheat, and papillomaviruses and other
+  viruses filed under the host name.
+  - A species query now takes the species itself or its strains. A renamed genus with the same epithet also counts
+    (Lactobacillus → Lactiplantibacillus plantarum).
+  - It never takes a virus or phage named after the species.
+  - Effect on 0.1.6/0.1.7: the decided organism's database was a virus in 6 validation runs, which affected their
+    mass accuracy, Cys competition and mass gaps. Corrected values are in the v018 report.
+- `<cache>/resolved.tsv` maps each query and taxon id to its cached file, so a cached proteome needs no request.
+- Downloads:
+  - a cut chunked stream (IncompleteRead) is retried;
+  - when the REST stream refuses (HTTP 429/5xx), the proteome comes from UniProt's FTP mirror, checked against the
+    taxon id in its headers.
+
 ## 0.1.7 (2026-11-05)
 
 FASTag 1.9.0

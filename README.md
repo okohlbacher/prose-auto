@@ -152,6 +152,64 @@ The tests use OpenMS test data: BSA1 (LTQ Orbitrap XL, CID/ion trap), the
 DIAuditor and OpenSWATH DIA inputs, and the IsobaricAnalyzer iTRAQ input. A
 fake LLM covers the quote guard.
 
+## Fast and full mode
+
+**Full mode** is the default. prose-auto infers the organism and the search database from the spectra and the
+texts.
+
+**Fast mode** takes the organism as known:
+
+```bash
+python -m prose_auto.cli analyze run.mzML --fast --organism "Homo sapiens" --panel proteomes/ -o out/
+python -m prose_auto.cli analyze mix.mzML --fast --organism "Homo sapiens" --organism "Escherichia coli" --panel proteomes/
+python -m prose_auto.cli analyze run.mzML --fast --fasta my_db.fasta
+```
+
+- **What is given:** `--organism` (repeatable) and/or `--fasta`; `--fast` needs at least one of them.
+- **The search database:**
+  - each `--organism` resolves to its panel proteome, else to its UniProt reference proteome (cached under
+    `<panel>/extra`);
+  - a species without a UniProt reference proteome is searched against its nearest relative's: the first reference
+    proteome under its NCBI taxon, or under up to 3 parent taxa (synonyms resolve through UniProt taxonomy). The
+    organism stays as given; the report and the console name the database used;
+  - nothing within 3 parent taxa, or a download that still fails after the retries, stops the run with an error.
+    Fast mode never searches without the given organism and never infers it instead;
+  - every resolved fetch is indexed in `<panel>/extra/resolved.tsv`, so a cached proteome needs no UniProt request;
+  - `--fasta` is added as it is;
+  - several databases are concatenated once into `<panel>/extra/union/A+B.fasta`, and that file is the one search
+    database.
+- **Skipped:** everything that only serves the organism:
+  - the ProSE organism search (signature panel);
+  - the organism competition of the panel mini-search;
+  - the FASTag species call and tier 2;
+  - the mixture test and union building;
+  - the organism question to Jev, and the Jev cross-check and indicator agreement of the organism.
+- **Every other organism statement is dropped:** the record, the texts and the description.
+- **Runs as in full mode, against the given database:**
+  - the metadata, mass-accuracy and chemistry detectors and the FASTag termini;
+  - the texts;
+  - the mini-search (PSM mass errors, Cys alkylation competition);
+  - the FASTag mass gaps (Cys alkylation, variable modifications, enrichment);
+  - Jev for every other parameter.
+- **Report:** `mode: "fast"`. The organism decision has status `given` ("given (fast mode)"). `organisms` and
+  the SDRF `characteristics[organism]` list the given organisms. `organism_mix` is null. The organism is left out
+  of `agreement`.
+- **Without `--fast`:** `--organism` is a user statement (confidence 0.9), and the spectra may overrule it.
+
+**What fast mode changes beyond skipping the organism detectors:**
+- **Enzyme on runs with nothing stated:** in full mode, the ProSE organism search runs when nothing names the
+  organism. Its HLA-first search can then set the enzyme when no other indicator decides. Fast mode has no ProSE
+  organism search, so on those runs the enzyme comes from the tag termini, Jev and the texts only.
+- **Jev cache:** Jev gets neither the organism question nor the organism profile of the searches. Its request
+  differs from full mode's, so fast mode cannot reuse full-mode Jev answers, and its other answers can shift.
+- **Search database:** the organism winner of the mini-search (or the union) feeds the mass accuracy, the Cys
+  competition and the FASTag mass gaps. Fast mode replaces it with the given database; nothing is dropped. When
+  the given proteome explains fewer than max(10, 1 %) of the mini-search spectra, the mini-search's mass accuracy
+  and Cys competition are left out, as in full mode. So are the FASTag mass gaps, unless `--fasta` is given.
+
+The order of the decisions in both modes, and which detectors feed each parameter, are in
+[docs/decision_flow.md](docs/decision_flow.md).
+
 ## Organism and validation
 
 `--organism-source auto` (the default):
