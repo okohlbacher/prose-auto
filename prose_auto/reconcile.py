@@ -580,7 +580,7 @@ def organism_mix(evidence: list, jev_report=None, file_species=()):
     return out
 
 
-MIX_MAX_ORGANISMS = 2   # databases of a mixture union (0.1.6-0.1.8: 6; PSMs level off at 5-6 on the 8-species PXD017035)
+MIX_MAX_ORGANISMS = 3   # databases of a mixture union (0.1.6-0.1.8: 6; a cap of 2 cost the HYE runs 3-5 % of their PSMs)
 #                           (28,417 / 28,751 / 28,848 / 28,792 for 4 / 5 / 6 / 8), FDP stays 0.85-1.09 %; more only adds search space
 MIX_OWN_SPECTRA = 10    # spectra of its own (and 0.5 % of the searched spectra) before a named organism joins it
 MIX_TEXT_SPECTRA = 40   # ... and before an organism named only in the texts joins (mouse beside a human-yeast benchmark

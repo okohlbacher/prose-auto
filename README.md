@@ -243,7 +243,7 @@ indicators, scope); a suspected mixture is searched against the union of the pro
 UniProt by name or NCBI taxon id, cached under `<panel>/extra`). Greedily, the candidate with the most spectra
 the union so far does not explain joins while it has at least max(10, 0.5 % of the spectra) of them (1 when the
 file name names it; max(40, 2 %) when only the texts or a record beyond its first three organisms name it), up
-to 2 organisms. An inconsistency of 0.2 or more flags 65 % of the wrong decisions (precision 0.25).
+to 3 organisms. An inconsistency of 0.2 or more flags 65 % of the wrong decisions (precision 0.25).
 
 Other sets (0.1.3): non-tryptic Orbitrap DDA enzyme 15/16, DIA/timsTOF non-tryptic 8/11 with 12/12 tryptic
 controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs) sensitivity 19/19, specificity
@@ -264,6 +264,5 @@ controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs
   the stated second species was searched and is absent.
   A flagged run searches a union only when a further species has spectra of its own in the mini-search; a
   species at a few percent with no such spectra (PXD020394, SARS-CoV-2) is missed.
-* Unions stop at 2 organisms (0.1.6-0.1.8: 6). The third and later members of PXD017035 (8 species), the E. coli
-  of the HYE mixtures and the horse of PXD012636 are no longer searched; `--fast` with every `--organism` searches
-  them all.
+* Unions stop at 3 organisms (0.1.6-0.1.8: 6). The fourth and later members of PXD017035 (8 species) are no longer
+  searched; `--fast` with every `--organism` searches them all.

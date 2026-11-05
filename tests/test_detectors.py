@@ -421,9 +421,9 @@ def test_mixture_union_needs_spectra_of_its_own():
         ("Homo_sapiens", None), ("Saccharomyces_cerevisiae", 511), ("Escherichia_coli", 30)]
     # the file name (HYE) names E. coli: one spectrum of its own suffices (PXD039576: 4)
     assert pick(own(600, 511), own(2000, 4), set(), "file")[-1] == ("Escherichia_coli", 4)
-    # 0.1.9: two organisms by default
-    assert pick(own(600, 511), own(1200, 30), own(3000, 11), cap=None) == [
-        ("Homo_sapiens", None), ("Saccharomyces_cerevisiae", 511)]
+    # 0.1.9: three organisms by default; mouse (45 of its own, above its bar of 40) joins third, E. coli (30) is left out
+    assert pick(own(600, 511), own(1200, 30), own(3000, 45), cap=None) == [
+        ("Homo_sapiens", None), ("Saccharomyces_cerevisiae", 511), ("Mus_musculus", 45)]
 
 
 def test_union_candidates_take_the_record_and_the_search_winner():

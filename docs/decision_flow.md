@@ -150,7 +150,7 @@ flowchart LR
 
 | Parameter | Evidence, in decision order | Fast mode |
 |---|---|---|
-| organism, search database | user, record, texts, then the organism source: the ProSE organism search when nothing is stated, else the panel mini-search with the FASTag species call and tier 2; Jev's organism answer; after reconciling, the mixture test and the union (2 organisms at most) | given; no detector runs; several organisms are one union |
+| organism, search database | user, record, texts, then the organism source: the ProSE organism search when nothing is stated, else the panel mini-search with the FASTag species call and tier 2; Jev's organism answer; after reconciling, the mixture test and the union (3 organisms at most) | given; no detector runs; several organisms are one union |
 | instrument, analyzers, fragmentation, acquisition | mzML metadata (Bruker `analysis.tdf`) first, then the record, the texts and Jev | unchanged |
 | charge range | precursor charges up to 9 kDa (DIA: the pseudo-spectra), clamped to 1–20 | unchanged |
 | precursor / fragment tolerance and offset | database-free measurement (repeated ions, lock mass, immonium/y1), then the mini-search PSM errors on the database; texts and Jev only as coarse windows | mini-search on the given proteome |

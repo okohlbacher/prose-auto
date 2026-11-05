@@ -14,9 +14,10 @@ Protease on timsTOF from the spectra
 - The heavy-Arg share of the tag ends (0.29–0.91 on label-free timsTOF) reaches Jev with a timsTOF caveat. No label
   decision depended on it.
 
-Mixture unions: 2 organisms at most (was 6)
-- PXD017035 (8 species) keeps 2 of its 4 members. The HYE runs lose E. coli or yeast, and PXD012636 loses horse.
-- ProSE IDs on these five runs: PSMs −8.0 %, protein groups −14.4 %; PXD017035: −23.6 % and −36.7 %.
+Mixture unions: 3 organisms at most (was 6)
+- The HYE runs and PXD012636 keep their unions. PXD017035 (8 species) drops its fourth member, E. coli: PSMs −7.4 %,
+  protein groups −12.1 %.
+- A cap of 2 would have cost the five affected runs 8.0 % of their PSMs and 14.4 % of their protein groups.
 - `--fast` with every `--organism` still searches the full list.
 
 Jev 3-vote
