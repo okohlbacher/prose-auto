@@ -41,20 +41,22 @@ can run it as a sidecar.
 
 | Flag | Tool | What it adds |
 |---|---|---|
-| `--fastag <exe>` | [FASTag](https://github.com/okohlbacher/FASTag) | a database-free genus call (`-species`, reagent genera such as Bos/Sus are skipped when a real genus is close) and, with a FASTA, the Cys alkylation from the tag mass-gap histogram searched without fixed modifications (`-recon_fasta`, `-delta_out`) |
+| `--fastag <exe>` | [FASTag](https://github.com/okohlbacher/FASTag) >= 1.10.0 | a database-free genus call (`-species -species_evidence best`; reagent genera such as Bos/Sus are skipped when a real genus is close) and, with a FASTA, the Cys alkylation from the tag mass-gap histogram searched without fixed modifications (`-recon_fasta`, `-delta_out`), and the precursor and fragment mass errors of the tag placements |
 | `--fastag-subsample <f>` | FASTag | analyse only a fraction of the MS2 spectra |
 | `--diaspextract <exe>` | [DIAspeXtract](https://github.com/okohlbacher/diaspextract) | converts a diaPASEF `.d` folder (required for `.d` input) or a DIA mzML with ion mobility into pseudo-MS/MS spectra (Orbitrap DIA without ion mobility skips it and stays on the DIA path; DDA-PASEF `.d` is not supported and stops with an error), so the mini-search and FASTag also run on DIA data |
 | `--threads <n>` | both | threads for the external tools |
 
 FASTag needs high-resolution MS2 to be useful: on the ion-trap BSA example it
-places only a handful of tags, and its evidence stays below the mini-search.
+places only a handful of tags. Without FASTag the mass errors come from the database-free estimates only.
 
 ## Runs without a digest
 
 Top-down, middle-down, native and intact-mass runs are recognised right after reading the spectra
 (`topdown.py`): from the MS2 precursor charges and masses, else FLASHDeconv on a few MS1 and MS2 spectra
 (`--flashdeconv`) and charge-state series in MS1. prose-auto then sets no ProSE parameters, writes the verdict with
-its reason and the recommendation "use FLASHTnT (OpenMS)", and exits with status 3.
+its reason and a recommendation, and exits with status 3. Top-down, middle-down and native runs with MS2 get "use
+FLASHTnT (OpenMS)". Intact-mass runs and runs without MS2 get "use intact-mass deconvolution, e.g. FLASHDeconv
+(OpenMS)", because FLASHTnT needs MS2.
 
 ## Pipeline
 
@@ -65,12 +67,13 @@ its reason and the recommendation "use FLASHTnT (OpenMS)", and exits with status
 | 3 mass precision | `detect_tolerance.py` | fragment and precursor precision without a database | Param-Medic pairs (May et al. 2017), extended to DIA window repeats and MS1 scan-to-scan; Gaussian + uniform EM |
 | 3 mass offset | `detect_tolerance.py` | systematic offset without a database | lock-mass polysiloxane ions (MS1), immonium and y1 ions (HCD MS2) |
 | 4 chemistry | `detect_chemistry.py` | TMT/TMTpro/iTRAQ plex, SILAC, phospho/glyco/acetyl enrichment, Cys alkylation (weak) | reporter and diagnostic ions against control m/z values (Param-Medic 2019 idea); MS1 heavy/light pairs with an intensity check |
-| 5 mini-search | `tagsearch.py`, `hypotheses.py` | organism, Cys alkylation, calibrated offsets and tolerances | binomial b/y scoring with target/reversed-decoy FDR on the top-TIC subset; competing hypotheses compared by PSMs at 1% FDR |
-| 5 protease | `external.py` (FASTag >= 1.9.0 `-digest_out`) | protease, HLA ligand class | FASTag scores the tag termini against MEROPS, PeptideCutter, MHC Motif Atlas and proteome models (`data/prose_auto_013_digest_models.tsv`); on timsTOF the K/R and residue shares of the tag ends (`tims_protease`) and the mini-search protease competition instead |
+| 5 mini-search | `tagsearch.py`, `hypotheses.py` | organism (full mode); protease on timsTOF without a tag-rule call | binomial b/y scoring with target/reversed-decoy FDR on the top-TIC subset; competing hypotheses compared by PSMs at 1% FDR |
+| 5 mass errors | `hypotheses.placement_accuracy` (FASTag `-recon_out`) | calibrated offsets and tolerances | the precursor and b/y fragment errors of the tag placements of the gap stage: \|offset\| + 4 SD (precursor), Gauss-plus-uniform fit (fragment) |
+| 5 protease | `external.py` (FASTag `-digest_out`) | protease, HLA ligand class | FASTag scores the tag termini against MEROPS, PeptideCutter, MHC Motif Atlas and proteome models (`data/prose_auto_013_digest_models.tsv`); on timsTOF the K/R and residue shares of the tag ends (`tims_protease`) and the mini-search protease competition instead |
 | 5 records and text | `repository.py`, `text_extract.py` | what the submitters and the user say | PRIDE API v3, PROXI, bigbio/sdrf-annotated-datasets, Europe PMC methods; keyword rules with verbatim quotes |
 | 6 LLM | `llm.py` | the same from free text, literature priors, a final review | any CLI or OpenAI-compatible endpoint; quotes must occur in the text |
 | 6b Jev (last) | `jev.py`, `schema.py` | every head from the texts and all indicators; afterwards a consistency verdict per setting | typed choice questions over the texts plus the measured and search profiles (`--jev`) |
-| 7 reconcile | `reconcile.py` | one decision per parameter, confidence, conflicts, status; indicator agreement; suspected organism mix | measured beats stated for instrument-determined settings; a clear mini-search result beats text for sample prep; an enrichment needs a strong signal or two indicators |
+| 7 reconcile | `reconcile.py` | one decision per parameter, confidence, conflicts, status; indicator agreement; suspected organism mix | measured beats stated for instrument-determined settings; a clear spectral result beats text for sample prep; an enrichment needs a strong signal or two indicators |
 | (opt) ProSE | `prose_runner.py` | confirmation with ProSE's own calibration pass and an open search | `-summary_out` YAML (`precursor_error`, `fragment_error`), `-out_mod_analysis_dir` |
 
 ## LLM backends
@@ -192,8 +195,8 @@ python -m prose_auto.cli analyze run.mzML --fast --fasta my_db.fasta
 - **Runs as in full mode, against the given database:**
   - the metadata, mass-accuracy and chemistry detectors and the FASTag termini;
   - the texts;
-  - the mini-search (PSM mass errors, Cys alkylation competition);
-  - the FASTag mass gaps (Cys alkylation, variable modifications, enrichment);
+  - the FASTag mass gaps and tag placements (Cys alkylation, variable modifications, enrichment, mass errors);
+  - no mini-search, except on timsTOF when the tag ends give no protease call (fewer than 175);
   - Jev for every other parameter.
 - **Report:** `mode: "fast"`. The organism decision has status `given` ("given (fast mode)"). `organisms` and
   the SDRF `characteristics[organism]` list the given organisms. `organism_mix` is null. The organism is left out
@@ -206,10 +209,10 @@ python -m prose_auto.cli analyze run.mzML --fast --fasta my_db.fasta
   organism search, so on those runs the enzyme comes from the tag termini, Jev and the texts only.
 - **Jev cache:** Jev gets neither the organism question nor the organism profile of the searches. Its request
   differs from full mode's, so fast mode cannot reuse full-mode Jev answers, and its other answers can shift.
-- **Search database:** the organism winner of the mini-search (or the union) feeds the mass accuracy, the Cys
-  competition and the FASTag mass gaps. Fast mode replaces it with the given database; nothing is dropped. When
-  the given proteome explains fewer than max(10, 1 %) of the mini-search spectra, the mini-search's mass accuracy
-  and Cys competition are left out, as in full mode. So are the FASTag mass gaps, unless `--fasta` is given.
+- **Search database:** the organism winner of the mini-search (or the union) feeds the FASTag mass gaps and tag
+  placements. Fast mode replaces it with the given database; nothing is dropped. A wrong given organism places
+  tags by chance: their precursor errors spread over the window, and no mass error is taken from them (robust SD
+  above a quarter of the window).
 
 The order of the decisions in both modes, and which detectors feed each parameter, are in
 [docs/decision_flow.md](docs/decision_flow.md).
@@ -251,13 +254,16 @@ controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs
 
 ## Known limits (prototype)
 
-* The mini-search is pure Python; with persistent peptide indexes it takes 10-30 s per run.
+* The mini-search is pure Python; with persistent peptide indexes it takes 10-30 s per run. Since 0.1.10 it
+  chooses the organism only (and the protease on timsTOF without a tag-rule call).
 * Repeated-ion and MS1 scan-to-scan estimates give precision without the offset and are about 2x too small
-  alone; the mini-search PSM errors or the immonium/y1 probe should decide.
+  alone; the FASTag placement errors or the immonium/y1 probe should decide. On the 120 mass-truth cases the
+  placement errors are within 1.5x of a wide-window reference in 58/58 (precursor), 41/41 (high-res fragment) and
+  19/20 (ion-trap fragment) cases; the mini-search PSM errors were in 55/56, 39/39 and 18/19.
 * Proteases on timsTOF: the MS2 scans start at m/z 200-235, above y1 of K and R, so FASTag's tag-profile call
   fails and an R end reads as R+10 (heavy Arg). The total K/R share of the tag ends (13 tryptic runs 0.33-0.75;
-  Glu-C, Asp-N, chymotrypsin 0.006-0.025) and the residue shares decide instead, with the mini-search protease
-  competition (17/17 timsTOF runs). There are no HLA timsTOF runs in the validation sets.
+  Glu-C, Asp-N, chymotrypsin 0.006-0.025) and the residue shares decide instead; with fewer than 175 tag ends,
+  the mini-search protease competition (17/17 timsTOF runs). There are no HLA timsTOF runs in the validation sets.
   N-side cutters (Lys-N, Asp-N) need 100 N-terminal tags; LysargiNase has no model and reads as "unspecific".
 * The non-tryptic sets are small (16 Orbitrap DDA, 11 DIA/timsTOF runs).
 * `organism_mix` from the records and texts alone is study-level: a pure file of a mixed study is flagged unless

@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.1.10 (2026-11-05)
+
+Mass errors from FASTag
+- Tolerances and offsets come from the FASTag tag placements of the gap stage (`-recon_out`), in both modes:
+  - the precursor error recomputed at full precision;
+  - the b/y fragment errors of the placed peptides;
+  - |offset| + 4 SD (precursor) and a Gauss-plus-uniform fit (fragment), as the wide-window reference.
+- The mini-search PSM errors are no longer used.
+- Mass truth (120 DDA cases, within 1.5×): precursor 59/59, high-res fragment 41/41, ion-trap fragment 19/20 (0.1.9:
+  59/59, 40/41, 19/20).
+- ProSE IDs on runs whose only change is the mass errors: PSMs +0.13 % (full), +0.15 % (fast).
+- Chance placements on a wrong given proteome spread over the window. They give no mass error: the precursor SD must
+  stay below a quarter of the window, the fragment σ below 0.4 of it.
+
+Mini-search: organism only
+- **Full mode:** the mini-search only chooses the organism.
+- **Fast mode:** it is skipped, except on timsTOF when the tag ends give no protease call; there the protease
+  competition decides (2 of 13 tryptic timsTOF runs).
+- **Cys competition:** dropped.
+  - SDRF Cys 126 → 128/132 (full) and 125 → 127/131 (fast).
+  - The 10–11 runs whose Cys decision changed lost 9.5 % of their PSMs, including the three that now match the SDRF.
+    See the v0110 report: it recommends restoring the competition.
+- **Runtime of the changed steps:** −21 % (full) and −66 % (fast); median per run in fast mode 16.4 → 3.0 s.
+
+FASTag 1.10.0
+- Requires FASTag >= 1.10.0. The species call uses `-species_evidence best`: on the 193 validation runs it gets 131
+  species right, against 112 for `all` (1.9.0), and the organism decisions stay at 187/193.
+
+Runs without a digest
+- The recommendation depends on the class:
+  - "use FLASHTnT (OpenMS)" for top-down, middle-down and native runs with MS2;
+  - "use intact-mass deconvolution, e.g. FLASHDeconv (OpenMS)" for intact-mass runs and runs without MS2, because
+    FLASHTnT needs MS2.
+
 ## 0.1.9 (2026-11-05)
 
 Protease on timsTOF from the spectra

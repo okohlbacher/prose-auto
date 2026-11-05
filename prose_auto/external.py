@@ -75,8 +75,10 @@ def fastag_species(fastag, mzml, frag_tol=20.0, frag_unit="ppm", fixed=("Carbami
     with tempfile.TemporaryDirectory(prefix="fastag_") as tmp:
         out = os.path.join(tmp, "tags.tsv")
         sp = os.path.join(tmp, "species.tsv")
-        cmd = [fastag, "-in", mzml, "-out", out, "-species", "-tag_length", 7, "-species_out", sp,
-               "-threads", threads] + _frag_args(frag_tol, frag_unit) + _taxonomy_args(taxonomy_dir, rank)
+        # -species_evidence best (1.10.0): a spectrum counts for the taxa of its best tag; 'all' (1.9.0) took 19 fewer
+        # right species calls on the 193 validation runs and called Triticum aestivum 58 times instead of 32
+        cmd = [fastag, "-in", mzml, "-out", out, "-species", "-species_evidence", "best", "-tag_length", 7,
+               "-species_out", sp, "-threads", threads] + _frag_args(frag_tol, frag_unit) + _taxonomy_args(taxonomy_dir, rank)
         cmd += ["-fixed_modifications"] + list(fixed)
         if subsample:
             cmd += ["-subsample_fraction", subsample]
@@ -104,7 +106,8 @@ def fastag_species(fastag, mzml, frag_tol=20.0, frag_unit="ppm", fixed=("Carbami
     return [Evidence("organism", call["name"], conf, "data", "FASTag species", detail, {"taxa": table})]
 
 
-FASTAG_MIN_VERSION = (1, 9, 0)   # -digest_out, -label_out, -massgap_out; 1.9.0 keeps reversed (b-ion) placements
+FASTAG_MIN_VERSION = (1, 10, 0)   # -digest_out, -label_out, -massgap_out, -species_evidence; 1.9.0 keeps reversed
+                                  # (b-ion) placements
 DIGEST_MODELS = os.path.join(os.path.dirname(__file__), "data", "prose_auto_013_digest_models.tsv")
 _NLABEL = {"TMT6/10/11plex": ("TMT", 229.162932), "TMTpro (16/18plex)": ("TMTpro", 304.207146),
            "iTRAQ4plex": ("iTRAQ4", 144.102063)}
@@ -138,7 +141,8 @@ def require_fastag(fastag):
     v = fastag_version(fastag)
     if not v or v < FASTAG_MIN_VERSION:
         raise RuntimeError(f"prose-auto needs FASTag >= {'.'.join(map(str, FASTAG_MIN_VERSION))} (-digest_out, "
-                           f"-label_out, -massgap_out); {fastag} reports {'.'.join(map(str, v)) if v else 'no version'}")
+                           f"-label_out, -massgap_out, -species_evidence); {fastag} reports "
+                           f"{'.'.join(map(str, v)) if v else 'no version'}")
 
 
 def _report(path):
@@ -258,9 +262,11 @@ def fastag_shortlist(evs, n=3):
     return (real or names)[:n]
 
 
-def fastag_alkylation(fastag, mzml, fasta, frag_tol=20.0, frag_unit="ppm", threads=0, log=print, subsample=0.0):
+def fastag_alkylation(fastag, mzml, fasta, frag_tol=20.0, frag_unit="ppm", threads=0, log=print, subsample=0.0,
+                      placements=None):
     """Cys alkylation and modification combinations from FASTag's mass-gap report (-massgap_out: tags placed on
-    fasta without fixed modifications)."""
+    fasta without fixed modifications). placements, a list, receives (spectrum native id, peptide) of the first
+    placement per spectrum: the mass errors (hypotheses.placement_accuracy)."""
     with tempfile.TemporaryDirectory(prefix="fastag_") as tmp:
         mg = os.path.join(tmp, "massgap.tsv")
         cmd = [fastag, "-in", mzml, "-out", os.path.join(tmp, "tags.tsv"), "-tag_length", 4, "-extension", 6,
@@ -271,6 +277,13 @@ def fastag_alkylation(fastag, mzml, fasta, frag_tol=20.0, frag_unit="ppm", threa
         if subsample:
             cmd += ["-subsample_fraction", subsample]
         _run(cmd, log)
+        rc = os.path.join(tmp, "recon.tsv")
+        if placements is not None and os.path.exists(rc):
+            seen = set()
+            for r in _tsv(rc):
+                if r["spectrum"] not in seen:
+                    seen.add(r["spectrum"])
+                    placements.append((r["spectrum"], r["peptide"]))
         return massgap_evidence(_report(mg) if os.path.exists(mg) else {})
 
 

@@ -49,6 +49,12 @@ def test_charge_ladder_and_ms1_only_intact_run():
     assert lad["states"] >= 15 and abs(lad["mass"] - m) < 2 and lad["signif"] >= td.LADDER_SIGNIF
     v = td.detect(_run(ms1=[s]))
     assert v["class"] == "intact mass" and "charge series" in v["reason"]
+    assert "FLASHDeconv" in v["recommendation"] and "FLASHTnT" not in v["recommendation"]   # FLASHTnT needs MS2
+
+
+def test_recommendation_by_class():
+    assert td.recommendation("intact mass", 0) == td.recommendation("native", 0) == td.RECOMMENDATION_MS1
+    assert {td.recommendation(c, 120) for c in ("top-down", "middle-down", "native")} == {td.RECOMMENDATION}
 
 
 def test_analyze_aborts_with_exit_3(tmp_path, monkeypatch):

@@ -16,7 +16,8 @@ import numpy as np
 from .spectra import PROTON
 
 EXIT_NO_DIGEST = 3          # prose-auto analyze: a run without a digest, nothing to set for ProSE
-RECOMMENDATION = "use FLASHTnT (OpenMS)"
+RECOMMENDATION = "use FLASHTnT (OpenMS)"   # top-down, middle-down and native runs with MS2
+RECOMMENDATION_MS1 = "use intact-mass deconvolution, e.g. FLASHDeconv (OpenMS)"   # no MS2: FLASHTnT needs MS2
 MIN_CHARGED = 0.5           # share of MS2 precursors with a charge before the headers decide
 N_MS1 = 40                  # MS1 spectra (highest TIC) for FLASHDeconv when the headers have no charge
 
@@ -213,6 +214,11 @@ def _size_class(median_mass, share_10k):
     return "middle-down" if median_mass < TOP_DOWN_MASS and share_10k < MIDDLE_DOWN_TAIL else "top-down"
 
 
+def recommendation(cls, n_ms2):
+    """FLASHTnT identifies proteoforms from MS2; an intact-mass run, or any run without MS2, needs deconvolution only"""
+    return RECOMMENDATION_MS1 if cls == "intact mass" or not n_ms2 else RECOMMENDATION
+
+
 def detect(run, flashdeconv=None, threads=1, log=print):
     """The verdict for a run without a digest ({class, reason, recommendation, features}), or None. FLASHDeconv and
     the charge ladder run only when the MS2 headers carry too few precursor charges (DIA, MS1-only and Thermo
@@ -228,5 +234,5 @@ def detect(run, flashdeconv=None, threads=1, log=print):
     got = classify(prec, ms1, ms2, ladder, run.n_ms2_total)
     if not got:
         return None
-    return {"class": got[0], "reason": got[1], "recommendation": RECOMMENDATION,
+    return {"class": got[0], "reason": got[1], "recommendation": recommendation(got[0], run.n_ms2_total),
             "features": {"precursors": prec, "ms1": ms1, "ms2_fragments": ms2, "ms1_charge_ladder": ladder}}

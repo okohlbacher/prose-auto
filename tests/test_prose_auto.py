@@ -552,8 +552,10 @@ def test_fast_mode_takes_the_given_organisms(tmp_path):
     assert rep["search_database"]["union"].endswith("Bos_taurus+Homo_sapiens.fasta")
     assert rep["sdrf"]["characteristics[organism]"] == "Bos taurus;Homo sapiens"
     assert "organism" not in rep["agreement"]["parameters"]
-    assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # the mini-search ran on the union
-    assert not {"organism_prose", "organism_tier2", "mixture_candidates"} & set(rep["timings_s"])
+    assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"
+    assert not any(e["method"] == "alkylation competition" for e in rep["decisions"]["cys_alkylation"]["evidence"])
+    # 0.1.10: no mini-search in fast mode on DDA and DIA (only on timsTOF without a tag-rule protease call)
+    assert not {"organism_prose", "organism_tier2", "mixture_candidates", "mini_search"} & set(rep["timings_s"])
     assert "given (fast mode)" in (out / "BSA1.auto.md").read_text()
     with pytest.raises(SystemExit):
         cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "-o", str(out)])
@@ -675,6 +677,32 @@ def test_fetch_retries_5xx_and_keeps_the_text(tmp_path, monkeypatch):
     assert R.fetch("https://x/paper", log=lambda *a: None) == "methods text" and len(calls) == 3
     monkeypatch.setattr(R, "_get", lambda url, timeout=30: 1 / 0)   # a rerun reads the cached text
     assert R.fetch("https://x/paper", log=lambda *a: None) == "methods text"
+
+
+def test_placement_accuracy_from_fastag_placements():
+    """precursor and fragment errors of placed peptides: offset +3 ppm (SD 1) on the precursor, +2 ppm (SD 1.5) on
+    the fragments; Cys peptides are left out (the alkylation is not decided when the gaps run)"""
+    import numpy as np
+    from prose_auto import hypotheses as H, tagsearch as ts
+    from prose_auto.spectra import Run, Scan
+    rng, mods, run, placed = np.random.default_rng(0), ts.Mods(cys=0.0), Run(path="x"), []
+    for i, seq in enumerate(["PEPTIDEKLLR", "SAMPLERGLVK", "VLSEGEWQLVLHVWAK"] * 20):
+        th = ts._fragments(seq, mods, 1)
+        mz = np.sort(np.concatenate([th * (1 + rng.normal(2, 1.5, th.size) * 1e-6), rng.uniform(150, 1500, 40)]))
+        m = sum(ts.AA[a] for a in seq) + ts.H2O
+        run.ms2.append(Scan(f"scan={i}", 2, float(i), mz, np.ones(mz.size),
+                            precursor_mz=m * (1 + rng.normal(3, 1) * 1e-6) / 2 + ts.PROTON, charge=2))
+        placed.append((f"scan={i}", seq))
+    placed.append(("scan=0", "ACDEFGHIK"))   # a Cys peptide: not used
+    ev = {(e.parameter, e.method): e for e in H.placement_accuracy(run, placed, mods, True, True)}
+    po, pt = ev[("precursor_offset", "FASTag placements")], ev[("precursor_tolerance", "FASTag placements")]
+    assert abs(po.value["value"] - 3) < 0.6 and 5 <= pt.value["value"] <= 9 and pt.stats["n"] == 60
+    fo, ft = ev[("fragment_offset", "FASTag placements")], ev[("fragment_tolerance", "FASTag placements")]
+    assert abs(fo.value["value"] - 2) < 0.6 and 6 <= ft.value["value"] <= 11 and ft.value["unit"] == "ppm"
+    assert H.placement_accuracy(run, placed[:10], mods, True, True) == []   # fewer than 20 placed spectra
+    for s in run.ms2:   # chance placements (a wrong database): errors spread over the window, no estimate
+        s.precursor_mz = (s.precursor_mz - ts.PROTON) * (1 + rng.uniform(-45, 45) * 1e-6) + ts.PROTON
+    assert not [e for e in H.placement_accuracy(run, placed, mods, True, True) if e.parameter.startswith("precursor")]
 
 
 def test_tims_protease_from_the_tag_ends():

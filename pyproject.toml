@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "prose-auto"
-version = "0.1.9"
+version = "0.1.10"
 description = "Prototype: propose ProSE search settings from the MS data (Auto Mode exploration)"
 requires-python = ">=3.9"
 license = { text = "MIT" }

@@ -46,6 +46,61 @@ def fragment_errors(scans, peaks, psms, mods, frag_tol, frag_ppm):
     return np.asarray(errs)
 
 
+def placement_accuracy(run, placements, mods, hr1, hr2):
+    """Precursor and fragment mass errors from FASTag's tag placements (0.1.10; replaces the mini-search PSM errors).
+    The first placement per spectrum, peptides without Cys (the alkylation is not decided yet); the precursor error
+    from the mzML precursor at full precision (isotope 0 or 1, within 50 ppm, 2000 ppm on low-res MS1), the fragment
+    errors of the peptide's b/y ions within 50 ppm (1 Da on ion traps). Tolerance: |median| + 4 robust SD (precursor),
+    |mu| + 4 sigma of the Gauss-plus-uniform fit (fragment), as the wide-window reference. On the 120 mass-truth cases
+    within 1.5x of the reference: precursor 58/58, fragment 41/41 (high-res) and 19/20 (ion trap); mini-search 55/56,
+    39/39, 18/19."""
+    from .detect_tolerance import fit_gauss_uniform
+    by_id = {s.native_id: s for s in run.ms2}
+    p_wide, f_wide = (50.0 if hr1 else 2000.0), (50.0 if hr2 else 1.0)
+    pe, scans, psms = [], [], []
+    for sid, seq in placements:
+        s = by_id.get(sid)
+        if s is None or s.precursor_mz <= 0 or "C" in seq or not set(seq) <= set(ts.AA):
+            continue
+        mth = sum(ts.AA[a] for a in seq) + ts.H2O + seq.count("K") * mods.k + mods.nterm
+        errs = [((s.precursor_mz - ts.PROTON) * z - iso * ts.ISO - mth) / mth * 1e6
+                for z in ((s.charge,) if s.charge > 0 else (2, 3)) for iso in (0, 1)]
+        e = min(errs, key=abs)
+        if abs(e) <= p_wide:
+            pe.append(e)
+            scans.append(s)
+            psms.append((len(scans) - 1, 0.0, False, seq, e))
+    ev = []
+    if len(pe) < 20:
+        return ev
+    errs = np.asarray(pe)
+    med = float(np.median(errs))
+    sd = float(1.4826 * np.median(np.abs(errs - med)))
+    # chance placements (a wrong database in fast mode: no mini-search guards it) spread over the whole window, robust
+    # SD about 0.74 of its half-width; real runs reach 5.9 ppm (timsTOF) and 344 of 2000 ppm (low-res MS1)
+    if sd > 0.25 * p_wide:
+        return ev
+    rec = max(3.0, math.ceil(abs(med) + 4 * sd))
+    conf = min(0.95, 0.5 + 0.1 * math.log10(len(pe)) * 2)
+    ev.append(Evidence("precursor_offset", {"value": round(med, 2), "unit": "ppm"}, conf, "search",
+                       "FASTag placements", f"median precursor error of {len(pe)} placed spectra: {med:+.2f} ppm"))
+    ev.append(Evidence("precursor_tolerance", {"value": rec, "unit": "ppm"}, conf, "search", "FASTag placements",
+                       f"{len(pe)} spectra with a FASTag placement: offset {med:+.2f} ppm, robust SD {sd:.2f} ppm; "
+                       f"|offset| + 4 SD = {rec} ppm", {"median": med, "sd": sd, "n": len(pe)}))
+    fe = fragment_errors(scans, [ts.prepare_peaks(s) for s in scans], psms, mods, f_wide, hr2)
+    g = fit_gauss_uniform(fe, f_wide) if fe.size >= 100 else None
+    if g is not None and g[1] <= 0.4 * f_wide:   # real runs: sigma at most 15 of 50 ppm
+        unit, step = ("ppm", 1.0) if hr2 else ("Da", 0.05)
+        frec = max(5.0 if hr2 else 0.2, math.ceil((abs(g[0]) + 4 * g[1]) / step) * step)
+        ev.append(Evidence("fragment_offset", {"value": round(g[0], 4), "unit": unit}, conf, "search",
+                           "FASTag placements", f"fragment error offset {g[0]:+.3g} {unit}"))
+        ev.append(Evidence("fragment_tolerance", {"value": round(frec, 3), "unit": unit}, conf * 0.9, "search",
+                           "FASTag placements", f"{fe.size} matched fragments of the placed peptides: offset "
+                           f"{g[0]:+.3g}, sigma {g[1]:.3g} {unit}; |offset| + 4 sigma = {frec:.3g} {unit}",
+                           {"median": g[0], "sd": g[1], "n": int(fe.size)}))
+    return ev
+
+
 class HypothesisTester:
     def __init__(self, run, frag_tol, frag_ppm, prec_ppm=20.0, n_spectra=2000,
                  mods: ts.Mods | None = None, log=print, sample="top", seed=0):

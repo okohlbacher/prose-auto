@@ -53,7 +53,7 @@ from . import tagsearch as ts
 from . import taxa
 from . import text_extract as tx
 from . import topdown as td
-from .hypotheses import HypothesisTester
+from .hypotheses import HypothesisTester, placement_accuracy
 from .evidence import Evidence
 from .reconcile import indicator_agreement, mixture_union, organism_mix, reconcile, union_candidates
 from .spectra import load_mzml
@@ -608,9 +608,28 @@ def _search_features(ev):
     return "\n".join(lines)
 
 
+def _label_mods(c):
+    """Fixed masses of the label the spectra show (TMT, iTRAQ) on K and the N-terminus"""
+    lab = _first([e for e in c.ev if e.parameter == "label" and e.source == "data"
+                  and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
+    mods = ts.Mods()
+    key = next((k for p, k in LABEL_MASS_KEYS if str(lab.value).startswith(p)), None) if lab else None
+    if key:
+        mods.k = mods.nterm = ts.LABEL_MASS[key]
+    return mods
+
+
+def _tims_without_tag_call(c):
+    """timsTOF whose tag ends give no protease call (fewer than TAG_MIN): the protease competition decides there"""
+    return "PASEF" in str(c.acq) and not any(e.method == "FASTag termini (timsTOF)" for e in c.ev)
+
+
 def _mini_search(c, panel, org_fixed):
-    """Mini-search hypotheses (DDA only: DIA spectra have no single precursor). Returns the HypothesisTester or
-    None. With the organism fixed (metadata, ProSE) its organism evidence is dropped."""
+    """Mini-search hypotheses (DDA only: DIA spectra have no single precursor): the organism competition, and on
+    timsTOF without a tag-rule call the protease competition. 0.1.10: the mass errors come from the FASTag placements
+    (hypotheses.placement_accuracy), and the Cys competition is gone (it made 3 false "free Cys" calls on 132
+    validation runs and saved 1). Returns the HypothesisTester or None. With the organism fixed (metadata, ProSE,
+    fast mode) its organism evidence is dropped."""
     a, log, hr2 = c.a, c.log, c.hr2
     dia = str(c.search_acq).startswith("DIA")
     if not panel or dia or a.no_search:
@@ -619,21 +638,13 @@ def _mini_search(c, panel, org_fixed):
         return None
     log(f"[6/7] mini-search on {min(a.spectra, len(c.run.ms2))} spectra against {len(panel)} database(s)")
     with _timed(c, "mini_search"):
-        lab = _first([e for e in c.ev if e.parameter == "label" and e.source == "data"
-                      and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
-        mods = ts.Mods()
-        key = next((k for p, k in LABEL_MASS_KEYS if str(lab.value).startswith(p)), None) if lab else None
-        if key:
-            mods.k = mods.nterm = ts.LABEL_MASS[key]
         h = HypothesisTester(c.run, 20.0 if hr2 else 0.4, hr2, prec_ppm=20.0 if c.hr1 else 500.0,
-                             n_spectra=a.spectra, mods=mods, log=log, sample=a.sample)
+                             n_spectra=a.spectra, mods=_label_mods(c), log=log, sample=a.sample)
         oe = h.organism(panel)
         if not org_fixed:
             c.ev += oe
-        if h.best_db:
-            c.ev += h.accuracy() + h.alkylation()
-            if "PASEF" in str(c.acq):   # timsTOF: the protease competition stands in for the tag-profile call
-                c.ev += h.enzyme()
+        if h.best_db and _tims_without_tag_call(c):   # 3 of 17 timsTOF validation runs
+            c.ev += h.enzyme()
     return h
 
 
@@ -652,12 +663,13 @@ def _fastag_stage(c, h, org_fixed):
             c.ev += [e for e in fev if id(e) not in have]
         except Exception as e:
             log(f"  FASTag failed: {e}")
-        _fastag_gaps(c, (h.best_db[1] if h is not None and h.best_db else None) or a.fasta)
+        _fastag_gaps(c, (h.best_db[1] if h is not None and h.best_db else None)
+                     or (c.union if getattr(a, "fast", False) else None) or a.fasta)
 
 
 def _fastag_gaps(c, db):
-    """The FASTag mass-gap histogram against db: Cys alkylation and modification combinations; replaces earlier
-    gap evidence (tier 2 calls it again for a new winner)."""
+    """The FASTag mass-gap histogram against db: Cys alkylation and modification combinations, and the mass errors of
+    its tag placements (tolerances and offsets); replaces earlier gap evidence (tier 2 and the union call it again)."""
     a, log = c.a, c.log
     ftol, funit = c.ftol
     if not db:
@@ -667,8 +679,11 @@ def _fastag_gaps(c, db):
     try:
         log(f"  FASTag: mass-gap histogram against {os.path.basename(db)} without fixed modifications")
         # Cys alkylation, and the same gaps explained as modification combinations (variable mods, enrichment)
+        placed = []
         c.gap_ev = ext.fastag_alkylation(a.fastag, c.spectra_file, db, ftol, funit, threads=a.threads, log=log,
-                                         subsample=_fastag_fraction(c))
+                                         subsample=_fastag_fraction(c), placements=placed)
+        if placed:
+            c.gap_ev += placement_accuracy(c.run, placed, _label_mods(c), c.hr1, c.hr2)
         c.ev += c.gap_ev
     except Exception as e:
         log(f"  FASTag failed: {e}")
@@ -712,7 +727,8 @@ def _tier2(c, h, panel):
                     e.stats["stated_added"] = added
             if h.best_db and h.best_db[0] != prev:  # a new winner: redo the stages that used the old one
                 c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter in TIER2_REDO)] + new
-                c.ev += h.accuracy() + h.alkylation()
+                if _tims_without_tag_call(c):
+                    c.ev += h.enzyme()
                 if a.fastag:
                     with _timed(c, "fastag_tier2"):
                         _fastag_gaps(c, h.best_db[1])
@@ -775,8 +791,8 @@ def _union(c, h, panel, mix, decided):
     """A suspected mixture searches the union of the organisms the data support: every organism an indicator names
     (reconcile.union_candidates) is mini-searched, fetched from UniProt when the panel lacks it, and joins
     (reconcile.mixture_union) by the spectra it explains that the union so far does not. Their FASTA files are
-    concatenated once into <panel>/extra/union/, then the mini-search Cys competition and the FASTag mass gaps are
-    redone against it (the mass accuracy keeps the winner's PSMs). Returns the search database or None."""
+    concatenated once into <panel>/extra/union/, then the FASTag mass gaps and placements (Cys, modifications, mass
+    errors) are redone against it. Returns the search database or None."""
     cands = union_candidates(c.ev, mix, decided)
     if not cands or h is None:
         return None
@@ -816,7 +832,6 @@ def _union(c, h, panel, mix, decided):
     c.log(f"  organism mix: searching the union of {', '.join(paths)}")
     with _timed(c, "mixture_union"):
         h.best_db = ("+".join(paths), dst)
-        c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter == "cys_alkylation")] + h.alkylation()
         if c.a.fastag:
             _fastag_gaps(c, dst)
     return {"organisms": list(paths), "fasta": list(paths.values()), "union": dst,
@@ -871,7 +886,7 @@ def analyze(a, log=print):
     with _timed(c, "topdown_check"):
         verdict = td.detect(c.run, a.flashdeconv, threads=a.threads, log=log)
     if verdict:
-        log(f"  {verdict['class']} run: {verdict['reason']}; {td.RECOMMENDATION}")
+        log(f"  {verdict['class']} run: {verdict['reason']}; {verdict['recommendation']}")
         c.timings["total"] = round(time.time() - t0, 1)
         return {"tool": "prose-auto 0.1 (prototype)", "input": {**c.run.summary(), "given": a.mzml},
                 "no_digest": verdict, "timings_s": c.timings}
@@ -902,7 +917,7 @@ def analyze(a, log=print):
 
     if a.fast:   # the organism is given: no organism detector runs (README "Fast and full mode")
         organisms, panel, db = _organism_given(c)
-        h = _mini_search(c, panel, org_fixed=True)
+        h = _mini_search(c, panel, org_fixed=True) if _tims_without_tag_call(c) else None
         if a.fastag:
             _fastag_stage(c, h, org_fixed=True)
     else:
