@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.9 (2026-11-05)
+
+Protease on timsTOF from the spectra
+- The MS2 scans start at m/z 200–235, above y1 of K and R. FASTag's tag-profile call fails there, and an R end reads
+  as R+10.
+- Two signals now decide, with Jev and the texts as before (Jev still picks the member of the K/R family):
+  - **The tag ends:** K/R ≥ 0.30 means Trypsin. K/R ≤ 0.10 means Glu-C (E ≥ 0.5), Asp-N (N-terminal D ≥ 0.3) or
+    chymotrypsin (FYWLM ≥ 0.6).
+  - **The mini-search protease competition**, on timsTOF only.
+- Validation: 17/17 timsTOF runs, 13 tryptic and 4 non-tryptic. The tags call 14 and the competition 15. No HLA
+  timsTOF run was available.
+- The heavy-Arg share of the tag ends (0.29–0.91 on label-free timsTOF) reaches Jev with a timsTOF caveat. No label
+  decision depended on it.
+
+Mixture unions: 2 organisms at most (was 6)
+- PXD017035 (8 species) keeps 2 of its 4 members. The HYE runs lose E. coli or yeast, and PXD012636 loses horse.
+- ProSE IDs on these five runs: PSMs −8.0 %, protein groups −14.4 %; PXD017035: −23.6 % and −36.7 %.
+- `--fast` with every `--organism` still searches the full list.
+
+Jev 3-vote
+- Jev takes no temperature or seed. A new request is now asked 3 times (`PROSE_AUTO_JEV_VOTES`). The majority choice
+  wins per question, with the probabilities averaged; if all three answers differ, the vote abstains. The vote and
+  the single answers are cached under a new key.
+- On the 730 requests of the validation, two single answers differ in 1.15 % of the choices, and a single answer
+  differs from the vote in 0.51 %.
+- SDRF accuracy is unchanged. The cost is 3× the requests (about 0.03 USD per run) and +0.36 s per run.
+
+Texts and downloads
+- `repository.fetch` retries 5xx three times. `PROSE_AUTO_TEXT_CACHE` keeps fetched texts, so a PRIDE or Europe PMC
+  outage does not change a rerun. Europe PMC answered 503 for hours on 2026-11-05.
+- Proteome downloads wait as long as UniProt's Retry-After asks on HTTP 429.
+
 ## 0.1.8 (2026-11-05)
 
 Fast mode

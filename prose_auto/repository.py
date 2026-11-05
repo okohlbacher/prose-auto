@@ -41,13 +41,26 @@ def _get(url, timeout=30):
         return r.read().decode("utf-8", "replace")
 
 
-def fetch(url, log=print, retries=1):
-    """None on 404s and network policies; transient failures (DNS, timeouts, 5xx) are retried once after 5 s"""
+def fetch(url, log=print, retries=3):
+    """None on 404s and network policies; transient failures (DNS, timeouts, 5xx) are retried after 5, 15 and 45 s.
+    PROSE_AUTO_TEXT_CACHE=<dir> keeps every fetched text (<dir>/<sha256 of the URL>), so a rerun reads the same
+    texts: on 2026-11-05 a Europe PMC outage (HTTP 503) dropped the paper from 127 of 217 validation runs."""
+    import hashlib
     import time
     import urllib.error
+    cache = os.environ.get("PROSE_AUTO_TEXT_CACHE")
+    f = cache and os.path.join(cache, hashlib.sha256(url.encode()).hexdigest())
+    if f and os.path.exists(f):
+        return open(f, encoding="utf-8").read()
     for i in range(retries + 1):
         try:
-            return _get(url)
+            txt = _get(url)
+            if f:
+                os.makedirs(cache, exist_ok=True)
+                with open(f"{f}.{os.getpid()}.tmp", "w", encoding="utf-8") as fh:
+                    fh.write(txt)
+                os.replace(f"{f}.{os.getpid()}.tmp", f)
+            return txt
         except urllib.error.HTTPError as e:
             if e.code < 500 or i == retries:
                 log(f"  could not fetch {url}: {e}")
@@ -56,7 +69,7 @@ def fetch(url, log=print, retries=1):
             if i == retries:
                 log(f"  could not fetch {url}: {e!r}")
                 return None
-        time.sleep(5)
+        time.sleep(5 * 3 ** i)
 
 
 # --- SDRF -------------------------------------------------------------------

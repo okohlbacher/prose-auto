@@ -410,7 +410,7 @@ def _fake_jev_answers(body):
 def test_jev_read_study_and_cross_check():
     from prose_auto import jev as J
 
-    jev = J.Jev(key="x", transport=_fake_jev_answers)
+    jev = J.Jev(key="x", transport=_fake_jev_answers, votes=1)
     ev, rep = J.read_study(jev, {"user's description": "HeLa, TMTpro 16plex, TiO2", "PRIDE data protocol": "20 ppm"},
                            user=True)
     got = {e.parameter: e.value for e in ev}
@@ -643,6 +643,50 @@ def test_fetch_proteome_resolves_from_the_local_index(tmp_path, monkeypatch):
     (tmp_path / "resolved.tsv").write_text("Homo sapiens\t\tHomo_sapiens\tHomo_sapiens.fasta\n")
     monkeypatch.setattr(cli, "_reference_proteomes", lambda *x: 1 / 0)   # no UniProt request
     assert cli.fetch_proteome("Homo sapiens", str(tmp_path)) == ("Homo_sapiens", str(tmp_path / "Homo_sapiens.fasta"))
+
+
+def test_jev_votes_take_the_majority_and_abstain_on_a_split(tmp_path):
+    from prose_auto import jev as J
+    a = lambda c, p: {"enzyme": {"choice": c, "confidence": p, "probabilities": {c: p}}, "var:ox": {"noul": p}}
+    v = J.vote([a("trypsin", 0.9), a("lysc", 0.6), a("trypsin", 0.6)])
+    assert v["enzyme"]["choice"] == "trypsin" and abs(v["enzyme"]["confidence"] - 0.5) < 1e-9
+    assert v["var:ox"]["noul"] == 0.6
+    assert J.vote([a("trypsin", 0.9), a("lysc", 0.6), a("gluc", 0.6)])["enzyme"]["choice"] == J.NOT_STATED
+    seq = iter([a("trypsin", 0.9), a("lysc", 0.6), a("trypsin", 0.6)])
+    jev = J.Jev(key="x", transport=lambda body: {"answers": next(seq)}, cache=str(tmp_path), study="S")
+    assert jev.decide({"t": "x"}, {})["enzyme"]["choice"] == "trypsin" and jev.calls == 3
+    again = J.Jev(key="x", transport=lambda body: 1 / 0, cache=str(tmp_path), study="S")
+    assert again.decide({"t": "x"}, {})["enzyme"]["choice"] == "trypsin"   # the cached vote
+
+
+def test_fetch_retries_5xx_and_keeps_the_text(tmp_path, monkeypatch):
+    import time, urllib.error
+    from prose_auto import repository as R
+    calls = []
+
+    def get(url, timeout=30):
+        calls.append(url)
+        if len(calls) < 3:
+            raise urllib.error.HTTPError(url, 503, "Service Unavailable", {}, None)
+        return "methods text"
+    monkeypatch.setattr(R, "_get", get)
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+    monkeypatch.setenv("PROSE_AUTO_TEXT_CACHE", str(tmp_path))
+    assert R.fetch("https://x/paper", log=lambda *a: None) == "methods text" and len(calls) == 3
+    monkeypatch.setattr(R, "_get", lambda url, timeout=30: 1 / 0)   # a rerun reads the cached text
+    assert R.fetch("https://x/paper", log=lambda *a: None) == "methods text"
+
+
+def test_tims_protease_from_the_tag_ends():
+    """timsTOF scans start above y1: K/R share and residue shares (measured on the 17 timsTOF validation runs)"""
+    from prose_auto import external as ext
+    st = lambda kr, top, d=0.03, n=1000: {"cterm_KR": kr, "cterm_top": top, "nterm_D": d, "cterm_tags": n}
+    assert ext.tims_protease(st(0.33, {"K": 0.21, "L": 0.2, "R+10": 0.09})).value == "Trypsin"
+    assert ext.tims_protease(st(0.006, {"E": 0.77, "L": 0.16})).value == "Glu-C"
+    assert ext.tims_protease(st(0.025, {"L": 0.27, "W": 0.23, "S": 0.13}, d=0.39)).value == "Asp-N"
+    assert ext.tims_protease(st(0.011, {"L": 0.27, "F": 0.23, "Y": 0.22, "W": 0.09, "M": 0.05})).value == "Chymotrypsin"
+    assert ext.tims_protease(st(0.2, {"K": 0.1})) is None                       # between the families: no call
+    assert ext.tims_protease(st(0.6, {"K": 0.4}, n=100)) is None                # too few tag ends
 
 
 def test_jev_skips_the_organism_question_in_fast_mode():

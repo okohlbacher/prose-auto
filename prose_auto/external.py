@@ -224,6 +224,31 @@ def termini_evidence(d, lab):
     return ev, stats
 
 
+def tims_protease(stats):
+    """The protease from the tag termini on timsTOF, where FASTag's tag-profile call fails: the MS2 scans start at
+    m/z 200-235, above y1 of K (147.1) and R (175.1), so the C-terminal residue is read from the gap to the precursor
+    and an R end often reads as R+10. The K/R share (heavy variants included) still separates: 13 tryptic timsTOF
+    runs 0.33-0.75, Glu-C, Asp-N and chymotrypsin 0.006-0.025. Evidence or None (below TAG_MIN tag ends)."""
+    kr, top = stats.get("cterm_KR"), stats.get("cterm_top") or {}
+    if kr is None or stats.get("cterm_tags", 0) < TAG_MIN:
+        return None
+    if kr >= 0.30:
+        val = "Trypsin"
+    elif kr > 0.10:
+        return None
+    elif top.get("E", 0) >= 0.5:
+        val = "Glu-C"
+    elif stats.get("nterm_D", 0) >= 0.3:
+        val = "Asp-N"
+    elif sum(top.get(a, 0) for a in "FYWLM") >= 0.6:
+        val = "Chymotrypsin"
+    else:
+        return None
+    return Evidence("enzyme", val, 0.6, "data", "FASTag termini (timsTOF)",
+                    f"timsTOF tag ends: K/R {kr:.2f}, C-terminal {', '.join(f'{a} {v:.2f}' for a, v in top.items())}, "
+                    f"N-terminal D {stats.get('nterm_D', 0):.2f}", stats)
+
+
 def fastag_shortlist(evs, n=3):
     """The top-n taxa of a FASTag species ranking (reagent genera only when nothing else is ranked), for the
     two-tier organism test."""

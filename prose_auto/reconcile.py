@@ -379,7 +379,8 @@ def _enzyme(evs):
     enzyme" of a control) and decides only without them, as does the ProSE organism search (HLA-first). No protease
     competition: the Trypsin rule covers Lys-C and Arg-C peptides, and it lost to the tags on tryptic and HLA runs."""
     first = [e for e in evs if e.source in ("user", "repository")]
-    tag = [e for e in evs if e.method == "FASTag termini" and (e.stats or {}).get("tag_margin", 0) >= TAG_MARGIN]
+    tag = [e for e in evs if e.method == "FASTag termini" and (e.stats or {}).get("tag_margin", 0) >= TAG_MARGIN
+           or e.method in ("FASTag termini (timsTOF)", "protease competition")]
     jev = [e for e in evs if e.source == "llm" and e.method.endswith("+data")
            and (e.stats or {}).get("p", 0) >= JEV_ENZYME_P]
     if not first and (tag or jev):
@@ -579,7 +580,7 @@ def organism_mix(evidence: list, jev_report=None, file_species=()):
     return out
 
 
-MIX_MAX_ORGANISMS = 6   # databases of a mixture union: on the 8-species PXD017035 ProSE's PSMs level off at 5-6
+MIX_MAX_ORGANISMS = 2   # databases of a mixture union (0.1.6-0.1.8: 6; PSMs level off at 5-6 on the 8-species PXD017035)
 #                           (28,417 / 28,751 / 28,848 / 28,792 for 4 / 5 / 6 / 8), FDP stays 0.85-1.09 %; more only adds search space
 MIX_OWN_SPECTRA = 10    # spectra of its own (and 0.5 % of the searched spectra) before a named organism joins it
 MIX_TEXT_SPECTRA = 40   # ... and before an organism named only in the texts joins (mouse beside a human-yeast benchmark

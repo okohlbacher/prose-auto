@@ -74,7 +74,7 @@ READ_INSTRUCTIONS = ("You read the description of a proteomics experiment. The s
 
 
 class Jev:
-    def __init__(self, key=None, url=None, model=None, transport=None, timeout=60, cache=None, study=None):
+    def __init__(self, key=None, url=None, model=None, transport=None, timeout=60, cache=None, study=None, votes=None):
         self.key = (key or os.environ.get("JEV_API_KEY") or os.environ.get("TYPESAFE_API_KEY") or "").strip()
         self.url = url or os.environ.get("JEV_URL") or (URL_HOSTED if self.key.startswith("jv_") else URL_OFFICIAL)
         self.model = model or os.environ.get("JEV_MODEL", "jev-latest")
@@ -85,6 +85,7 @@ class Jev:
         self.calls = 0
         self.cache = cache or os.environ.get("PROSE_AUTO_JEV_CACHE")
         self.study = re.sub(r"[^A-Za-z0-9._-]+", "_", study or "_")
+        self.votes = int(votes or os.environ.get("PROSE_AUTO_JEV_VOTES", 3))
 
     def _http(self, body):
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.key}"}
@@ -98,26 +99,60 @@ class Jev:
     def decide(self, state, questions):
         """Jev offers no temperature or seed (the API rejects both), so answers are reproducible only through the
         cache: --jev-cache / PROSE_AUTO_JEV_CACHE=<dir> stores each answer as <dir>/<study>/<sha256 of model, state,
-        questions>.json (never the key), with the measured block binned (binned()) before it is sent and keyed."""
+        questions>.json (never the key), with the measured block binned (binned()) before it is sent and keyed.
+        A cache miss asks self.votes times (default 3) and caches the vote (vote()); the key includes the number
+        of votes, so single answers cached by 0.1.8 and earlier are not reused."""
         state = {k: binned(v) if k == MEASURED else v for k, v in state.items()}
         body = {"model": self.model, "state": state, "questions": questions}
         f = None
         if self.cache:
+            keyed = {**body, "votes": self.votes} if self.votes > 1 else body
             f = os.path.join(self.cache, self.study,
-                             hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest() + ".json")
+                             hashlib.sha256(json.dumps(keyed, sort_keys=True).encode()).hexdigest() + ".json")
             if os.path.exists(f):
                 return json.load(open(f)).get("answers", {})
-        out = self.transport(body)
+        outs = [self.transport(body) for _ in range(self.votes)]
+        out = {"answers": vote([o.get("answers", {}) for o in outs]),
+               "usage": {"cost_usd": sum(float((o.get("usage") or {}).get("cost_usd") or
+                                                ((o.get("usage") or {}).get("input_tokens") or 0) * USD_PER_INPUT_TOKEN)
+                                          for o in outs)}}
+        if self.votes > 1:
+            out["votes"] = [o.get("answers", {}) for o in outs]
         if f:
             os.makedirs(os.path.dirname(f), exist_ok=True)
             tmp = f"{f}.{os.getpid()}.tmp"   # parallel analyses may write the same request
             with open(tmp, "w") as fh:
                 json.dump(out, fh)
             os.replace(tmp, f)
-        self.calls += 1
+        self.calls += len(outs)
         u = out.get("usage") or {}
         self.cost_usd += float(u.get("cost_usd") or (u.get("input_tokens") or 0) * USD_PER_INPUT_TOKEN)
         return out.get("answers", {})
+
+
+def vote(answers):
+    """Jev has no temperature or seed, so one answer is a sample. Per question: the choice most answers give, with the
+    probabilities averaged over the answers; no majority (all answers differ) abstains as not stated with p=0;
+    noul questions take the median p(yes)."""
+    if len(answers) == 1:
+        return answers[0]
+    out = {}
+    for q in {q for a in answers for q in a}:
+        got = [a[q] for a in answers if q in a]
+        if any("noul" in g for g in got):
+            out[q] = {"noul": sorted(float(g.get("noul", 0)) for g in got)[len(got) // 2]}
+            continue
+        choices = [g.get("choice") for g in got]
+        top = max(set(choices), key=choices.count)
+        probs = {}
+        for g in got:
+            for k, p in (g.get("probabilities") or {}).items():
+                probs[k] = probs.get(k, 0.0) + float(p) / len(got)
+        if choices.count(top) * 2 <= len(choices):
+            out[q] = {"choice": NOT_STATED, "confidence": 0.0, "probabilities": {NOT_STATED: 0.0}}
+        else:
+            out[q] = {"choice": top, "confidence": probs.get(top, 0.0), "probabilities": probs}
+    return out
 
 
 def _choice(instructions, criteria):

@@ -338,7 +338,7 @@ def test_jev_cache(tmp_path, monkeypatch):
     from prose_auto import jev as J
     n = []
     monkeypatch.setenv("PROSE_AUTO_JEV_CACHE", str(tmp_path))
-    j = J.Jev(key="k", transport=lambda body: n.append(1) or {"answers": {"q": {"choice": "a"}}})
+    j = J.Jev(key="k", votes=1, transport=lambda body: n.append(1) or {"answers": {"q": {"choice": "a"}}})
     assert j.decide({"s": 1}, {"q": {}}) == j.decide({"s": 1}, {"q": {}}) == {"q": {"choice": "a"}}
     assert len(n) == 1 and all("k" not in open(f).read() for f in tmp_path.rglob("*.json"))
 
@@ -346,7 +346,7 @@ def test_jev_cache(tmp_path, monkeypatch):
 def test_jev_cache_key_is_stable(tmp_path):
     from prose_auto import jev as J
     n = []
-    j = J.Jev(key="secret-key", cache=str(tmp_path), study="PXD000001",
+    j = J.Jev(key="secret-key", cache=str(tmp_path), study="PXD000001", votes=1,
               transport=lambda body: n.append(body) or {"answers": {"q": {"choice": "a"}}})
     m = lambda tags, kr: {"PRIDE description": "trypsin", J.MEASURED:
                           f"C-terminal K/R share of {tags} sequence tags {kr} (tryptic Orbitrap DDA 0.84-0.98)"}
@@ -407,9 +407,9 @@ def test_mixture_union_needs_spectra_of_its_own():
                                              ("Mus musculus", "text")]
     assert union_candidates(ev, {**mix, "suspected": False}, "Homo sapiens") == []
     human = set(range(600))
-    pick = lambda yeast, ecoli, mouse, kind="named": mixture_union(
+    pick = lambda yeast, ecoli, mouse, kind="named", cap=6: mixture_union(
         ("Homo_sapiens", human), [("Saccharomyces_cerevisiae", "named", yeast), ("Escherichia_coli", kind, ecoli),
-                                  ("Mus_musculus", "text", mouse)], 2000)
+                                  ("Mus_musculus", "text", mouse)], 2000, cap=cap)
     own = lambda a, n: set(range(a, a + n))
     # yeast with 511 spectra of its own joins, E. coli (3) and mouse (11 < 40) do not
     assert pick(own(600, 511), own(2000, 3), own(3000, 11)) == [("Homo_sapiens", None),
@@ -421,6 +421,9 @@ def test_mixture_union_needs_spectra_of_its_own():
         ("Homo_sapiens", None), ("Saccharomyces_cerevisiae", 511), ("Escherichia_coli", 30)]
     # the file name (HYE) names E. coli: one spectrum of its own suffices (PXD039576: 4)
     assert pick(own(600, 511), own(2000, 4), set(), "file")[-1] == ("Escherichia_coli", 4)
+    # 0.1.9: two organisms by default
+    assert pick(own(600, 511), own(1200, 30), own(3000, 11), cap=None) == [
+        ("Homo_sapiens", None), ("Saccharomyces_cerevisiae", 511)]
 
 
 def test_union_candidates_take_the_record_and_the_search_winner():

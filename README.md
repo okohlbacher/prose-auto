@@ -66,7 +66,7 @@ its reason and the recommendation "use FLASHTnT (OpenMS)", and exits with status
 | 3 mass offset | `detect_tolerance.py` | systematic offset without a database | lock-mass polysiloxane ions (MS1), immonium and y1 ions (HCD MS2) |
 | 4 chemistry | `detect_chemistry.py` | TMT/TMTpro/iTRAQ plex, SILAC, phospho/glyco/acetyl enrichment, Cys alkylation (weak) | reporter and diagnostic ions against control m/z values (Param-Medic 2019 idea); MS1 heavy/light pairs with an intensity check |
 | 5 mini-search | `tagsearch.py`, `hypotheses.py` | organism, Cys alkylation, calibrated offsets and tolerances | binomial b/y scoring with target/reversed-decoy FDR on the top-TIC subset; competing hypotheses compared by PSMs at 1% FDR |
-| 5 protease | `external.py` (FASTag >= 1.9.0 `-digest_out`) | protease, HLA ligand class | FASTag scores the tag termini against MEROPS, PeptideCutter, MHC Motif Atlas and proteome models (`data/prose_auto_013_digest_models.tsv`); not on timsTOF |
+| 5 protease | `external.py` (FASTag >= 1.9.0 `-digest_out`) | protease, HLA ligand class | FASTag scores the tag termini against MEROPS, PeptideCutter, MHC Motif Atlas and proteome models (`data/prose_auto_013_digest_models.tsv`); on timsTOF the K/R and residue shares of the tag ends (`tims_protease`) and the mini-search protease competition instead |
 | 5 records and text | `repository.py`, `text_extract.py` | what the submitters and the user say | PRIDE API v3, PROXI, bigbio/sdrf-annotated-datasets, Europe PMC methods; keyword rules with verbatim quotes |
 | 6 LLM | `llm.py` | the same from free text, literature priors, a final review | any CLI or OpenAI-compatible endpoint; quotes must occur in the text |
 | 6b Jev (last) | `jev.py`, `schema.py` | every head from the texts and all indicators; afterwards a consistency verdict per setting | typed choice questions over the texts plus the measured and search profiles (`--jev`) |
@@ -103,13 +103,17 @@ labelled state and are read in **one request**:
   others. Jev runs after all searches and sees the texts plus every indicator
   as profiles with reference ranges. After reconciling, it judges each final
   setting against the texts and the indicators (supports / texts contradict /
-  indicators contradict / not mentioned). Two requests per run, about $0.01. A TypeSafe console key
+  indicators contradict / not mentioned). Two requests per run, each asked 3 times, about $0.03. A TypeSafe console key
   (`TYPESAFE_API_KEY` or `JEV_API_KEY`) uses `api.typesafe.ai/v1/systemone`; a
   `jv_live_` key uses the jevtypesafeai.com proxy. About $0.001 per request.
-  Jev takes no temperature or seed, and two identical requests differ by up to 0.05 in probability, so the
-  answers are cached (`--jev-cache DIR` or `PROSE_AUTO_JEV_CACHE`; `DIR/<accession>/<sha256>.json`). The key
-  is the request: the texts, the questions and the measured profile with its numbers rounded to 2 significant
-  digits (the reference ranges stay as written), so a rerun asks nothing and decides the same.
+  Jev takes no temperature or seed, and two identical requests differ by up to 0.05 in probability, and in
+  1.2 % of the answers by their choice. So a new request is asked 3 times (`PROSE_AUTO_JEV_VOTES`). Per question
+  the majority choice wins, with the probabilities averaged. If all three answers differ, the vote abstains
+  (not stated). The vote is cached (`--jev-cache DIR` or `PROSE_AUTO_JEV_CACHE`;
+  `DIR/<accession>/<sha256>.json`, with the single answers). The key is the request: the texts, the questions
+  and the measured profile with its numbers rounded to 2 significant digits (the reference ranges stay as
+  written), so a rerun asks nothing and decides the same. Fetched texts can be kept too
+  (`PROSE_AUTO_TEXT_CACHE`), so an outage of PRIDE or Europe PMC does not change a rerun.
 
 **Consistency rules** (`schema.RULES`) say which values exclude each other
 (*hard*: TMT/iTRAQ with ion-trap CID MS2, PASEF on a non-timsTOF, ETD on an
@@ -239,7 +243,7 @@ indicators, scope); a suspected mixture is searched against the union of the pro
 UniProt by name or NCBI taxon id, cached under `<panel>/extra`). Greedily, the candidate with the most spectra
 the union so far does not explain joins while it has at least max(10, 0.5 % of the spectra) of them (1 when the
 file name names it; max(40, 2 %) when only the texts or a record beyond its first three organisms name it), up
-to 6 organisms. An inconsistency of 0.2 or more flags 65 % of the wrong decisions (precision 0.25).
+to 2 organisms. An inconsistency of 0.2 or more flags 65 % of the wrong decisions (precision 0.25).
 
 Other sets (0.1.3): non-tryptic Orbitrap DDA enzyme 15/16, DIA/timsTOF non-tryptic 8/11 with 12/12 tryptic
 controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs) sensitivity 19/19, specificity
@@ -250,12 +254,16 @@ controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs
 * The mini-search is pure Python; with persistent peptide indexes it takes 10-30 s per run.
 * Repeated-ion and MS1 scan-to-scan estimates give precision without the offset and are about 2x too small
   alone; the mini-search PSM errors or the immonium/y1 probe should decide.
-* Proteases on timsTOF come from the records, the texts and Jev only: the tag termini there miss C-terminal R.
+* Proteases on timsTOF: the MS2 scans start at m/z 200-235, above y1 of K and R, so FASTag's tag-profile call
+  fails and an R end reads as R+10 (heavy Arg). The total K/R share of the tag ends (13 tryptic runs 0.33-0.75;
+  Glu-C, Asp-N, chymotrypsin 0.006-0.025) and the residue shares decide instead, with the mini-search protease
+  competition (17/17 timsTOF runs). There are no HLA timsTOF runs in the validation sets.
   N-side cutters (Lys-N, Asp-N) need 100 N-terminal tags; LysargiNase has no model and reads as "unspecific".
 * The non-tryptic sets are small (16 Orbitrap DDA, 11 DIA/timsTOF runs).
 * `organism_mix` from the records and texts alone is study-level: a pure file of a mixed study is flagged unless
   the stated second species was searched and is absent.
   A flagged run searches a union only when a further species has spectra of its own in the mini-search; a
   species at a few percent with no such spectra (PXD020394, SARS-CoV-2) is missed.
-* Unions stop at 6 organisms: on PXD017035 (8-species community) PSMs level off at 5-6 and the protein
-  search space keeps growing.
+* Unions stop at 2 organisms (0.1.6-0.1.8: 6). The third and later members of PXD017035 (8 species), the E. coli
+  of the HYE mixtures and the horse of PXD012636 are no longer searched; `--fast` with every `--organism` searches
+  them all.

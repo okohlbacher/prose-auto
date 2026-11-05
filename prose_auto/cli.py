@@ -200,7 +200,10 @@ def _data_features(ev, digest_stats, term_stats=None, pseudo=False, tims=False):
         lab.append(f"heavy C-termini: Lys8 {f(ts.get('heavy_K8'))} of the K C-termini, Arg10 {f(ts.get('heavy_R10'))} "
                    "of the R C-termini (SILAC runs median 0.25 / 0.37; label-free DDA mostly below 0.05 / 0.37; isobaric "
                    "labels can mimic Lys8" + ("; DIA pseudo-spectra show Arg10 0.25-0.9 without any SILAC" if pseudo
-                                                else "") + ")")
+                                                else "")
+                   # timsTOF scans start above y1 of R: the R end is read from the precursor gap and lands on Arg10
+                   + ("; timsTOF reads R ends as Arg10: label-free runs 0.29-0.91, no evidence of SILAC" if tims
+                      else "") + ")")
     if lab:
         lines.append("Label profile: " + "; ".join(lab) + ".")
     enr = []
@@ -399,6 +402,8 @@ def _chemistry(c, raw):
                 # the right calls had margins 0.03-0.12; Orbitrap DIA pseudo-spectra keep the call (controls >= 0.67)
                 c.ev += [e for e in term_ev if not (c.pseudo and "SILAC" in str(e.value))
                          and not (tims and e.parameter == "enzyme")]
+                if tims:   # the K/R share and the residue shares still tell the protease there
+                    c.ev += [e for e in [ext.tims_protease(term_stats)] if e]
             except Exception as e:
                 c.log(f"  FASTag termini failed: {e}")
     votes, cls = _digest_votes(hint_stats, term_stats, c.pseudo, tims)
@@ -627,6 +632,8 @@ def _mini_search(c, panel, org_fixed):
             c.ev += oe
         if h.best_db:
             c.ev += h.accuracy() + h.alkylation()
+            if "PASEF" in str(c.acq):   # timsTOF: the protease competition stands in for the tag-profile call
+                c.ev += h.enzyme()
     return h
 
 
@@ -1090,7 +1097,9 @@ def _download(url, dst, log=print, attempts=5):
             if not isinstance(e, (OSError, http.client.HTTPException)):  # URLError and HTTPError are OSErrors;
                 raise                                                       # a cut chunked stream is IncompleteRead
             log(f"    attempt {attempt + 1} failed: {e}")
-            time.sleep(10 * 2 ** attempt)
+            # 429 (UniProt's rate limit, which hit every client for hours on 2026-11-05): wait as long as it asks
+            wait = (getattr(e, "headers", None) or {}).get("Retry-After", "") if getattr(e, "code", 0) == 429 else ""
+            time.sleep(max(10 * 2 ** attempt, min(int(wait) if wait.isdigit() else 0, 600)))
             continue
         os.replace(part, dst)
         return True
