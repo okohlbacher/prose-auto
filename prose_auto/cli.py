@@ -625,11 +625,12 @@ def _tims_without_tag_call(c):
 
 
 def _mini_search(c, panel, org_fixed):
-    """Mini-search hypotheses (DDA only: DIA spectra have no single precursor): the organism competition, and on
-    timsTOF without a tag-rule call the protease competition. 0.1.10: the mass errors come from the FASTag placements
-    (hypotheses.placement_accuracy), and the Cys competition is gone (it made 3 false "free Cys" calls on 132
-    validation runs and saved 1). Returns the HypothesisTester or None. With the organism fixed (metadata, ProSE,
-    fast mode) its organism evidence is dropped."""
+    """Mini-search hypotheses (DDA only: DIA spectra have no single precursor): the organism competition (full mode),
+    the Cys alkylation competition, and on timsTOF without a tag-rule call the protease competition. 0.1.10: the mass
+    errors come from the FASTag placements (hypotheses.placement_accuracy). The Cys competition stays: without it the
+    SDRF Cys score rose by 2 of 132 runs, but the 10 runs whose decision changed lost 9.5 % of their ProSE PSMs.
+    Returns the HypothesisTester or None. With the organism fixed (metadata, ProSE, fast mode) its organism evidence
+    is dropped."""
     a, log, hr2 = c.a, c.log, c.hr2
     dia = str(c.search_acq).startswith("DIA")
     if not panel or dia or a.no_search:
@@ -643,8 +644,10 @@ def _mini_search(c, panel, org_fixed):
         oe = h.organism(panel)
         if not org_fixed:
             c.ev += oe
-        if h.best_db and _tims_without_tag_call(c):   # 3 of 17 timsTOF validation runs
-            c.ev += h.enzyme()
+        if h.best_db:
+            c.ev += h.alkylation()
+            if _tims_without_tag_call(c):   # 2 of 13 tryptic timsTOF validation runs
+                c.ev += h.enzyme()
     return h
 
 
@@ -727,6 +730,7 @@ def _tier2(c, h, panel):
                     e.stats["stated_added"] = added
             if h.best_db and h.best_db[0] != prev:  # a new winner: redo the stages that used the old one
                 c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter in TIER2_REDO)] + new
+                c.ev += h.alkylation()
                 if _tims_without_tag_call(c):
                     c.ev += h.enzyme()
                 if a.fastag:
@@ -791,8 +795,8 @@ def _union(c, h, panel, mix, decided):
     """A suspected mixture searches the union of the organisms the data support: every organism an indicator names
     (reconcile.union_candidates) is mini-searched, fetched from UniProt when the panel lacks it, and joins
     (reconcile.mixture_union) by the spectra it explains that the union so far does not. Their FASTA files are
-    concatenated once into <panel>/extra/union/, then the FASTag mass gaps and placements (Cys, modifications, mass
-    errors) are redone against it. Returns the search database or None."""
+    concatenated once into <panel>/extra/union/, then the mini-search Cys competition and the FASTag mass gaps and
+    placements (Cys, modifications, mass errors) are redone against it. Returns the search database or None."""
     cands = union_candidates(c.ev, mix, decided)
     if not cands or h is None:
         return None
@@ -832,6 +836,7 @@ def _union(c, h, panel, mix, decided):
     c.log(f"  organism mix: searching the union of {', '.join(paths)}")
     with _timed(c, "mixture_union"):
         h.best_db = ("+".join(paths), dst)
+        c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter == "cys_alkylation")] + h.alkylation()
         if c.a.fastag:
             _fastag_gaps(c, dst)
     return {"organisms": list(paths), "fasta": list(paths.values()), "union": dst,
@@ -917,7 +922,7 @@ def analyze(a, log=print):
 
     if a.fast:   # the organism is given: no organism detector runs (README "Fast and full mode")
         organisms, panel, db = _organism_given(c)
-        h = _mini_search(c, panel, org_fixed=True) if _tims_without_tag_call(c) else None
+        h = _mini_search(c, panel, org_fixed=True)   # the Cys competition (and the timsTOF protease fallback)
         if a.fastag:
             _fastag_stage(c, h, org_fixed=True)
     else:

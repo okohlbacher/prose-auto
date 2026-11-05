@@ -10,19 +10,20 @@ Mass errors from FASTag
 - The mini-search PSM errors are no longer used.
 - Mass truth (120 DDA cases, within 1.5×): precursor 59/59, high-res fragment 41/41, ion-trap fragment 19/20 (0.1.9:
   59/59, 40/41, 19/20).
-- ProSE IDs on runs whose only change is the mass errors: PSMs +0.13 % (full), +0.15 % (fast).
+- ProSE IDs on the runs whose command changed: PSMs +0.77 % (full, 140 runs) and +0.14 % (fast, 154 runs). On runs
+  whose only change is the mass errors: +0.13 % and +0.15 %.
 - Chance placements on a wrong given proteome spread over the window. They give no mass error: the precursor SD must
   stay below a quarter of the window, the fragment σ below 0.4 of it.
 
-Mini-search: organism only
-- **Full mode:** the mini-search only chooses the organism.
-- **Fast mode:** it is skipped, except on timsTOF when the tag ends give no protease call; there the protease
-  competition decides (2 of 13 tryptic timsTOF runs).
-- **Cys competition:** dropped.
-  - SDRF Cys 126 → 128/132 (full) and 125 → 127/131 (fast).
-  - The 10–11 runs whose Cys decision changed lost 9.5 % of their PSMs, including the three that now match the SDRF.
-    See the v0110 report: it recommends restoring the competition.
-- **Runtime of the changed steps:** −21 % (full) and −66 % (fast); median per run in fast mode 16.4 → 3.0 s.
+Mini-search
+- **What it still does:** the organism competition (full mode) and the Cys alkylation competition (both modes). On
+  timsTOF it runs the protease competition only when the tag ends give no call (2 of 13 tryptic timsTOF runs).
+- **Its PSM mass errors:** no longer used.
+- **The Cys competition stays:**
+  - Without it, the SDRF Cys score rose by 2 runs.
+  - But the 11 runs whose decision changed lost 9.5 % of their PSMs, the three that then matched the SDRF included.
+- **Runtime:** most of the mini-search time is the Cys competition, so the changed steps take only 2–3 % less
+  (timsTOF full mode: −19 %).
 
 FASTag 1.10.0
 - Requires FASTag >= 1.10.0. The species call uses `-species_evidence best`: on the 193 validation runs it gets 131

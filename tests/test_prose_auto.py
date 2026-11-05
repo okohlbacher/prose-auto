@@ -552,10 +552,11 @@ def test_fast_mode_takes_the_given_organisms(tmp_path):
     assert rep["search_database"]["union"].endswith("Bos_taurus+Homo_sapiens.fasta")
     assert rep["sdrf"]["characteristics[organism]"] == "Bos taurus;Homo sapiens"
     assert "organism" not in rep["agreement"]["parameters"]
-    assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"
-    assert not any(e["method"] == "alkylation competition" for e in rep["decisions"]["cys_alkylation"]["evidence"])
-    # 0.1.10: no mini-search in fast mode on DDA and DIA (only on timsTOF without a tag-rule protease call)
-    assert not {"organism_prose", "organism_tier2", "mixture_candidates", "mini_search"} & set(rep["timings_s"])
+    assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # the mini-search ran on the union
+    assert any(e["method"] == "alkylation competition" for e in rep["decisions"]["cys_alkylation"]["evidence"])
+    # 0.1.10: the mini-search runs for the Cys competition only; the mass errors come from the FASTag placements
+    assert not any(e["method"] == "mini-search PSMs" for e in rep["decisions"]["precursor_tolerance"]["evidence"])
+    assert not {"organism_prose", "organism_tier2", "mixture_candidates"} & set(rep["timings_s"])
     assert "given (fast mode)" in (out / "BSA1.auto.md").read_text()
     with pytest.raises(SystemExit):
         cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "-o", str(out)])
