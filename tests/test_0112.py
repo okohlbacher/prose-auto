@@ -110,7 +110,7 @@ def test_openms_mztab_full():
     assert n == 1620 and ided == _psm_targets(MZTAB) and len(ided) > 1500
 
 
-# 6: the union and panel caches are rebuilt when a source file changes
+# 6: the union and panel caches are rebuilt when a source file changes, at a new path (R3: immutable paths)
 def test_cache_invalidation(tmp_path):
     a, b = tmp_path / "a.fasta", tmp_path / "b.fasta"
     a.write_text(">p1\nPEPTIDEK\n")
@@ -118,14 +118,66 @@ def test_cache_invalidation(tmp_path):
     extra = str(tmp_path / "extra")
     u = cli._union_fasta({"a": str(a), "b": str(b)}, extra)
     b.write_text(">p3\nNEWSEQK\n")
-    assert cli._union_fasta({"a": str(a), "b": str(b)}, extra) == u and ">p3\n" in open(u).read()
+    u2 = cli._union_fasta({"a": str(a), "b": str(b)}, extra)
+    assert u2 != u and ">p3\n" in open(u2).read() and ">p2\n" in open(u).read()   # the old file is never changed
     exe = _fastag_bundle(tmp_path / "bin")
     crap = tmp_path / "crap.fasta"
     crap.write_text(">K1\nKERATINK\n")
     p, _ = ext.dbcheck_panel(str(exe), str(crap), str(tmp_path / "cache"))
     crap.write_text(">K2\nOTHERK\n")
     p2, _ = ext.dbcheck_panel(str(exe), str(crap), str(tmp_path / "cache"))
-    assert p2 == p and ">dbcheck_contaminants|K2\n" in open(p).read() and "K1" not in open(p).read()
+    assert p2 != p and ">dbcheck_contaminants|K2\n" in open(p2).read() and "K1" in open(p).read()
+
+
+# R3: two runs with different sources under one cache name never share a file, whatever the interleaving
+def test_cache_paths_by_fingerprint(tmp_path):
+    a, b = tmp_path / "a.fasta", tmp_path / "b.fasta"
+    a.write_text(">A\nAAAK\n")
+    b.write_text(">B\nBBBK\n")
+    dst = str(tmp_path / "c" / "union.fasta")
+    copy = lambda src: (lambda part: open(part, "w").write(open(src).read()))
+    pa = ext.cached(dst, [str(a)], copy(a))
+    pb = ext.cached(dst, [str(b)], copy(b))
+    assert pa != pb and open(pa).read() == ">A\nAAAK\n" and open(pb).read() == ">B\nBBBK\n"
+    assert ext.cached(dst, [str(a)], lambda part: 1 / 0) == pa   # a cached fingerprint is never rewritten
+
+
+# R1: a --fasta stem equal to a given organism's proteome, and one named <stem>_fasta, in both orders
+@pytest.mark.parametrize("order", [0, 1])
+def test_fasta_names_against_given_organism(tmp_path, monkeypatch, order):
+    human = tmp_path / "Homo_sapiens.panel.fasta"
+    human.write_text(">h\nHUMANK\n")
+    (tmp_path / "x").mkdir()
+    f1, f2 = tmp_path / "x" / "Homo_sapiens_fasta.fasta", tmp_path / "Homo_sapiens.fasta"
+    f1.write_text(">f1\nFIRSTK\n")
+    f2.write_text(">f2\nSECONDK\n")
+    fastas = [str(f1), str(f2)] if order == 0 else [str(f2), str(f1)]
+    monkeypatch.setattr(cli, "_panel", lambda a, with_fasta=False: {"Homo_sapiens": str(human)})
+    a = argparse.Namespace(organism=["Homo sapiens"], fastas=fastas, panel=None, out=str(tmp_path / "o"))
+    c = cli._Run(a, lambda *x: None, "x", "x.mzML")
+    names, _, db = cli._organism_given(c)
+    assert sorted(db["fasta"]) == sorted([str(human), str(f1), str(f2)]) and len(set(names)) == 3
+    heads = {l for l in open(c.union) if l.startswith(">")}
+    assert heads == {">h\n", ">f1\n", ">f2\n"}
+
+
+def _mztab_with(term, tmp_path):
+    src = open(os.path.join(HERE, "data", "MzTabExporter_1_head.mzTab")).read()
+    old = "[MS, MS:1003115, OpenMS:Target-decoy PSM q-value, ]"
+    assert old in src
+    p = tmp_path / "x.mzTab"
+    p.write_text(src.replace(old, term))
+    return str(p)
+
+
+# R2: PSM q-values by CV accession: Percolator's is read, a peptide-level one is not
+def test_mztab_qvalue_cv_terms(tmp_path):
+    ided, n = CK.identified(_mztab_with("[MS, MS:1001491, percolator:Q value, ]", tmp_path))
+    assert n == 40 and len(ided) > 30
+    ided, n = CK.identified(_mztab_with("[MS, MS:1002354, PSM-level q-value, ]", tmp_path))
+    assert len(ided) > 30
+    ided, n = CK.identified(_mztab_with("[MS, MS:1003116, OpenMS:Target-decoy peptide q-value, ]", tmp_path))
+    assert n == 40 and ided == set()
 
 
 # 7: ddaPASEF: the converted mzML is temporary; check uses the given run, not a deleted path

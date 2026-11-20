@@ -1,13 +1,23 @@
-auto/reference: development median 1.014 (n=228), true ratios x1.0: power 1.00 for lower 95 % bound >= 0.98
-auto/reference: development median 1.014 (n=228), true ratios x0.98: power 1.00 for lower 95 % bound >= 0.98
-auto/reference: development median 1.014 (n=228), true ratios x0.97: power 0.22 for lower 95 % bound >= 0.98
-auto/reference: development median 1.014 (n=228), true ratios x0.965: power 0.01 for lower 95 % bound >= 0.98
-auto/defaults: development median 96409.531 (n=16), true ratios x1.0: power 1.00 for lower 95 % bound > 1.0
-P3: development FDP <= 1.5 % share auto 0.846, reference 0.836 (n=214); power 0.81 for lower 95 % bound of the difference >= -0.05; the 0.1.11 rule (auto share >= 0.95) passes in 0.00
-post:correct: development 0.869 (159/183), held-out n=142: power 0.98 for the one-sided Wilson lower bound >= 0.75; largest bound (step 0.05) with power >= 0.80: 0.75
-post:unrelated: development 0.988 (163/165), held-out n=33: power 0.93 for the one-sided Wilson lower bound >= 0.85; largest bound (step 0.05) with power >= 0.80: 0.85
-post:wrong_label: development 0.960 (24/25), held-out n=25: power 0.99 for the one-sided Wilson lower bound >= 0.7; largest bound (step 0.05) with power >= 0.80: 0.75
-post:wrong_protease: development 1.000 (25/25), held-out n=25: power 1.00 for the one-sided Wilson lower bound >= 0.7; largest bound (step 0.05) with power >= 0.80: 0.9
-pre:correct: development 0.863 (158/183), held-out n=141: power 0.96 for the one-sided Wilson lower bound >= 0.75; largest bound (step 0.05) with power >= 0.80: 0.75
-pre:related_distant: development 0.723 (120/166), held-out n=33: power 0.82 for the one-sided Wilson lower bound >= 0.5; largest bound (step 0.05) with power >= 0.80: 0.5
-pre:unrelated: development 0.838 (140/167), held-out n=33: power 0.84 for the one-sided Wilson lower bound >= 0.65; largest bound (step 0.05) with power >= 0.80: 0.65
+development pools: astral 8, iontrap 48, nontryptic 27, orbitrap DDA 133, orbitrap DIA 19, tof DDA 6, tof DIA 11
+held-out draw: 182 runs not tagged top-down, by pool: astral 8, iontrap 7, nontryptic 40, orbitrap DDA 98, orbitrap DIA 10, tof DDA 12, tof DIA 7
+auto PSMs x1.0, 0% of compliant auto runs made noncompliant: eligible 164, P1 pairs 135, P3 pairs 131; power P1 1.00, P3 relative 0.06, P3 both gates 0.03
+auto PSMs x0.98, 0% of compliant auto runs made noncompliant: eligible 164, P1 pairs 135, P3 pairs 131; power P1 1.00, P3 relative 0.04, P3 both gates 0.02
+auto PSMs x0.97, 0% of compliant auto runs made noncompliant: eligible 164, P1 pairs 135, P3 pairs 131; power P1 0.53, P3 relative 0.03, P3 both gates 0.02
+auto PSMs x1.0, 2% of compliant auto runs made noncompliant: eligible 164, P1 pairs 135, P3 pairs 131; power P1 1.00, P3 relative 0.01, P3 both gates 0.01
+auto PSMs x1.0, 5% of compliant auto runs made noncompliant: eligible 164, P1 pairs 135, P3 pairs 131; power P1 1.00, P3 relative 0.00, P3 both gates 0.00
+auto exactly as compliant as the reference arm (its counts and FDP): P3 relative 1.00, P3 both gates 0.77
+P2: power unknown (16 development data sets with a defaults arm)
+P3 development: auto share 0.802, reference share 0.836 (n=207); one-sided 95 % lower bounds auto 0.751, reference 0.787; P3_ABS = 0.75
+post:correct: development 0.869 (159/183), held-out n=142; largest bound with power >= 0.80 at alpha/9: 0.75; frozen: 0.75
+post:incomplete: development 0.125 (2/16), held-out n=7; largest bound with power >= 0.80 at alpha/9: None; frozen: experimental
+post:related_close: development 0.252 (26/103), held-out n=31; largest bound with power >= 0.80 at alpha/9: None; frozen: experimental
+post:related_distant: development 0.556 (5/9), held-out n=30; largest bound with power >= 0.80 at alpha/9: 0.25; frozen: 0.2
+post:unrelated: development 0.988 (163/165), held-out n=32; largest bound with power >= 0.80 at alpha/9: 0.75; frozen: 0.75
+post:wrong_label: development 0.960 (24/25), held-out n=25; largest bound with power >= 0.80 at alpha/9: 0.65; frozen: 0.65
+post:wrong_protease: development 1.000 (25/25), held-out n=25; largest bound with power >= 0.80 at alpha/9: 0.8; frozen: 0.65
+pre:correct: development 0.863 (158/183), held-out n=141; largest bound with power >= 0.80 at alpha/9: 0.7; frozen: 0.7
+pre:incomplete: development 0.750 (12/16), held-out n=7; largest bound with power >= 0.80 at alpha/9: None; frozen: experimental
+pre:related_close: development 0.779 (81/104), held-out n=31; largest bound with power >= 0.80 at alpha/9: 0.45; frozen: 0.45
+pre:related_distant: development 0.778 (7/9), held-out n=30; largest bound with power >= 0.80 at alpha/9: 0.45; frozen: 0.45
+pre:unrelated: development 0.838 (140/167), held-out n=32; largest bound with power >= 0.80 at alpha/9: 0.5; frozen: 0.5
+joint power under Holm at the frozen bounds: post:correct 0.97, post:related_distant 0.98, post:unrelated 1.00, post:wrong_label 0.99, post:wrong_protease 1.00, pre:correct 1.00, pre:related_close 0.97, pre:related_distant 0.96, pre:unrelated 0.99

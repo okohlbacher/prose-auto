@@ -15,6 +15,10 @@
 2759	|	Eukaryota	|		|	scientific name	|
 3193	|	Embryophyta	|		|	scientific name	|
 3398	|	Magnoliopsida	|		|	scientific name	|
+3699	|	Brassicales	|		|	scientific name	|
+3700	|	Brassicaceae	|		|	scientific name	|
+3701	|	Arabidopsis	|		|	scientific name	|
+3702	|	Arabidopsis thaliana	|		|	scientific name	|
 4447	|	Liliopsida	|		|	scientific name	|
 4479	|	Poaceae	|		|	scientific name	|
 4575	|	Zea	|		|	scientific name	|
@@ -92,6 +96,8 @@
 58023	|	Tracheophyta	|		|	scientific name	|
 58024	|	Spermatophyta	|		|	scientific name	|
 68825	|	Rasamsonia emersonii	|		|	scientific name	|
+71240	|	eudicotyledons	|		|	scientific name	|
+71275	|	rosids	|		|	scientific name	|
 78536	|	Euphyllophyta	|		|	scientific name	|
 85512	|	Dicondylia	|		|	scientific name	|
 88770	|	Panarthropoda	|		|	scientific name	|
@@ -99,6 +105,8 @@
 91061	|	Bacilli	|		|	scientific name	|
 91347	|	Enterobacterales	|		|	scientific name	|
 91561	|	Artiodactyla	|		|	scientific name	|
+91827	|	Gunneridae	|		|	scientific name	|
+91836	|	malvids	|		|	scientific name	|
 116954	|	Dendrobaena	|		|	scientific name	|
 117570	|	Teleostomi	|		|	scientific name	|
 117571	|	Euteleostomi	|		|	scientific name	|
@@ -131,6 +139,7 @@
 716546	|	leotiomyceta	|		|	scientific name	|
 766764	|	Debaryomycetaceae	|		|	scientific name	|
 862507	|	Mus	|		|	scientific name	|
+980083	|	Camelineae	|		|	scientific name	|
 1046325	|	Lumbricinae	|		|	scientific name	|
 1132856	|	Rasamsonia	|		|	scientific name	|
 1206794	|	Ecdysozoa	|		|	scientific name	|
@@ -139,6 +148,7 @@
 1437010	|	Boreoeutheria	|		|	scientific name	|
 1437183	|	Mesangiospermae	|		|	scientific name	|
 1437197	|	Petrosaviidae	|		|	scientific name	|
+1437201	|	Pentapetalae	|		|	scientific name	|
 1648029	|	Tripsacinae	|		|	scientific name	|
 1648033	|	Andropogonodae	|		|	scientific name	|
 1783272	|	Bacillati	|		|	scientific name	|

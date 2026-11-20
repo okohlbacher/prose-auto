@@ -5,13 +5,16 @@
 Fixes from the adversarial review of 0.1.11 (each with a regression test in `tests/test_0112.py`)
 - `--fastag FASTag`, a name on `PATH`: the bundled proteomes are found from any working directory; before, the
   database check was skipped silently.
-- Several `--fasta` with the same file name in different folders are all searched; before, all but one were dropped.
+- Several `--fasta` with the same file name in different folders are all searched, also when a file name equals a
+  given organism's proteome; before, all but one were dropped.
 - `prose-auto check` separates the FASTA files with a newline; a file without a final newline merged its last line
   with the next header.
 - The Cys fallback runs when any text (or Jev) contradicts FASTag's call, even when another text agrees.
-- `prose-auto check` reads standard mzTab: the PSM q-value is the `search_engine_score[n]` the metadata declares
-  (OpenMS exports gave 0 identifications).
-- The union FASTA and the database-check panel are rebuilt when a source file changes (SHA-256 next to the cache).
+- `prose-auto check` reads standard mzTab: the PSM q-value is the `search_engine_score[n]` whose CV term is a
+  PSM-level q-value (MS:1001491 percolator:Q value, MS:1002354, MS:1003115); peptide- and protein-level q-values
+  are never read as PSM q-values (OpenMS exports gave 0 identifications).
+- The union FASTA and the database-check panel are cached under a path fingerprinted by the SHA-256 of their sources:
+  a changed source gives a new file, and concurrent runs never pair one run's content with another's.
 - ddaPASEF: the report no longer names the temporary converted mzML; `prose-auto check` tags the given run when the
   report's spectra are gone.
 - The given-database and panel FASTag passes use the same fixed label; FASTag's QC reporter kits (low confidence) no
@@ -19,7 +22,8 @@ Fixes from the adversarial review of 0.1.11 (each with a regression test in `tes
 
 The 218 release runs (development, in-sample), 0.1.12 against 0.1.11: no decision and no ProSE command changed on
 the 215 runs with settings, so the identifications and SDRF scores are those of 0.1.11. The Cys competition now runs
-on 5 more runs (their decisions unchanged); PXD053053's panel pass no longer uses the QC kit's TMTpro label.
+on 5 more runs and on 1 fewer (PXD053053), net 4, with no decision changed; PXD053053's panel pass no longer uses
+the QC kit's TMTpro label.
 
 Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets unchanged)
 - Scenario-specific searches for the wrong-database checks; a taxonomy rule for the scenarios (`scenarios.py`,
@@ -53,7 +57,8 @@ Mini-search as a fallback
   again after Jev; the timsTOF protease competition as before. `--mini-search-cys always|never` for ablations.
 - 218 release runs (development, in-sample): the competition ran on 30 of 215. `-alkylation_out` agreed with
   0.1.10's competition on all 87 runs it called (72 no call). FASTag's call alone lost 0.21 % of the PSMs on the
-  fallback runs (PXD073447 −9.2 %), so the competition stays as the fallback.
+  17 of the 30 fallback runs whose command differs (PXD073447 −9.2 %, 377 of the 385 PSMs), so the competition stays
+  as the fallback.
 - SDRF scores as 0.1.10 fast except Cys 124/131 (125). ProSE IDs on the 99 runs whose command changed: PSMs +0.16 %,
   peptides +0.38 %, protein groups +0.40 %.
 - Idle node, median per run: the changed steps take 7.3 → 7.6 s (DDA), 16.5 → 7.7 s (DIA), 11.9 → 8.5 s (timsTOF).

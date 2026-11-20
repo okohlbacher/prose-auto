@@ -832,21 +832,23 @@ def _tier2(c, h, panel):
                 c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter == "organism")] + new
 
 
-def _unique_names(paths):
-    """{name: path} for FASTA paths: the file stem, made unique with _2, _3 when two files share it (0.1.12: 0.1.11
-    keyed by the stem and dropped all but the last file of a name)"""
-    out = {}
+def _unique_names(paths, taken=()):
+    """{name: path} for FASTA paths: the file stem, made unique with _2, _3 against the names already taken and those
+    allocated here (0.1.11 keyed by the stem and dropped all but the last file of a name; the first 0.1.12 checked a
+    renamed stem only once)"""
+    out, used = {}, set(taken)
     for p in paths:
         n = base = os.path.splitext(os.path.basename(p))[0]
         k = 2
-        while n in out:
+        while n in used:
             n, k = f"{base}_{k}", k + 1
         out[n] = p
+        used.add(n)
     return out
 
 
 def _union_fasta(paths, extra):
-    """The concatenated FASTA of several proteomes, <extra>/union/A+B.fasta, rebuilt when a source changes."""
+    """The concatenated FASTA of several proteomes, <extra>/union/A+B.<fingerprint>.fasta (ext.cached)."""
     def write(part):
         with open(part, "wb") as out:
             for p in paths.values():
@@ -880,8 +882,7 @@ def _organism_given(c):
                 c.log(f"  database: {got[0]} proteome; no reference proteome for {o}")
             dbs[got[0]] = got[1]
             names.append(o.replace(" ", "_"))
-        for n, f in _unique_names(a.fastas).items():
-            n = n if n not in dbs else f"{n}_fasta"
+        for n, f in _unique_names(a.fastas, dbs).items():   # never over a given organism's proteome
             dbs[n] = f
             names.append(n)
         c.ev = [e for e in c.ev if e.parameter != "organism"]

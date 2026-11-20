@@ -185,7 +185,8 @@ python -m prose_auto.cli analyze run.mzML --fasta my_db.fasta --fasta crap.fasta
     proteome under its NCBI taxon or up to 3 parent taxa). The organism stays as given; the report names the
     database used. Nothing within 3 parents, or a failed download, stops the run;
   - every `--fasta` is added as it is, also two files of the same name from different folders; several databases
-    are concatenated into `<panel>/extra/union/`, rebuilt when a source file changes (the check panel too).
+    are concatenated into `<panel>/extra/union/`, under a name fingerprinted by the sources' content (the check
+    panel too): a changed source gives a new file.
 - **Skipped:** everything that only serves the organism: the ProSE organism search, the organism competition of the
   mini-search, the FASTag species call, tier 2, the mixture test and union, Jev's organism question. Every other
   organism statement is dropped.
@@ -238,8 +239,9 @@ python -m prose_auto.cli check run.mzML run.idXML --fasta db.fasta --fastag FAST
   wrong` when at least 20 % of the unidentified ones place on the given database (check label, protease,
   modifications, windows), else `database likely wrong or incomplete`, naming a panel organism that places at least
   10 % of them. ProSE results without q-values (no rescoring below 100 PSMs) identify nothing.
-- **Input:** idXML or mzTab; in mzTab the PSM q-value is the `search_engine_score[n]` the metadata declares as a
-  q-value (OpenMS exports). The spectra come from the report's pseudo-spectra (diaPASEF) if they still exist, else
+- **Input:** idXML or mzTab; in mzTab the PSM q-value is the `search_engine_score[n]` whose CV term is a PSM-level
+  q-value (MS:1001491 percolator:Q value, MS:1002354, MS:1003115), else `opt_global_q-value`; peptide- and
+  protein-level q-values are never used. The spectra come from the report's pseudo-spectra (diaPASEF) if they still exist, else
   from the given run: a ddaPASEF conversion is temporary, so give the `.d` or an mzML.
 - **Development calibration** (in-sample): correct FASTA 159 of 183 ok; deliberately wrong settings (label dropped
   or added, wrong protease; 58 searches on 29 runs) flagged 49 of the 50 assessed, 35 of them as settings; unrelated FASTAs flagged 163 of 165, related

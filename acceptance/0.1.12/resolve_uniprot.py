@@ -1,6 +1,10 @@
 """The inputs of scenarios.py from UniProt (taxonomy and reference-proteome metadata only, no sequences):
 
-    python3 resolve_uniprot.py wrongdb.tsv OUTDIR
+    python3 resolve_uniprot.py wrongdb.tsv OUTDIR [adjudicated.tsv]
+
+adjudicated.tsv (accession, file, organisms, class), written after the reference annotation, replaces the organisms
+field of wrongdb.tsv for its runs (scenarios.py reads the same file). The unrelated organisms of scenarios.py
+(Arabidopsis thaliana, Homo sapiens) are always resolved.
 
 OUTDIR/names.dmp, nodes.dmp   the lineages of every organism named in wrongdb.tsv (NCBI dump format)
 OUTDIR/candidates.tsv          per species: its own reference proteome (level self) and the reference proteomes of
@@ -19,7 +23,7 @@ import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from scenarios import species_names   # noqa: E402
+from scenarios import UNRELATED, organisms_of, species_names   # noqa: E402
 
 API = "https://rest.uniprot.org"
 LOG = []
@@ -61,44 +65,45 @@ def references(taxid):
     return out
 
 
-def main(wrongdb, out):
+def main(wrongdb, out, adjudicated=None):
     os.makedirs(out, exist_ok=True)
     nodes, names, cands, done = {}, {}, [], set()
-    for r in csv.DictReader(open(wrongdb), delimiter="\t"):
-        for n in species_names(r["organisms"]):
-            if n.lower() in done:
+    rows = list(csv.DictReader(open(wrongdb), delimiter="\t"))
+    wanted = [n for r in rows for n in species_names(organisms_of(r, adjudicated))] + sorted(set(UNRELATED.values()))
+    for n in wanted:
+        if n.lower() in done:
+            continue
+        done.add(n.lower())
+        t = taxon(n)
+        if not t:
+            print(f"unresolved: {n}", file=sys.stderr)
+            continue
+        chain = [x for x in t.get("lineage", [])] + [{"taxonId": t["taxonId"], "scientificName": t["scientificName"],
+                                                     "rank": t["rank"]}]
+        parent = 1
+        for x in chain:
+            nodes[x["taxonId"]] = (parent if x["taxonId"] != parent else 1, x["rank"])
+            names[x["taxonId"]] = x["scientificName"]
+            parent = x["taxonId"]
+        if t["rank"] != "species":
+            continue
+        sp = t["scientificName"]
+        rank_of = {x["rank"]: x["taxonId"] for x in chain}
+        levels = [("self", t["taxonId"], None), ("family", rank_of.get("family"), rank_of.get("genus")),
+                  ("order", rank_of.get("order"), rank_of.get("family")),
+                  ("class", rank_of.get("class"), rank_of.get("order"))]
+        got = {}
+        for lvl, inner, outer in levels:
+            if inner is None or (lvl == "class" and got.get("order")):
                 continue
-            done.add(n.lower())
-            t = taxon(n)
-            if not t:
-                print(f"unresolved: {n}", file=sys.stderr)
-                continue
-            chain = [x for x in t.get("lineage", [])] + [{"taxonId": t["taxonId"], "scientificName": t["scientificName"],
-                                                         "rank": t["rank"]}]
-            parent = 1
-            for x in chain:
-                nodes[x["taxonId"]] = (parent if x["taxonId"] != parent else 1, x["rank"])
-                names[x["taxonId"]] = x["scientificName"]
-                parent = x["taxonId"]
-            if t["rank"] != "species":
-                continue
-            sp = t["scientificName"]
-            rank_of = {x["rank"]: x["taxonId"] for x in chain}
-            levels = [("self", t["taxonId"], None), ("family", rank_of.get("family"), rank_of.get("genus")),
-                      ("order", rank_of.get("order"), rank_of.get("family")),
-                      ("class", rank_of.get("class"), rank_of.get("order"))]
-            got = {}
-            for lvl, inner, outer in levels:
-                if inner is None or (lvl == "class" and got.get("order")):
-                    continue
-                pool = references(inner)
-                if lvl == "self":
-                    got[lvl] = {k: v for k, v in pool.items() if k == sp}
-                else:
-                    near = references(outer) if outer else {}
-                    got[lvl] = {k: v for k, v in pool.items() if k not in near and k != sp}
-                for k, (tid, up, n_) in got[lvl].items():
-                    cands.append((t["taxonId"], lvl, k, tid, up, n_))
+            pool = references(inner)
+            if lvl == "self":
+                got[lvl] = {k: v for k, v in pool.items() if k == sp}
+            else:
+                near = references(outer) if outer else {}
+                got[lvl] = {k: v for k, v in pool.items() if k not in near and k != sp}
+            for k, (tid, up, n_) in got[lvl].items():
+                cands.append((t["taxonId"], lvl, k, tid, up, n_))
     names.setdefault(1, "root")
     nodes.setdefault(1, (1, "no rank"))
     with open(f"{out}/nodes.dmp", "w") as fh:
@@ -115,4 +120,4 @@ def main(wrongdb, out):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:3])
+    main(*sys.argv[1:4])

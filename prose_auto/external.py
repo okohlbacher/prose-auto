@@ -369,23 +369,19 @@ def sources_key(paths):
 
 
 def cached(dst, paths, write):
-    """dst, written by write(part) when missing or when its sources (paths) changed since: the fingerprint is kept
-    in dst.sources (0.1.12; 0.1.11 reused any file of that name)"""
-    key = sources_key(paths)
-    side = dst + ".sources"
-    try:
-        fresh = os.path.exists(dst) and open(side).read() == key
-    except OSError:
-        fresh = False
-    if not fresh:
-        os.makedirs(os.path.dirname(dst) or ".", exist_ok=True)
-        part = f"{dst}.{os.getpid()}.part"
+    """The cache file for dst built from paths: dst with the first 16 hex digits of the sources' fingerprint before
+    its extension, written once by write(part) and never changed afterwards. A changed source gives a new path, so a
+    search that opened the old one keeps reading consistent content, and concurrent writers of one fingerprint
+    publish identical files (0.1.12; 0.1.11 reused any file of the name, the first 0.1.12 kept the fingerprint in a
+    side file that a concurrent run could pair with another run's content)."""
+    stem, ext = os.path.splitext(dst)
+    path = f"{stem}.{sources_key(paths)[:16]}{ext}"
+    if not os.path.exists(path):
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        part = f"{path}.{os.getpid()}.part"
         write(part)
-        os.replace(part, dst)
-        with open(side + f".{os.getpid()}.part", "w") as fh:
-            fh.write(key)
-        os.replace(side + f".{os.getpid()}.part", side)
-    return dst
+        os.replace(part, path)
+    return path
 
 
 def write_labelled(dst, parts):
@@ -405,8 +401,8 @@ def write_labelled(dst, parts):
 def dbcheck_panel(fastag, contaminants, cache):
     """The database check's panel as one labelled FASTA, written once to <cache>/dbcheck_panel.fasta: FASTag's
     shipped human, mouse, yeast and E. coli proteomes (UniProt reviewed, share/FASTag/alkylation, 17 MB) and the
-    contaminants (rebuilt when one of them changes). Returns (path, member names) or (None, []) without the shipped
-    proteomes."""
+    contaminants, at a path fingerprinted by their content (cached). Returns (path, member names) or (None, []) without
+    the shipped proteomes."""
     share = fastag_share(fastag, "alkylation")
     members = [(n, os.path.join(share, f"{n}.fasta.gz")) for n in ("human", "mouse", "yeast", "ecoli")] if share else []
     members = [m for m in members if os.path.exists(m[1])]
@@ -416,8 +412,7 @@ def dbcheck_panel(fastag, contaminants, cache):
         members.append(("contaminants", contaminants))
     names = [n for n, _ in members]
     dst = os.path.join(cache, "dbcheck_panel" + ("+contaminants" if contaminants else "") + ".fasta")
-    cached(dst, [p for _, p in members], lambda part: write_labelled(part, members))
-    return dst, names
+    return cached(dst, [p for _, p in members], lambda part: write_labelled(part, members)), names
 
 
 def fastag_dbcheck(fastag, mzml, panel_fasta, frag_tol=20.0, frag_unit="ppm", threads=0, log=print, subsample=0.0,

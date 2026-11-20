@@ -57,23 +57,32 @@ def identified(path, fdr=0.01):
     return out, n
 
 
+# PSM-level q-values by PSI-MS accession; peptide- and protein-level ones (MS:1003116 OpenMS:Target-decoy peptide
+# q-value, MS:1001868 distinct peptide-level q-value, MS:1003117 protein q-value) are never read as PSM q-values
+PSM_QVALUE_CV = {"MS:1001491",   # percolator:Q value
+                 "MS:1002354",   # PSM-level q-value
+                 "MS:1003115"}   # OpenMS:Target-decoy PSM q-value
+
+
 def _mztab(path, fdr):
-    """mzTab 1.0: the metadata declares what psm_search_engine_score[n] is; the one named a (PSM) q-value is the
-    column search_engine_score[n] (0.1.12; 0.1.11 looked for "q-value" in the column names only and read 0
-    identifications from OpenMS exports). Else a column named q-value."""
+    """mzTab 1.0: the metadata declares each psm_search_engine_score[n] by a CV term; the column search_engine_score[n]
+    whose term is a PSM-level q-value (PSM_QVALUE_CV) holds the q-values; else the column opt_global_q-value (OpenMS
+    writes the PSM q-value there too); else none, and nothing is identified. 0.1.11 read 0 identifications from
+    OpenMS exports; the first 0.1.12 matched the words "q-value" and so missed percolator:Q value and accepted
+    peptide-level q-values."""
     head, out, n, qcol = None, set(), 0, None
     for line in open(path, encoding="utf-8", errors="replace"):
         f = line.rstrip("\n").split("\t")
-        if f[0] == "MTD" and len(f) > 2 and f[1].startswith("psm_search_engine_score[") and qcol is None \
-                and "q-value" in f[2].lower() and "peptide-level" not in f[2].lower():
-            qcol = "search_engine_score[" + f[1].split("[", 1)[1]
+        if f[0] == "MTD" and len(f) > 2 and f[1].startswith("psm_search_engine_score["):
+            acc = re.search(r"MS:\d{7}", f[2])
+            if qcol is None and acc and acc.group(0) in PSM_QVALUE_CV:
+                qcol = "search_engine_score[" + f[1].split("[", 1)[1]
         elif f[0] == "PSH":
             head = f
         elif f[0] == "PSM" and head:
             r = dict(zip(head, f))
             n += 1
-            q = r.get(qcol) if qcol else \
-                next((v for k, v in r.items() if "q-value" in k.lower() or k == "opt_global_q-value"), None)
+            q = r.get(qcol) if qcol else r.get("opt_global_q-value")
             decoy = r.get("opt_global_target_decoy", r.get("opt_global_cv_MS:1002217_decoy_peptide", "")) in ("decoy", "1")
             try:
                 ok = q is not None and float(q) <= fdr and not decoy
