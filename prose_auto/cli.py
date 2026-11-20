@@ -265,6 +265,7 @@ class _Run:
     run: object = None
     acq: object = None        # acquisition as detected
     pseudo: bool = False      # DIAspeXtract pseudo-spectra replace the input
+    spectra_tmp: bool = False  # the spectra are a temporary conversion (ddaPASEF), deleted at exit
     search_acq: object = None
     ms2a: str = "ORBITRAP"
     hr1: bool = True
@@ -274,6 +275,7 @@ class _Run:
     union: str = None         # the search database of a mixture union (_union) or of fast mode (_organism_given)
     qc: dict = field(default_factory=dict)        # FASTag -qc_out summary (default mode)
     dbcheck_given: tuple = None                   # (confident spectra, placed on the given database), gap stage
+    gap_fixed: tuple = ()                         # the fixed label of that pass; the panel pass reuses it (0.1.12)
 
     @property
     def ftol(self):           # FASTag fragment tolerance
@@ -343,6 +345,7 @@ def _timstof_input(c):
             # the converted mzML (6-23 GB with profile MS1) is only an input: keep it out of the results
             tmp = tempfile.mkdtemp(prefix="prose_auto_ddapasef_")
             atexit.register(shutil.rmtree, tmp, True)
+            c.spectra_tmp = True
             c.spectra_file = ext.fileconverter(a.fileconverter, a.mzml,
                                                os.path.join(tmp, os.path.basename(c.base) + ".mzML"), a.threads, log=log)
         except RuntimeError as e:
@@ -612,10 +615,19 @@ def _search_features(ev):
     return "\n".join(lines)
 
 
+def _data_label(c):
+    """The isobaric label the spectra show (the reporter ions), not FASTag's QC kit list (low confidence, 0.35): in
+    0.1.11 a QC kit added after the given-database pass became the fixed label of the panel pass and the mini-search"""
+    return _first([e for e in c.ev if e.parameter == "label" and e.source == "data" and e.method != QC_KIT_METHOD
+                   and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
+
+
+QC_KIT_METHOD = "FASTag QC reporter kits"
+
+
 def _label_mods(c):
     """Fixed masses of the label the spectra show (TMT, iTRAQ) on K and the N-terminus"""
-    lab = _first([e for e in c.ev if e.parameter == "label" and e.source == "data"
-                  and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
+    lab = _data_label(c)
     mods = ts.Mods()
     key = next((k for p, k in LABEL_MASS_KEYS if str(lab.value).startswith(p)), None) if lab else None
     if key:
@@ -626,12 +638,17 @@ def _label_mods(c):
 def _label_fixed(c):
     """The isobaric label the spectra show as FASTag fixed modifications for the gap stage (0.1.11): without them
     the label mass is part of every gap and FASTag's -alkylation_out finds no Cys form on TMT runs"""
-    lab = _first([e for e in c.ev if e.parameter == "label" and e.source == "data"
-                  and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
+    lab = _data_label(c)
     return pp.LABEL_MODS.get(str(lab.value), []) if lab else []
 
 
 CYS_STATED_MIN = 0.4   # a text statement of the Cys alkylation counts for the fallback from this confidence
+
+
+def _reported_spectra(c):
+    """The spectra the report names as searched: the pseudo-spectra, not a temporary ddaPASEF conversion (deleted at
+    exit; prose-auto check then tags the given run)"""
+    return c.spectra_file if c.pseudo and not c.spectra_tmp else None
 
 
 def _cys_fallback(c):
@@ -646,8 +663,8 @@ def _cys_fallback(c):
         return "the two FASTag Cys calls disagree (" + ", ".join(sorted(calls)) + ")"
     if not calls and not stated:
         return "FASTag and the texts make no Cys call"
-    if calls and stated and not calls & stated:
-        return f"FASTag calls {next(iter(calls))}, the texts say " + ", ".join(sorted(map(str, stated)))
+    if calls and stated - calls:   # 0.1.12: any contrary statement (0.1.11: only when none agreed)
+        return f"FASTag calls {next(iter(calls))}, the texts say " + ", ".join(sorted(map(str, stated - calls)))
     return None
 
 
@@ -720,9 +737,10 @@ def _fastag_gaps(c, db):
         # counts of the database check; full mode keeps the 0.1.10 pass
         extras = getattr(a, "fast", False)
         reports = {} if extras else None
+        c.gap_fixed = tuple(_label_fixed(c)) if extras else ()
         c.gap_ev = ext.fastag_alkylation(a.fastag, c.spectra_file, db, ftol, funit, threads=a.threads, log=log,
                                          subsample=_fastag_fraction(c), placements=placed, reports=reports,
-                                         fixed=_label_fixed(c) if extras else ())
+                                         fixed=c.gap_fixed)
         if placed:
             c.gap_ev += placement_accuracy(c.run, placed, _label_mods(c), c.hr1, c.hr2)
         if extras:
@@ -755,7 +773,7 @@ def _db_check(c, organisms):
         log(f"  database check: placing the tags on {', '.join(names)}")
         try:
             _, members = ext.fastag_dbcheck(a.fastag, c.spectra_file, panel, *c.ftol, threads=a.threads, log=log,
-                                            subsample=_fastag_fraction(c), fixed=_label_fixed(c))
+                                            subsample=_fastag_fraction(c), fixed=c.gap_fixed)
         except Exception as e:
             log(f"  database check failed: {e}")
             return None
@@ -814,18 +832,28 @@ def _tier2(c, h, panel):
                 c.ev = [e for e in c.ev if not (e.source == "search" and e.parameter == "organism")] + new
 
 
+def _unique_names(paths):
+    """{name: path} for FASTA paths: the file stem, made unique with _2, _3 when two files share it (0.1.12: 0.1.11
+    keyed by the stem and dropped all but the last file of a name)"""
+    out = {}
+    for p in paths:
+        n = base = os.path.splitext(os.path.basename(p))[0]
+        k = 2
+        while n in out:
+            n, k = f"{base}_{k}", k + 1
+        out[n] = p
+    return out
+
+
 def _union_fasta(paths, extra):
-    """The concatenated FASTA of several proteomes, written once as <extra>/union/A+B.fasta."""
-    dst = os.path.join(extra, "union", "+".join(paths) + ".fasta")
-    if not os.path.exists(dst):
-        os.makedirs(os.path.dirname(dst), exist_ok=True)
-        with open(f"{dst}.{os.getpid()}.part", "wb") as out:
+    """The concatenated FASTA of several proteomes, <extra>/union/A+B.fasta, rebuilt when a source changes."""
+    def write(part):
+        with open(part, "wb") as out:
             for p in paths.values():
                 with open(p, "rb") as fh:
                     b = fh.read()
                 out.write(b if b.endswith(b"\n") else b + b"\n")
-        os.replace(f"{dst}.{os.getpid()}.part", dst)
-    return dst
+    return ext.cached(os.path.join(extra, "union", "+".join(paths) + ".fasta"), list(paths.values()), write)
 
 
 def _organism_given(c):
@@ -852,8 +880,8 @@ def _organism_given(c):
                 c.log(f"  database: {got[0]} proteome; no reference proteome for {o}")
             dbs[got[0]] = got[1]
             names.append(o.replace(" ", "_"))
-        for f in a.fastas:
-            n = os.path.splitext(os.path.basename(f))[0]
+        for n, f in _unique_names(a.fastas).items():
+            n = n if n not in dbs else f"{n}_fasta"
             dbs[n] = f
             names.append(n)
         c.ev = [e for e in c.ev if e.parameter != "organism"]
@@ -946,8 +974,7 @@ def _fasta_list(a):
     fl = a.fasta if isinstance(a.fasta, list) else [a.fasta] if a.fasta else []
     a.fastas = fl
     if len(fl) > 1:
-        names = {os.path.splitext(os.path.basename(f))[0]: f for f in fl}
-        a.fasta = _union_fasta(names, os.path.join(a.panel or a.out, "extra"))
+        a.fasta = _union_fasta(_unique_names(fl), os.path.join(a.panel or a.out, "extra"))
     else:
         a.fasta = fl[0] if fl else None
 
@@ -1087,7 +1114,7 @@ def analyze(a, log=print):
     return {
         "tool": "prose-auto 0.1 (prototype)",
         "mode": "given" if a.fast else "infer",
-        "input": {**c.run.summary(), "given": a.mzml, "pseudo_spectra": c.spectra_file if c.pseudo else None},
+        "input": {**c.run.summary(), "given": a.mzml, "pseudo_spectra": _reported_spectra(c)},
         "decisions": {k: d.to_dict() for k, d in decisions.items()},
         "prose": prose,
         "prose_cli": pp.to_cli(prose["params"]),

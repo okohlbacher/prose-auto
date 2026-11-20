@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.12 (2026-11-20)
+
+Fixes from the adversarial review of 0.1.11 (each with a regression test in `tests/test_0112.py`)
+- `--fastag FASTag`, a name on `PATH`: the bundled proteomes are found from any working directory; before, the
+  database check was skipped silently.
+- Several `--fasta` with the same file name in different folders are all searched; before, all but one were dropped.
+- `prose-auto check` separates the FASTA files with a newline; a file without a final newline merged its last line
+  with the next header.
+- The Cys fallback runs when any text (or Jev) contradicts FASTag's call, even when another text agrees.
+- `prose-auto check` reads standard mzTab: the PSM q-value is the `search_engine_score[n]` the metadata declares
+  (OpenMS exports gave 0 identifications).
+- The union FASTA and the database-check panel are rebuilt when a source file changes (SHA-256 next to the cache).
+- ddaPASEF: the report no longer names the temporary converted mzML; `prose-auto check` tags the given run when the
+  report's spectra are gone.
+- The given-database and panel FASTag passes use the same fixed label; FASTag's QC reporter kits (low confidence) no
+  longer set a fixed label, for the panel pass nor for the mini-search.
+
+The 218 release runs (development, in-sample), 0.1.12 against 0.1.11: no decision and no ProSE command changed on
+the 215 runs with settings, so the identifications and SDRF scores are those of 0.1.11. The Cys competition now runs
+on 5 more runs (their decisions unchanged); PXD053053's panel pass no longer uses the QC kit's TMTpro label.
+
+Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets unchanged)
+- Scenario-specific searches for the wrong-database checks; a taxonomy rule for the scenarios (`scenarios.py`,
+  `resolve_uniprot.py`) and the manifest for all 40 runs (UniProt 2026_04; 2 runs excluded by rule).
+- Run classes: top-down (new endpoint S8), stopped, missing, organism not verified.
+- P3 is a paired non-inferiority against the reference arm with a one-sided bound; power for P1-P3 and the checks
+  from the development data (`power.py`, `power.txt`); a criterion per check and kind.
+- `score.py` written and tested on development data; it and the scenario code, the conversion recipe and the
+  manifests are frozen before any raw file is opened.
+- The organism is verified from the spectra; two blinded annotators with adjudication; the best-PSM settings are a
+  comparator arm, not the truth.
+
 ## 0.1.11 (2026-11-20)
 
 The organism is given

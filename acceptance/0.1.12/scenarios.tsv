@@ -1,0 +1,163 @@
+accession	file	kind	databases	taxids	common_rank	note
+PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	unrelated	Arabidopsis thaliana			
+PXD013038	FCarrieri_161006_05.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD013038	FCarrieri_161006_05.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD013038	FCarrieri_161006_05.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD013038	FCarrieri_161006_05.raw	unrelated	Arabidopsis thaliana			
+PXD018333	H3982FD.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD018333	H3982FD.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD018333	H3982FD.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD018333	H3982FD.raw	unrelated	Arabidopsis thaliana			
+PXD018425	tc_o292_F6A_f08265.raw	correct	Mus musculus	10090		proteomes UP000000589
+PXD018425	tc_o292_F6A_f08265.raw	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD018425	tc_o292_F6A_f08265.raw	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD018425	tc_o292_F6A_f08265.raw	unrelated	Arabidopsis thaliana			
+PXD019413	Pig3-4.wiff	correct	Sus scrofa	9823		proteomes UP000008227
+PXD019413	Pig3-4.wiff	related_close	none			no candidate
+PXD019413	Pig3-4.wiff	related_distant	Bos taurus	9913	order	proteomes UP000009136
+PXD019413	Pig3-4.wiff	unrelated	Arabidopsis thaliana			
+PXD020369	20190712_Snow_phos_3f.raw	correct	Saccharomyces cerevisiae	4932		proteomes UP000002311
+PXD020369	20190712_Snow_phos_3f.raw	related_close	Maudiozyma humilis	51915	family	proteomes UP001377567
+PXD020369	20190712_Snow_phos_3f.raw	related_distant	Waltiozyma pijperi	599730	class	proteomes UP000774326
+PXD020369	20190712_Snow_phos_3f.raw	unrelated	Arabidopsis thaliana			
+PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	unrelated	Arabidopsis thaliana			
+PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	unrelated	Arabidopsis thaliana			
+PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	unrelated	Arabidopsis thaliana			
+PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	correct	Drosophila melanogaster	7227		proteomes UP000000803
+PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	related_close	Drosophila lebanonensis	7225	family	proteomes UP000504634
+PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	related_distant	Aedes albopictus	7160	order	proteomes UP000069940
+PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	unrelated	Arabidopsis thaliana			
+PXD045331	wo_nucs_Base6_L03618.RAW	correct	Zea mays	4577		proteomes UP000007305
+PXD045331	wo_nucs_Base6_L03618.RAW	related_close	Avena sativa	4498	family	proteomes UP000830882
+PXD045331	wo_nucs_Base6_L03618.RAW	related_distant	Rhynchospora pubera	906938	order	proteomes UP001140206
+PXD045331	wo_nucs_Base6_L03618.RAW	unrelated	Homo sapiens	9606		
+PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	correct	Mus musculus	10090		proteomes UP000000589
+PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	unrelated	Arabidopsis thaliana			
+PXD050840	P10_DIA_R4_20230107.raw	correct	Mus musculus	10090		proteomes UP000000589
+PXD050840	P10_DIA_R4_20230107.raw	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD050840	P10_DIA_R4_20230107.raw	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD050840	P10_DIA_R4_20230107.raw	unrelated	Arabidopsis thaliana			
+PXD051981	220419_36811_KA_L.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD051981	220419_36811_KA_L.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD051981	220419_36811_KA_L.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD051981	220419_36811_KA_L.raw	unrelated	Arabidopsis thaliana			
+PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	unrelated	Arabidopsis thaliana			
+PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	unrelated	Arabidopsis thaliana			
+PXD059726	XB07482DPST_D06_1.raw	correct	Mus musculus	10090		proteomes UP000000589
+PXD059726	XB07482DPST_D06_1.raw	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD059726	XB07482DPST_D06_1.raw	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD059726	XB07482DPST_D06_1.raw	unrelated	Arabidopsis thaliana			
+PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	correct	Mus musculus	10090		proteomes UP000000589
+PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	unrelated	Arabidopsis thaliana			
+PXD060120	20220827_HF2_01_PK_1_TMT12.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD060120	20220827_HF2_01_PK_1_TMT12.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD060120	20220827_HF2_01_PK_1_TMT12.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD060120	20220827_HF2_01_PK_1_TMT12.raw	unrelated	Arabidopsis thaliana			
+PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	correct	Mus musculus	10090		proteomes UP000000589
+PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	unrelated	Arabidopsis thaliana			
+PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	unrelated	Arabidopsis thaliana			
+PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	correct	Neisseria gonorrhoeae	485		proteomes UP000002564
+PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	related_close	Crenobacter oryzisoli	3056844	family	proteomes UP001168540
+PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	related_distant	Chromobacterium fluminis	3044269	order	proteomes UP001515641
+PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	unrelated	Homo sapiens	9606		
+PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	correct	Dendrobaena veneta	332521		proteomes none (nearest relative, as prose-auto)
+PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	related_close	none			no candidate
+PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	related_distant	Helobdella robusta	6412	class	proteomes UP000015101
+PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	unrelated	Arabidopsis thaliana			
+PXD064921	250527_SG_EarlyTimeInh_rerun_SECR_MIX_4_R2_S1-A4_1_14757.d.ZIP	excluded				top-down
+PXD066618	OH_20210818_TMTA_pST4.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD066618	OH_20210818_TMTA_pST4.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD066618	OH_20210818_TMTA_pST4.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD066618	OH_20210818_TMTA_pST4.raw	unrelated	Arabidopsis thaliana			
+PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	unrelated	Arabidopsis thaliana			
+PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	correct	Saccharomyces cerevisiae	4932		proteomes UP000002311
+PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	related_close	Maudiozyma humilis	51915	family	proteomes UP001377567
+PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	related_distant	Waltiozyma pijperi	599730	class	proteomes UP000774326
+PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	unrelated	Arabidopsis thaliana			
+PXD082651	XB01822B1DAR1_M18_LNs2.raw	correct	Mus musculus	10090		proteomes UP000000589
+PXD082651	XB01822B1DAR1_M18_LNs2.raw	related_close	Rattus norvegicus	10116	family	proteomes UP000002494
+PXD082651	XB01822B1DAR1_M18_LNs2.raw	related_distant	Castor canadensis	51338	order	proteomes UP001732720
+PXD082651	XB01822B1DAR1_M18_LNs2.raw	unrelated	Arabidopsis thaliana			
+PXD084660	Seq94432_HFX.raw	correct	Listeria monocytogenes	1639		proteomes UP000000817
+PXD084660	Seq94432_HFX.raw	related_close	Paenilisteria newyorkensis	1497681	family	proteomes UP000236500
+PXD084660	Seq94432_HFX.raw	related_distant	Paenibacillus sepulcri	359917	order	proteomes UP001519887
+PXD084660	Seq94432_HFX.raw	unrelated	Homo sapiens	9606		
+PXD087517	12_KL_MVIC_A722_sph.raw	correct	Homo sapiens	9606		proteomes UP000005640
+PXD087517	12_KL_MVIC_A722_sph.raw	related_close	Pan troglodytes	9598	family	proteomes UP000002277
+PXD087517	12_KL_MVIC_A722_sph.raw	related_distant	Macaca fascicularis	9541	order	proteomes UP000233100
+PXD087517	12_KL_MVIC_A722_sph.raw	unrelated	Arabidopsis thaliana			
+PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	correct	Homo sapiens; Saccharomyces cerevisiae	9606; 4932		proteomes UP000005640; UP000002311
+PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	related_close	Pan troglodytes; Maudiozyma humilis	9598; 51915	family; family	proteomes UP000002277; UP001377567
+PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	related_distant	Macaca fascicularis; Waltiozyma pijperi	9541; 599730	order; class	proteomes UP000233100; UP000774326
+PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	unrelated	Arabidopsis thaliana			
+PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	incomplete	Homo sapiens	9606		of 2 species
+PXD038377	AAS_P2009_155.raw	correct	Mus musculus; Saccharomyces cerevisiae	10090; 4932		proteomes UP000000589; UP000002311
+PXD038377	AAS_P2009_155.raw	related_close	Rattus norvegicus; Maudiozyma humilis	10116; 51915	family; family	proteomes UP000002494; UP001377567
+PXD038377	AAS_P2009_155.raw	related_distant	Castor canadensis; Waltiozyma pijperi	51338; 599730	order; class	proteomes UP001732720; UP000774326
+PXD038377	AAS_P2009_155.raw	unrelated	Arabidopsis thaliana			
+PXD038377	AAS_P2009_155.raw	incomplete	Mus musculus	10090		of 2 species
+PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	correct	Homo sapiens; Saccharomyces cerevisiae	9606; 4932		proteomes UP000005640; UP000002311
+PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	related_close	Pan troglodytes; Maudiozyma humilis	9598; 51915	family; family	proteomes UP000002277; UP001377567
+PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	related_distant	Macaca fascicularis; Waltiozyma pijperi	9541; 599730	order; class	proteomes UP000233100; UP000774326
+PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	unrelated	Arabidopsis thaliana			
+PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	incomplete	Homo sapiens	9606		of 2 species
+PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	correct	Homo sapiens; Mus musculus	9606; 10090		proteomes UP000005640; UP000000589
+PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	related_close	Pan troglodytes; Rattus norvegicus	9598; 10116	family; family	proteomes UP000002277; UP000002494
+PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	related_distant	Macaca fascicularis; Castor canadensis	9541; 51338	order; order	proteomes UP000233100; UP001732720
+PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	unrelated	Arabidopsis thaliana			
+PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	incomplete	Homo sapiens	9606		of 2 species
+PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	correct	Homo sapiens; Saccharomyces cerevisiae	9606; 4932		proteomes UP000005640; UP000002311
+PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	related_close	Pan troglodytes; Maudiozyma humilis	9598; 51915	family; family	proteomes UP000002277; UP001377567
+PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	related_distant	Macaca fascicularis; Waltiozyma pijperi	9541; 599730	order; class	proteomes UP000233100; UP000774326
+PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	unrelated	Arabidopsis thaliana			
+PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	incomplete	Homo sapiens	9606		of 2 species
+PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	correct	Homo sapiens; Escherichia coli; Candida albicans	9606; 562; 5476		proteomes UP000005640; UP000001410; UP000000559
+PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	related_close	Pan troglodytes; Kluyvera cryocrescens; Pichia sorbitophila	9598; 580; 559304	family; family; family	proteomes UP000002277; UP000401081; UP000005222
+PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	related_distant	Macaca fascicularis; Enterobacter agglomerans; Metschnikowia pulcherrima	9541; 549; 27326	order; order; order	proteomes UP000233100; UP000254640; UP000649328
+PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	unrelated	Arabidopsis thaliana			
+PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	incomplete	Homo sapiens	9606		of 3 species
+PXD046292	C2.raw	correct	Rasamsonia emersonii	68825		proteomes UP000053958
+PXD046292	C2.raw	related_close	Talaromyces proteolyticus	1131652	family	proteomes UP001201262
+PXD046292	C2.raw	related_distant	Aspergillus keveii	714993	order	proteomes UP001610563
+PXD046292	C2.raw	unrelated	Arabidopsis thaliana			
+PXD063632	Haonan_20220809_DIA_MIX_1_1.raw	excluded				no species named
+PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	correct	Homo sapiens; Saccharomyces cerevisiae; Escherichia coli	9606; 4932; 562		proteomes UP000005640; UP000002311; UP000001410
+PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	related_close	Pan troglodytes; Maudiozyma humilis; Kluyvera cryocrescens	9598; 51915; 580	family; family; family	proteomes UP000002277; UP001377567; UP000401081
+PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	related_distant	Macaca fascicularis; Waltiozyma pijperi; Enterobacter agglomerans	9541; 599730; 549	order; class; order	proteomes UP000233100; UP000774326; UP000254640
+PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	unrelated	Arabidopsis thaliana			
+PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	incomplete	Homo sapiens	9606		of 3 species
+PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	correct	Homo sapiens; Escherichia coli	9606; 562		proteomes UP000005640; UP000001410
+PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	related_close	Pan troglodytes; Kluyvera cryocrescens	9598; 580	family; family	proteomes UP000002277; UP000401081
+PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	related_distant	Macaca fascicularis; Enterobacter agglomerans	9541; 549	order; order	proteomes UP000233100; UP000254640
+PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	unrelated	Arabidopsis thaliana			
+PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	incomplete	Homo sapiens	9606		of 2 species

@@ -47,7 +47,7 @@ can run it as a sidecar.
 
 | Flag | Tool | What it adds |
 |---|---|---|
-| `--fastag <exe>` | [FASTag](https://github.com/okohlbacher/FASTag) >= 1.15.2 | on the given FASTA: the protease from the tag ends, the mass errors of the tag placements, the Cys alkylation (mass gaps, `-alkylation_out` on the placements, the database-free `-alkylation_tags_out`), the run QC (`-qc_out`: analyser class, charges, reporter kits), and the database check; with `--infer-organism` also the species call |
+| `--fastag <exe>` (a path, or a name on `PATH`) | [FASTag](https://github.com/okohlbacher/FASTag) >= 1.15.2 | on the given FASTA: the protease from the tag ends, the mass errors of the tag placements, the Cys alkylation (mass gaps, `-alkylation_out` on the placements, the database-free `-alkylation_tags_out`), the run QC (`-qc_out`: analyser class, charges, reporter kits), and the database check; with `--infer-organism` also the species call |
 | `--contaminants <fasta>` | | cRAP: part of the database-check panel (and of the ProSE organism search) |
 | `--fastag-subsample <f>` | FASTag | analyse only a fraction of the MS2 spectra |
 | `--diaspextract <exe>` | [DIAspeXtract](https://github.com/okohlbacher/diaspextract) | converts a diaPASEF `.d` folder (required for `.d` input) or a DIA mzML with ion mobility into pseudo-MS/MS spectra (Orbitrap DIA without ion mobility skips it and stays on the DIA path; DDA-PASEF `.d` is not supported and stops with an error), so the mini-search and FASTag also run on DIA data |
@@ -184,7 +184,8 @@ python -m prose_auto.cli analyze run.mzML --fasta my_db.fasta --fasta crap.fasta
   - a species without a UniProt reference proteome is searched against its nearest relative's (the first reference
     proteome under its NCBI taxon or up to 3 parent taxa). The organism stays as given; the report names the
     database used. Nothing within 3 parents, or a failed download, stops the run;
-  - every `--fasta` is added as it is; several databases are concatenated once into `<panel>/extra/union/`.
+  - every `--fasta` is added as it is, also two files of the same name from different folders; several databases
+    are concatenated into `<panel>/extra/union/`, rebuilt when a source file changes (the check panel too).
 - **Skipped:** everything that only serves the organism: the ProSE organism search, the organism competition of the
   mini-search, the FASTag species call, tier 2, the mixture test and union, Jev's organism question. Every other
   organism statement is dropped.
@@ -193,8 +194,8 @@ python -m prose_auto.cli analyze run.mzML --fasta my_db.fasta --fasta crap.fasta
   FASTag's Cys calls and the run QC.
 - **The mini-search is a fallback** (`--mini-search-cys fallback`):
   - the Cys competition runs only when FASTag's Cys call (`-alkylation_out` on the placements, else the
-    database-free `-alkylation_tags_out`) and the texts disagree, or when both abstain; Jev's answer counts as a
-    text and is checked again after Jev reads;
+    database-free `-alkylation_tags_out`) is contradicted by a text (even when another text agrees), or when both
+    abstain; Jev's answer counts as a text and is checked again after Jev reads;
   - on timsTOF the protease competition runs when the tag ends give no call (fewer than 175);
   - `always` restores the 0.1.10 competition, `never` uses FASTag's call alone (ablations).
 - **Report:** `mode: "given"`; the organism decision has status `given`; `database_check`, `fastag_qc` and
@@ -217,9 +218,9 @@ it: on PXD039269, given as aphid (truth soybean), the wrong proteome still gave 
 - **Warning** (`--check-organism warn`, the default) when fewer than 5 % of the confident-tag spectra place on the
   given database, or a panel organism alone places at least 3 % of them and at least a tenth of the given share.
   Fewer than 100 confident-tag spectra: not assessed. `strict` infers the organism after a warning (needs
-  `--panel`); `off` skips the check.
+  `--panel`); `off` skips the check. Both FASTag passes tag with the same fixed label.
 - **Development calibration** (the 218 release runs, in-sample; see the 0.1.11 report): correct FASTA 158 of 183
-  pass; warnings on 120 of 166 related, 140 of 167 unrelated and 12 of 16 incomplete FASTAs, and on 2 of the 3 known
+  pass; warnings on 120 of 166 related (104 of them in the same genus or family, the rest up to the same kingdom), 140 of 167 unrelated and 12 of 16 incomplete FASTAs, and on 2 of the 3 known
   wrong SDRF organisms. Several warnings on "correct" FASTAs look real (pig and zebrafish runs that place more on the
   human proteome; human runs with a third of their tags on mouse). Cost: one FASTag pass, about 2.4 s per DDA run.
 
@@ -237,8 +238,11 @@ python -m prose_auto.cli check run.mzML run.idXML --fasta db.fasta --fastag FAST
   wrong` when at least 20 % of the unidentified ones place on the given database (check label, protease,
   modifications, windows), else `database likely wrong or incomplete`, naming a panel organism that places at least
   10 % of them. ProSE results without q-values (no rescoring below 100 PSMs) identify nothing.
+- **Input:** idXML or mzTab; in mzTab the PSM q-value is the `search_engine_score[n]` the metadata declares as a
+  q-value (OpenMS exports). The spectra come from the report's pseudo-spectra (diaPASEF) if they still exist, else
+  from the given run: a ddaPASEF conversion is temporary, so give the `.d` or an mzML.
 - **Development calibration** (in-sample): correct FASTA 159 of 183 ok; deliberately wrong settings (label dropped
-  or added, wrong protease) flagged 49 of 50, 35 of them as settings; unrelated FASTAs flagged 163 of 165, related
+  or added, wrong protease; 58 searches on 29 runs) flagged 49 of the 50 assessed, 35 of them as settings; unrelated FASTAs flagged 163 of 165, related
   70 of 165, incomplete 2 of 16. The pre-search check is better for related and incomplete FASTAs; only the
   post-search check sees wrong settings.
 

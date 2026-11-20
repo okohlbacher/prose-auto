@@ -1,0 +1,13 @@
+auto/reference: development median 1.014 (n=228), true ratios x1.0: power 1.00 for lower 95 % bound >= 0.98
+auto/reference: development median 1.014 (n=228), true ratios x0.98: power 1.00 for lower 95 % bound >= 0.98
+auto/reference: development median 1.014 (n=228), true ratios x0.97: power 0.22 for lower 95 % bound >= 0.98
+auto/reference: development median 1.014 (n=228), true ratios x0.965: power 0.01 for lower 95 % bound >= 0.98
+auto/defaults: development median 96409.531 (n=16), true ratios x1.0: power 1.00 for lower 95 % bound > 1.0
+P3: development FDP <= 1.5 % share auto 0.846, reference 0.836 (n=214); power 0.81 for lower 95 % bound of the difference >= -0.05; the 0.1.11 rule (auto share >= 0.95) passes in 0.00
+post:correct: development 0.869 (159/183), held-out n=142: power 0.98 for the one-sided Wilson lower bound >= 0.75; largest bound (step 0.05) with power >= 0.80: 0.75
+post:unrelated: development 0.988 (163/165), held-out n=33: power 0.93 for the one-sided Wilson lower bound >= 0.85; largest bound (step 0.05) with power >= 0.80: 0.85
+post:wrong_label: development 0.960 (24/25), held-out n=25: power 0.99 for the one-sided Wilson lower bound >= 0.7; largest bound (step 0.05) with power >= 0.80: 0.75
+post:wrong_protease: development 1.000 (25/25), held-out n=25: power 1.00 for the one-sided Wilson lower bound >= 0.7; largest bound (step 0.05) with power >= 0.80: 0.9
+pre:correct: development 0.863 (158/183), held-out n=141: power 0.96 for the one-sided Wilson lower bound >= 0.75; largest bound (step 0.05) with power >= 0.80: 0.75
+pre:related_distant: development 0.723 (120/166), held-out n=33: power 0.82 for the one-sided Wilson lower bound >= 0.5; largest bound (step 0.05) with power >= 0.80: 0.5
+pre:unrelated: development 0.838 (140/167), held-out n=33: power 0.84 for the one-sided Wilson lower bound >= 0.65; largest bound (step 0.05) with power >= 0.80: 0.65

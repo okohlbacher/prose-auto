@@ -1,4 +1,4 @@
-# Decision flow (prose-auto 0.1.11)
+# Decision flow (prose-auto 0.1.12)
 
 prose-auto has two modes:
 - **The default (organism given):** `--organism` and/or `--fasta` (both repeatable) are required. Every detector runs

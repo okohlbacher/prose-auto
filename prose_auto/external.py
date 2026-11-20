@@ -21,7 +21,10 @@ from __future__ import annotations
 
 import csv
 import functools
+import gzip
+import hashlib
 import os
+import shutil
 import subprocess
 import tempfile
 
@@ -344,19 +347,66 @@ DBCHECK_PREFIX = "dbcheck_"   # accession prefix of the check panel members: dbc
 
 def fastag_share(fastag, sub):
     """FASTag's shipped data folder <sub> (alkylation, digest, taxonomy): share-FASTag-<sub> next to the executable
-    (the release bundle), else <prefix>/share/FASTag/<sub>"""
-    d = os.path.dirname(os.path.realpath(fastag))
+    (the release bundle), else <prefix>/share/FASTag/<sub>. A bare name is looked up on PATH, as subprocess runs it
+    (0.1.12: realpath resolved it against the working directory)."""
+    exe = shutil.which(fastag) if os.sep not in fastag else fastag
+    d = os.path.dirname(os.path.realpath(exe or fastag))
     for p in (os.path.join(d, f"share-FASTag-{sub}"), os.path.join(d, "..", "share", "FASTag", sub)):
         if os.path.isdir(p):
             return os.path.normpath(p)
     return None
 
 
+def sources_key(paths):
+    """A fingerprint of the files a cached FASTA is built from: path and SHA-256 of the content (0.1.12)"""
+    h = hashlib.sha256()
+    for p in paths:
+        h.update(os.path.realpath(p).encode() + b"\0")
+        with open(p, "rb") as fh:
+            for b in iter(lambda: fh.read(1 << 20), b""):
+                h.update(b)
+    return h.hexdigest()
+
+
+def cached(dst, paths, write):
+    """dst, written by write(part) when missing or when its sources (paths) changed since: the fingerprint is kept
+    in dst.sources (0.1.12; 0.1.11 reused any file of that name)"""
+    key = sources_key(paths)
+    side = dst + ".sources"
+    try:
+        fresh = os.path.exists(dst) and open(side).read() == key
+    except OSError:
+        fresh = False
+    if not fresh:
+        os.makedirs(os.path.dirname(dst) or ".", exist_ok=True)
+        part = f"{dst}.{os.getpid()}.part"
+        write(part)
+        os.replace(part, dst)
+        with open(side + f".{os.getpid()}.part", "w") as fh:
+            fh.write(key)
+        os.replace(side + f".{os.getpid()}.part", side)
+    return dst
+
+
+def write_labelled(dst, parts):
+    """Concatenate (label, FASTA) parts into dst, every header prefixed DBCHECK_PREFIX + label + "|", every part
+    ending with a newline (a FASTA without a final newline would merge its last line with the next header)"""
+    with open(dst, "w") as out:
+        for label, p in parts:
+            last = "\n"
+            with (gzip.open(p, "rt") if p.endswith(".gz") else open(p)) as fh:
+                for line in fh:
+                    out.write(f">{DBCHECK_PREFIX}{label}|{line[1:]}" if line.startswith(">") else line)
+                    last = line
+            if not last.endswith("\n"):
+                out.write("\n")
+
+
 def dbcheck_panel(fastag, contaminants, cache):
     """The database check's panel as one labelled FASTA, written once to <cache>/dbcheck_panel.fasta: FASTag's
     shipped human, mouse, yeast and E. coli proteomes (UniProt reviewed, share/FASTag/alkylation, 17 MB) and the
-    contaminants. Returns (path, member names) or (None, []) without the shipped proteomes."""
-    import gzip
+    contaminants (rebuilt when one of them changes). Returns (path, member names) or (None, []) without the shipped
+    proteomes."""
     share = fastag_share(fastag, "alkylation")
     members = [(n, os.path.join(share, f"{n}.fasta.gz")) for n in ("human", "mouse", "yeast", "ecoli")] if share else []
     members = [m for m in members if os.path.exists(m[1])]
@@ -366,15 +416,7 @@ def dbcheck_panel(fastag, contaminants, cache):
         members.append(("contaminants", contaminants))
     names = [n for n, _ in members]
     dst = os.path.join(cache, "dbcheck_panel" + ("+contaminants" if contaminants else "") + ".fasta")
-    if not os.path.exists(dst):
-        os.makedirs(cache, exist_ok=True)
-        part = f"{dst}.{os.getpid()}.part"
-        with open(part, "w") as out:
-            for n, p in members:
-                with (gzip.open(p, "rt") if p.endswith(".gz") else open(p)) as fh:
-                    for line in fh:
-                        out.write(f">{DBCHECK_PREFIX}{n}|{line[1:]}" if line.startswith(">") else line)
-        os.replace(part, dst)
+    cached(dst, [p for _, p in members], lambda part: write_labelled(part, members))
     return dst, names
 
 

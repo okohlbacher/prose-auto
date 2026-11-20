@@ -17,7 +17,6 @@ The thresholds are calibrated on the development set (v0111/README_0111.md).
 
 from __future__ import annotations
 
-import gzip
 import json
 import os
 import re
@@ -59,15 +58,22 @@ def identified(path, fdr=0.01):
 
 
 def _mztab(path, fdr):
-    head, out, n = None, set(), 0
+    """mzTab 1.0: the metadata declares what psm_search_engine_score[n] is; the one named a (PSM) q-value is the
+    column search_engine_score[n] (0.1.12; 0.1.11 looked for "q-value" in the column names only and read 0
+    identifications from OpenMS exports). Else a column named q-value."""
+    head, out, n, qcol = None, set(), 0, None
     for line in open(path, encoding="utf-8", errors="replace"):
         f = line.rstrip("\n").split("\t")
-        if f[0] == "PSH":
+        if f[0] == "MTD" and len(f) > 2 and f[1].startswith("psm_search_engine_score[") and qcol is None \
+                and "q-value" in f[2].lower() and "peptide-level" not in f[2].lower():
+            qcol = "search_engine_score[" + f[1].split("[", 1)[1]
+        elif f[0] == "PSH":
             head = f
         elif f[0] == "PSM" and head:
             r = dict(zip(head, f))
             n += 1
-            q = next((v for k, v in r.items() if "q-value" in k.lower() or k == "opt_global_q-value"), None)
+            q = r.get(qcol) if qcol else \
+                next((v for k, v in r.items() if "q-value" in k.lower() or k == "opt_global_q-value"), None)
             decoy = r.get("opt_global_target_decoy", r.get("opt_global_cv_MS:1002217_decoy_peptide", "")) in ("decoy", "1")
             try:
                 ok = q is not None and float(q) <= fdr and not decoy
@@ -79,11 +85,7 @@ def _mztab(path, fdr):
 
 
 def _labelled(parts, dst):
-    with open(dst, "w") as fo:
-        for label, p in parts:
-            with (gzip.open(p, "rt") if p.endswith(".gz") else open(p)) as fh:
-                for line in fh:
-                    fo.write(f">{ext.DBCHECK_PREFIX}{label}|{line[1:]}" if line.startswith(">") else line)
+    ext.write_labelled(dst, parts)   # 0.1.12: a newline between the files
 
 
 def placements(fastag, spectra, fastas, contaminants=None, frag=(20.0, "ppm"), fixed=(), threads=0, log=print,
@@ -169,7 +171,11 @@ def main(a, log=print):
         raise SystemExit("prose-auto check needs --fastag")
     ext.require_fastag(a.fastag)
     hints = _report_hints(a.report)
-    spectra = hints.get("spectra") or a.run
+    spectra = hints.get("spectra")
+    if not (spectra and os.path.exists(spectra)):   # 0.1.12: a temporary ddaPASEF conversion is gone after the run
+        if spectra:
+            log(f"  {spectra} (from the report) no longer exists; tagging {a.run}")
+        spectra = a.run
     ided, n_psm = identified(a.result, a.fdr)
     conf, placed, n_ms2 = placements(a.fastag, spectra, a.fasta, a.contaminants, hints.get("frag", (20.0, "ppm")),
                                      hints.get("fixed", ()), a.threads, log)
