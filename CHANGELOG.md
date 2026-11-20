@@ -17,6 +17,8 @@ Fixes from the adversarial review of 0.1.11 (each with a regression test in `tes
   a changed source gives a new file, and concurrent runs never pair one run's content with another's.
 - ddaPASEF: the report no longer names the temporary converted mzML; `prose-auto check` tags the given run when the
   report's spectra are gone.
+- A union of proteomes is plain text also when a source is compressed (`.fasta.gz` panel proteomes were copied
+  byte for byte into the uncompressed union); the ProSE organism search decompresses its candidates the same way.
 - The given-database and panel FASTag passes use the same fixed label; FASTag's QC reporter kits (low confidence) no
   longer set a fixed label, for the panel pass nor for the mini-search.
 
@@ -27,7 +29,7 @@ the QC kit's TMTpro label.
 
 Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets unchanged)
 - Scenario-specific searches for the wrong-database checks; a taxonomy rule for the scenarios (`scenarios.py`,
-  `resolve_uniprot.py`) and the manifest for all 40 runs (UniProt 2026_04; 2 runs excluded by rule).
+  `resolve_uniprot.py`) and the manifest for all 40 runs (UniProt 2026_04; 3 runs excluded by rule).
 - Run classes: top-down (new endpoint S8), stopped, missing, organism not verified.
 - P3 is a paired non-inferiority against the reference arm with a one-sided bound; power for P1-P3 and the checks
   from the development data (`power.py`, `power.txt`); a criterion per check and kind.

@@ -384,18 +384,30 @@ def cached(dst, paths, write):
     return path
 
 
+def open_fasta(p):
+    """a FASTA for reading as text, gzip-compressed (.gz) or plain"""
+    return gzip.open(p, "rt") if str(p).endswith(".gz") else open(p)
+
+
+def copy_fasta(out, p, label=None):
+    """append FASTA p (plain or .gz) to the open text file out, decompressed, headers prefixed DBCHECK_PREFIX + label
+    + "|" when a label is given, ending with a newline (a file without a final newline would merge its last line with
+    the next header)"""
+    last = "\n"
+    with open_fasta(p) as fh:
+        for line in fh:
+            out.write(f">{DBCHECK_PREFIX}{label}|{line[1:]}" if label is not None and line.startswith(">") else line)
+            last = line
+    if not last.endswith("\n"):
+        out.write("\n")
+
+
 def write_labelled(dst, parts):
     """Concatenate (label, FASTA) parts into dst, every header prefixed DBCHECK_PREFIX + label + "|", every part
     ending with a newline (a FASTA without a final newline would merge its last line with the next header)"""
     with open(dst, "w") as out:
         for label, p in parts:
-            last = "\n"
-            with (gzip.open(p, "rt") if p.endswith(".gz") else open(p)) as fh:
-                for line in fh:
-                    out.write(f">{DBCHECK_PREFIX}{label}|{line[1:]}" if line.startswith(">") else line)
-                    last = line
-            if not last.endswith("\n"):
-                out.write("\n")
+            copy_fasta(out, p, label)
 
 
 def dbcheck_panel(fastag, contaminants, cache):

@@ -24,6 +24,7 @@ import subprocess
 import tempfile
 
 from .evidence import Evidence
+from .external import copy_fasta, open_fasta
 from .spectra import write_subset_mzml
 
 
@@ -170,16 +171,21 @@ def organism_with_prose(prose, spectra, candidates, fixed, variable, prec, frag,
     ev = []
     with tempfile.TemporaryDirectory(prefix="prose_auto_org_") as tmp:
         def write_db(names, path):
-            with open(path, "w") as fh:
+            with open(path, "w") as fh:   # plain or .gz candidates, each ending with a newline (0.1.12)
                 for name in list(names) + (["CRAP"] if contaminants else []):
-                    for line in open(contaminants if name == "CRAP" else candidates[name]):
-                        fh.write(f">{name}|{line[1:]}" if line.startswith(">") else line)
+                    last = "\n"
+                    with open_fasta(contaminants if name == "CRAP" else candidates[name]) as src:
+                        for line in src:
+                            fh.write(f">{name}|{line[1:]}" if line.startswith(">") else line)
+                            last = line
+                    if not last.endswith("\n"):
+                        fh.write("\n")
             return path
 
         db = write_db({} if panel_db else candidates, os.path.join(tmp, "candidates.fasta"))
         if panel_db:  # the panel's accessions already carry the species prefix; contaminants appended
             with open(db, "a") as fh:
-                fh.write(open(panel_db).read())
+                copy_fasta(fh, panel_db)
         tryptic = [("as decided", [], None)]
         if not any(m in variable for m in PHOSPHO):
             tryptic.append(("+ variable phospho", PHOSPHO, None))

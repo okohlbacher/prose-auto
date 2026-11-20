@@ -2,6 +2,7 @@
 
 import argparse
 import gzip
+import io
 import json
 import os
 
@@ -222,3 +223,21 @@ def test_db_check_passes_same_label(tmp_path, monkeypatch):
     cli._db_check(c, [])
     assert used["given"] == used["panel"] == []
     assert cli._label_mods(c).k == 0.0     # nor does the QC kit set the mini-search's fixed label
+
+
+# third review: a union of compressed and plain proteomes, from a .gz organism panel and a plain --fasta
+def test_union_decompresses_gz_sources(tmp_path, monkeypatch):
+    panel = tmp_path / "panel"
+    panel.mkdir()
+    with gzip.open(panel / "Homo_sapiens.fasta.gz", "wt") as fh:
+        fh.write(">sp|H1|HUMAN\nHUMANSEQK")            # compressed, no final newline
+    plain = tmp_path / "my_db.fasta"
+    plain.write_text(">P1\nPLAINSEQK\n")
+    monkeypatch.setattr(cli, "_panel", lambda a, with_fasta=False: {"Homo_sapiens": str(panel / "Homo_sapiens.fasta.gz")})
+    a = argparse.Namespace(organism=["Homo sapiens"], fastas=[str(plain)], panel=None, out=str(tmp_path / "o"))
+    c = cli._Run(a, lambda *x: None, "x", "x.mzML")
+    cli._organism_given(c)
+    assert open(c.union).read() == ">sp|H1|HUMAN\nHUMANSEQK\n>P1\nPLAINSEQK\n"
+    out = io.StringIO()
+    ext.copy_fasta(out, str(panel / "Homo_sapiens.fasta.gz"), "human")
+    assert out.getvalue() == ">dbcheck_human|sp|H1|HUMAN\nHUMANSEQK\n"

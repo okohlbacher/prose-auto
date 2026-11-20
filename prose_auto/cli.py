@@ -848,13 +848,13 @@ def _unique_names(paths, taken=()):
 
 
 def _union_fasta(paths, extra):
-    """The concatenated FASTA of several proteomes, <extra>/union/A+B.<fingerprint>.fasta (ext.cached)."""
+    """The concatenated FASTA of several proteomes, <extra>/union/A+B.<fingerprint>.fasta (ext.cached), always plain
+    text: a .gz source (a compressed panel proteome) is decompressed (0.1.12; before, its bytes were copied into the
+    uncompressed union)."""
     def write(part):
-        with open(part, "wb") as out:
+        with open(part, "w") as out:
             for p in paths.values():
-                with open(p, "rb") as fh:
-                    b = fh.read()
-                out.write(b if b.endswith(b"\n") else b + b"\n")
+                ext.copy_fasta(out, p)
     return ext.cached(os.path.join(extra, "union", "+".join(paths) + ".fasta"), list(paths.values()), write)
 
 
