@@ -1,0 +1,284 @@
+stratum	accession	file
+protease:Glu-C	PXD038231	20220726_bkc_23-0075_Goldberg_Hasan_RAP.raw
+protease:Glu-C	PXD001281	20130528_09_qEx_TT_T90_IP_I_II.raw
+protease:Glu-C	PXD015549	Griese_20181031_R2lox_S07_r3.raw
+protease:Glu-C	PXD071146	-
+protease:Glu-C	PXD068367	aSN_WT_gluC_GD5_1_14100.d.zip
+protease:Glu-C	PXD070124	h020598_DLB_BSA5_2p0_794_version_inactive_r2_E03_inj01.raw
+protease:Glu-C	PXD001217	AZ_PABJ_120610.RAW
+protease:Glu-C	PXD084992	Pyk2-Src_phosph_60m-1.raw
+protease:Glu-C	PXD013363	CCD-S1-GluCKGG-FT-C_180414173051.raw
+protease:Glu-C	PXD002525	L1rep-2.raw
+protease:Glu-C	PXD018333	H3982FD.raw
+protease:Asp-N	PXD047019	20220521_EXPL7_LC6_IAH_collab_AP_SUMO_RKO_01_F2.raw
+protease:Asp-N	PXD079895	16217_tTau-IP_Exon4a_20260425060215.raw
+protease:Asp-N	PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw
+protease:Asp-N	PXD079838	tTau_27_UL-17607-10_MC.raw
+protease:Asp-N	PXD031548	20211214_EXPL7_LC6_IAH_collab_JC_SUMO_8D_03_F5x.raw
+protease:Asp-N	PXD068489	-
+protease:Asp-N	PXD024144	20200211_QE6_LC6_IAH_collab_PC_SUMO_AdD0_04_F6.raw
+protease:Asp-N	PXD079878	pTau217_29_7557_MU.raw
+protease:Asp-N	PXD010659	Diaz_INF2-4.raw
+protease:Asp-N	PXD061276	20200804_EXPL7_LC12_IAH_collab_VM-AD_SUMO_P_02_F5.raw
+protease:Asp-N	PXD053254	-
+protease:Asp-N	PXD024574	FUS04873_PF_2.raw
+protease:chymotrypsin	PXD013038	FCarrieri_161006_05.raw
+protease:chymotrypsin	PXD025430	HBe_3CA_3.raw
+protease:chymotrypsin	PXD010782	HF331_MSQ1275b_20180309_SAndrews_MITF_GSK_2.raw
+protease:chymotrypsin	PXD046394	P1411-3-GFP_TM55B_NA.raw
+protease:chymotrypsin	PXD059719	-
+protease:chymotrypsin	PXD049110	ETD-1208-S-FL-Chymo-PNG-Neu-VVA.raw
+protease:chymotrypsin	PXD072059	-
+protease:chymotrypsin	PXD050366	20221024_F1_UM4_Peng0013_SA_EXT00_F_S2_Chymo_01.raw
+protease:chymotrypsin	PXD043731	MMD6494_chymo_F2b.raw
+protease:chymotrypsin	PXD019016	Upperband_API.raw
+protease:chymotrypsin	PXD040279	-
+protease:chymotrypsin	PXD023659	V200409_06.raw
+protease:chymotrypsin	PXD036345	FP060222_11.raw
+protease:Lys-C	PXD075809	PRC-7113DDA_UPRC_3702_H11119_2p_IonOpt18_25cm_Breusegem-shotgun-DDA-2.raw
+protease:Lys-C	PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip
+protease:Lys-C	PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw
+protease:Lys-C	PXD065808	PSD_1MC2_020820.raw
+protease:Lys-C	PXD071719	20250815_SB_B3-Hb-GAPDH_Xlinks_6Plex_TMT.raw
+protease:Lys-C	PXD071955	20250118_BoDo_ZH03_ZH_5_107_6_SiHa_pup2_1.raw
+protease:Lys-C	PXD067823	ACE_0999_4000ng_RZ05.raw
+protease:Lys-C	PXD028507	DCT-S2-GluC-KGG-M.raw
+protease:Lys-C	PXD001648	20121219_BoSo_Ecoli_SuperSilac_EtOH_Rep2_IG_HCD_LysC_prestress_02.raw
+protease:Lys-C	PXD003468	20140802_Maja_Ecoli_LysC_OffGel_A_WT_10hrsLys4_0hrsLys0_12.raw
+label:TMTpro SPS-MS3	PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw
+label:TMTpro SPS-MS3	PXD053061	Adipocytes_Phospho_HpHF11.raw
+label:TMTpro SPS-MS3	PXD062886	PL21-PB-Frankel_11.raw
+label:TMTpro SPS-MS3	PXD036641	JM04824.raw
+label:TMTpro SPS-MS3	PXD056517	PanC_020624_TMT_2_SF05.raw
+label:TMTpro SPS-MS3	PXD063776	220930_37817_AS_L3.raw
+label:TMTpro	PXD054545	a27937.raw
+label:TMTpro	PXD060120	20220827_HF2_01_PK_1_TMT12.raw
+label:TMTpro	PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw
+label:TMTpro	PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw
+label:TMTpro	PXD055647	ORC_03047.raw
+label:TMTpro	PXD074581	ABI1quantIP.raw
+label:TMTpro	PXD062540	ORC_02102.raw
+label:TMTpro	PXD054989	20240418_Ec_12_MS3_F12.raw
+label:TMT	PXD071434	OxidoResist_LCTA2940_MDAMB231_Frac09.raw
+label:TMT	PXD068869	xb07892.raw
+label:TMT	PXD066618	OH_20210818_TMTA_pST4.raw
+label:TMT	PXD066626	iMEF_Eclipse_2024Aug29_P24-058_Maher_F20.raw
+label:TMT	PXD071550	20200309_ZYP_melotonin_ITDR_52_F2.raw
+label:TMT	PXD066652	20240823_JM_Benerji_DIA_15.raw
+label:TMT	PXD080876	CAC20220225lut_Ag_lib4_2.raw
+label:TMT	PXD072739	SLK-TMT-CvsKD-f36.raw
+label:TMT	PXD079152	OR3_2025_07_19_JS25_005_flag_R.raw
+label:TMT	PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw
+label:iTRAQ	PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw
+label:iTRAQ	PXD037185	-
+label:iTRAQ	PXD027549	-
+label:iTRAQ	PXD059190	FR3_2_IJ.raw
+label:iTRAQ	PXD034075	-
+label:iTRAQ	PXD015930	-
+label:iTRAQ	PXD026260	-
+label:iTRAQ	PXD022064	F8032TQ_12.raw
+label:iTRAQ	PXD024916	Orbi05251XM_HJC_T2_5.raw
+label:iTRAQ	PXD033938	3.raw
+label:iTRAQ	PXD054699	2019_HC_E3_F1.raw
+label:iTRAQ	PXD055514	iTRAQ6_08.raw
+label:iTRAQ	PXD017197	-
+label:iTRAQ	PXD019413	Pig3-4.wiff
+label:SILAC	PXD035420	20220502_SFB1_PBE_IM_HCT116_SILAC_eto_PPM1Di_TiO2_R3_5.raw
+label:SILAC	PXD070104	-
+label:SILAC	PXD077432	20250423_4a_RL_i03.raw
+label:SILAC	PXD047413	20220724_MC_LLQE_BMDM_LPS_rep2.raw
+label:SILAC	PXD036348	NOZ_PvsGemR_BR1.raw
+label:SILAC	PXD073367	20250430_HF_LC2_BSP_20024_01_500ng_45min_MIX02_01.raw
+label:SILAC	PXD047664	P22_081_Singapur_Smim26_SampleIV_11.raw
+label:SILAC	PXD032030	Q20210823-05.raw
+label:SILAC	PXD058147	jg210713_03.raw
+enrichment:glyco	PXD034397	Mesothelin_Ascites_Sample829_Fr3_TrpDig_1a.raw
+enrichment:glyco	PXD016318	-
+enrichment:glyco	PXD023719	GlycoPeptide_50cmC18_TGHPT_NASH92_PRM.raw
+enrichment:glyco	PXD048188	21-284_LJL0628_sample-HIBE-PG-2.raw
+enrichment:glyco	PXD002707	QE_130716_152_Plasma_0.8MNaCl.raw
+enrichment:glyco	PXD014390	3_Tnglycopep_C1GalT1_UDPGal_OpeRATOR.raw
+enrichment:glyco	PXD024770	T6.raw
+enrichment:phospho	PXD041899	061120-AdventHealth-serum-EV-27-phos.raw
+enrichment:phospho	PXD059726	XB07482DPST_D06_1.raw
+enrichment:phospho	PXD042616	10R-b.raw
+enrichment:phospho	PXD040159	TMT_Camk2dKO_T01.raw
+enrichment:phospho	PXD053428	240404_HN_YiYa_p_04.raw
+enrichment:phospho	PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw
+enrichment:phospho	PXD051981	220419_36811_KA_L.raw
+enrichment:phospho	PXD079682	Shawn_TiO2_18.raw
+instrument:Astral	PXD080350	Astral_MSP2501323_GV32_N1.raw
+instrument:Astral	PXD064180	091624_OptmzDIA_15m_0p01mNBA_Hela200ng_1.raw
+instrument:Astral	PXD075275	-
+instrument:Astral	PXD064583	-
+instrument:Astral	PXD075362	Snitrosylation_HFpEF4.raw
+instrument:Astral	PXD066659	OLEP07_200ng_CPR_HEK_180SPD_33_rep1_Frac18.raw
+instrument:Astral	PXD065051	-
+instrument:Astral	PXD064322	-
+instrument:Astral	PXD061071	-
+instrument:Astral	PXD058606	AD_rep2.raw
+instrument:Astral	PXD061848	2023107_Demo_Beatson_TMT_11SPD_F7.raw
+instrument:Astral	PXD067585	-
+instrument:Astral	PXD055853	CRG_Barcelona_500ng_CSF_MK008_05_60SPD_01.raw
+instrument:Astral	PXD067710	-
+instrument:Astral	PXD063931	20250228_EVO5_AST5_DIA_IO5cm_80SPD_ML_Collab_Phospho_islet_CPH_Donor3_GLP_1_100nM_4.raw
+instrument:timsTOF DDA	PXD069495	-
+instrument:timsTOF DDA	PXD071057	-
+instrument:timsTOF DDA	PXD077933	HFX186_IPP285_AN_HLA-E_250ug3D12_JK_NoCrossLink_5kDaFilter_2.raw
+instrument:timsTOF DDA	PXD079686	0628_2_1_Slot2-47_1_11489.d.zip
+instrument:timsTOF DDA	PXD082607	20240220_SCP_EE_2_S_Slot1-41_1_6620.d.zip
+instrument:timsTOF DDA	PXD075355	JesusCantoral_sol791-34-25_13_CA4_B05.10_DDA-PASEF_SG_0.8-1.5_Aurora25cm_30min_Slot2-13_1_9-12-2025_8334.d.zip
+instrument:timsTOF DDA	PXD076026	LinB-P208D_FD_1_7-5-2025_19-25-36.d.zip
+instrument:timsTOF DDA	PXD074707	LN_20241212_T7capping_cond02_rep5_run45_S1-C5_1_5569.d.zip
+instrument:timsTOF DDA	PXD069035	MJT_5_3474.d.zip
+instrument:timsTOF DDA	PXD074155	IMXP71_S4_IMXP01279_Infliximab_1M_HLA2_ElA_S4-A4_1_7574.d.zip
+instrument:timsTOF DIA	PXD067114	-
+instrument:timsTOF DIA	PXD058906	-
+instrument:timsTOF DIA	PXD052693	-
+instrument:timsTOF DIA	PXD041421	N20211212chenc_WOSP00101_DDA_60min_A549_rep1_1_Slot2-28_1_9853.d.zip
+instrument:timsTOF DIA	PXD047396	-
+instrument:timsTOF DIA	PXD069605	timsTOF2_9241_11-28-2024_Slot1-49_GS_AB_global_ID3KD_HDACi_R2.d.zip
+instrument:timsTOF DIA	PXD051453	20231212_TIMS5_PRIEVO3_PRI_X1345_P125_R1053_21min_DIA_S6_S3-A6_1_8696.d.zip
+instrument:timsTOF DIA	PXD054266	A200318_bcc_ct_heart_aur2_100min_HOCM534_243.d.zip
+instrument:timsTOF DIA	PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip
+instrument:timsTOF DIA	PXD064921	250527_SG_EarlyTimeInh_rerun_SECR_MIX_4_R2_S1-A4_1_14757.d.ZIP
+instrument:timsTOF DIA	PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar
+instrument:timsTOF DIA	PXD073186	-
+instrument:timsTOF DIA	PXD057946	20230531_TISTOF_EV_Droui001_EXT00_135_S100_S3-C3_1_969.d.zip
+instrument:TOF	PXD040819	-
+instrument:TOF	PXD052794	-
+instrument:TOF	PXD033952	-
+instrument:TOF	PXD042770	-
+instrument:TOF	PXD040122	-
+instrument:TOF	PXD056184	-
+instrument:TOF	PXD052106	-
+instrument:TOF	PXD051223	-
+instrument:TOF	PXD039037	-
+instrument:TOF	PXD037243	-
+instrument:TOF	PXD050276	-
+instrument:TOF	PXD034996	-
+instrument:TOF	PXD034108	-
+instrument:TOF	PXD030936	-
+instrument:TOF	PXD043773	-
+instrument:TOF	PXD046977	-
+instrument:TOF	PXD058096	210830_DentalCells_DPSC_DC-1-1-C_SET11.wiff
+instrument:TOF	PXD040292	-
+instrument:TOF	PXD065639	-
+instrument:TOF	PXD057120	-
+instrument:TOF	PXD042166	-
+instrument:TOF	PXD062512	-
+instrument:TOF	PXD038442	-
+instrument:TOF	PXD040165	-
+instrument:TOF	PXD066834	-
+instrument:TOF	PXD042891	-
+instrument:TOF	PXD062059	-
+instrument:TOF	PXD032785	-
+instrument:TOF	PXD037551	-
+instrument:TOF	PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw
+instrument:TOF	PXD032797	-
+instrument:TOF	PXD046188	-
+instrument:TOF	PXD052651	-
+instrument:TOF	PXD047310	20190926_06.wiff
+instrument:TOF	PXD041218	-
+instrument:TOF	PXD046499	-
+instrument:TOF	PXD051236	NonBart4_IDA3.wiff
+instrument:TOF	PXD077562	NB_MC_260803-Sample2_13684.d.zip
+instrument:TOF	PXD037795	-
+instrument:TOF	PXD066161	-
+instrument:TOF	PXD041994	-
+instrument:TOF	PXD037400	-
+instrument:TOF	PXD062127	-
+instrument:TOF	PXD043520	-
+instrument:TOF	PXD051873	-
+instrument:TOF	PXD057116	-
+instrument:TOF	PXD062955	-
+instrument:TOF	PXD036021	-
+instrument:TOF	PXD051775	-
+instrument:TOF	PXD037957	-
+instrument:TOF	PXD040275	-
+instrument:TOF	PXD051063	-
+instrument:TOF	PXD056097	-
+instrument:TOF	PXD036795	-
+instrument:TOF	PXD065951	-
+instrument:TOF	PXD074184	24012_E1_PRM_NS1.raw
+instrument:ion trap MS2	PXD057696	807-10_Slot2-26_1_3794.d.zip
+instrument:ion trap MS2	PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw
+instrument:ion trap MS2	PXD056381	GST-TbCSB.raw
+instrument:ion trap MS2	PXD064257	HC2_Orbitrap.raw
+instrument:ion trap MS2	PXD065058	S11017.raw
+instrument:ion trap MS2	PXD058522	zebra31_24092024.raw
+instrument:ion trap MS2	PXD066711	CARDIO_MIXPEP_PC_1_6ND_5LUGLIO24.raw
+instrument:ion trap MS2	PXD060807	CUSA_TD_ND_Core_290523_run1.raw
+acquisition:Orbitrap DIA	PXD085645	EC-DIA120-26-117-004.raw
+acquisition:Orbitrap DIA	PXD087665	20250509_7_N159_AD_1_DIA_130m2uL.raw
+acquisition:Orbitrap DIA	PXD086419	250915_Liu_20231_130min_2ul_DIA.raw
+acquisition:Orbitrap DIA	PXD029531	eJD904_re.raw
+acquisition:Orbitrap DIA	PXD084030	Gk16CL_ZA1_7.raw
+acquisition:Orbitrap DIA	PXD082651	XB01822B1DAR1_M18_LNs2.raw
+acquisition:Orbitrap DIA	PXD082602	D4.raw
+acquisition:Orbitrap DIA	PXD086188	20240304_D3000_ACCLAIM_DIA_SMHHMS02_01_RTSTD_R120R015_NCE27_50ms_090min_02.raw
+acquisition:Orbitrap DIA	PXD085201	20230331_E2_Neo_ColID_AUR01_25cm_FW_Sergio_CSF_V30.raw
+acquisition:Orbitrap DIA	PXD082746	2506_PISABR5_DIA_Ctrl_2.raw
+organism:plant	PXD044303	woMSBSthylakoidsnative_L00845.RAW
+organism:plant	PXD045331	wo_nucs_Base6_L03618.RAW
+organism:plant	PXD028672	20200916_112_S223624_Chol_ToMV_8_4_Day8-Chol-TomV.raw
+organism:plant	PXD037185	-
+organism:plant	PXD012684	HAU1.raw
+organism:plant	PXD001286	L16538_Silke_110713_MetoxCof_TP1_18.RAW
+organism:plant	PXD073734	E20240804_06.raw
+organism:fungus	PXD034922	1807001-Q4_NAT3-protA.raw
+organism:fungus	PXD020369	20190712_Snow_phos_3f.raw
+organism:fungus	PXD052597	HFX_19152_EL_50-1_DDA_191223.raw
+organism:fungus	PXD026806	MP_MDR09062020_S03_DDA02.raw
+organism:fungus	PXD000955	Orbi3_EvKe_SA_IP_FINAL_pHis3_4_02.RAW
+organism:bacterium	PXD079150	20260125_EB_Henrot_SN31_01_Slot1-15_1_9755.d.zip
+organism:bacterium	PXD075197	SirM.raw
+organism:bacterium	PXD075029	PIA25_000464_eighth_MIC_L1_2.raw
+organism:bacterium	PXD084660	Seq94432_HFX.raw
+organism:bacterium	PXD078556	Sp451_GpsB_2_1ug_01.raw
+organism:bacterium	PXD076108	mnmA_2_Slot1-14_1_3379.d.zip
+organism:other vertebrate	PXD023933	20190607_zebrafish_WT_MT_500ng_90min_TMT_HCD_F6.raw
+organism:other vertebrate	PXD005129	280_124F1.RAW
+organism:other vertebrate	PXD005137	280_bobe_B17.RAW
+organism:other vertebrate	PXD038229	-
+organism:other vertebrate	PXD081626	251216_Preethi_1_4_Slot2-4_1_12177.d.zip
+organism:other vertebrate	PXD043679	IA2836_kallemw_04_WWK_C010_72h_D.raw
+organism:invertebrate	PXD043236	220608_QE1_ulianaf_MJ_02_06.raw
+organism:invertebrate	PXD036512	20201110_LUMOS1_LC4_SCL_SA_collab_S2R_DMSO_R1_F3.raw
+organism:invertebrate	PXD055043	GFP-FAC-3.raw
+organism:invertebrate	PXD043234	220103_QE1_ulianaf_MJ_02_11.raw
+organism:mouse or rat	PXD018425	tc_o292_F6A_f08265.raw
+organism:mouse or rat	PXD025394	20190517_OR15_AG4_Samma001_SA_MousePancreas_Proteome_DTT_10_50pc.raw
+organism:mouse or rat	PXD065944	AGCB_KN_2503_WT_216_Slot1-45_1_16789.d.zip
+organism:mouse or rat	PXD022956	AgedMuscleAL4Lum_19aug2307.raw
+organism:mouse or rat	PXD059773	-
+organism:mouse or rat	PXD040810	-
+organism:mouse or rat	PXD003177	2014-12-18_3052_500ng_c1-9FT26_MS2.raw
+organism:mouse or rat	PXD050840	P10_DIA_R4_20230107.raw
+baseline:Orbitrap DDA label-free human	PXD084753	210730_HFX_Prof_KSW_251_E01.raw
+baseline:Orbitrap DDA label-free human	PXD082665	Control_02.raw
+baseline:Orbitrap DDA label-free human	PXD086975	Exploris04975-XJD-MJ-20240712-GST-IRG1-GLU.raw
+baseline:Orbitrap DDA label-free human	PXD087517	12_KL_MVIC_A722_sph.raw
+baseline:Orbitrap DDA label-free human	PXD087065	12_AL_RV1.raw
+baseline:Orbitrap DDA label-free human	PXD083450	HFX23-3481_Sokolov_S4_FT.raw
+baseline:Orbitrap DDA label-free human	PXD082542	20250417_Khavari_IFerguson_15015_3_M3.raw
+baseline:Orbitrap DDA label-free human	PXD082879	Cat_4_long2.raw
+baseline:Orbitrap DDA label-free human	PXD087375	240801_KC_2418BH_02_S01.raw
+baseline:Orbitrap DDA label-free human	PXD083638	10T13.raw
+baseline:Orbitrap DDA label-free human	PXD083232	S290443_pUb_T14_3.raw
+baseline:Orbitrap DDA label-free human	PXD085135	oecf3-SP0612-30.raw
+baseline:Orbitrap DDA label-free human	PXD083670	20220222_Fusion_Pinnock_HA48_A4I_6.raw
+mixed species	PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw
+mixed species	PXD038377	AAS_P2009_155.raw
+mixed species	PXD036786	-
+mixed species	PXD077338	-
+mixed species	PXD063462	-
+mixed species	PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw
+mixed species	PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw
+mixed species	PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw
+mixed species	PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw
+mixed species	PXD001240	-
+mixed species	PXD046292	C2.raw
+mixed species	PXD063632	Haonan_20220809_DIA_MIX_1_1.raw
+mixed species	PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw
+mixed species	PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar

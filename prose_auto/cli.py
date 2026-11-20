@@ -1,7 +1,9 @@
 """prose-auto: propose ProSE search settings from the data itself.
 
     prose-auto panel proteomes/        (download the model-organism panel once)
-    prose-auto analyze run.mzML [--panel proteomes/ | --fasta db.fasta]
+    prose-auto analyze run.mzML --organism "Homo sapiens" | --fasta db.fasta [--panel proteomes/]
+                                [--infer-organism] [--check-organism warn|strict|off]
+    prose-auto check run.mzML run.idXML --fasta db.fasta --fastag FASTag [--report run.auto.json]
                                 [--description "HeLa, TMTpro, IAA" | --description @notes.txt]
                                 [--methods methods.txt] [--accession PXD012345]
                                 [--llm none|claude|codex|cli:<cmd>|openai:<model>] [--jev]
@@ -270,6 +272,8 @@ class _Run:
     fastag_sp: object = None  # the FASTag species call (list, or the exception it raised): it runs once
     gap_ev: list = field(default_factory=list)   # mass-gap evidence, redone when tier 2 changes the database
     union: str = None         # the search database of a mixture union (_union) or of fast mode (_organism_given)
+    qc: dict = field(default_factory=dict)        # FASTag -qc_out summary (default mode)
+    dbcheck_given: tuple = None                   # (confident spectra, placed on the given database), gap stage
 
     @property
     def ftol(self):           # FASTag fragment tolerance
@@ -619,12 +623,40 @@ def _label_mods(c):
     return mods
 
 
+def _label_fixed(c):
+    """The isobaric label the spectra show as FASTag fixed modifications for the gap stage (0.1.11): without them
+    the label mass is part of every gap and FASTag's -alkylation_out finds no Cys form on TMT runs"""
+    lab = _first([e for e in c.ev if e.parameter == "label" and e.source == "data"
+                  and e.value not in ("no isobaric label", "no SILAC", "unknown")], "label")
+    return pp.LABEL_MODS.get(str(lab.value), []) if lab else []
+
+
+CYS_STATED_MIN = 0.4   # a text statement of the Cys alkylation counts for the fallback from this confidence
+
+
+def _cys_fallback(c):
+    """0.1.11: the reason to run the mini-search Cys competition, or None. It runs when FASTag's call
+    (-alkylation_out, else the database-free -alkylation_tags_out; both when both call) and the texts disagree, or
+    when both abstain. Texts: the user's description, the records and the methods; it is asked again after Jev,
+    whose answer counts as a text."""
+    calls = {e.value for e in c.ev if e.parameter == "cys_alkylation" and e.method.startswith("FASTag alkylation")}
+    stated = {e.value for e in c.ev if e.parameter == "cys_alkylation" and e.source in STATED_SOURCES
+              and e.confidence >= CYS_STATED_MIN and e.value not in ("unknown",)}
+    if len(calls) > 1:
+        return "the two FASTag Cys calls disagree (" + ", ".join(sorted(calls)) + ")"
+    if not calls and not stated:
+        return "FASTag and the texts make no Cys call"
+    if calls and stated and not calls & stated:
+        return f"FASTag calls {next(iter(calls))}, the texts say " + ", ".join(sorted(map(str, stated)))
+    return None
+
+
 def _tims_without_tag_call(c):
     """timsTOF whose tag ends give no protease call (fewer than TAG_MIN): the protease competition decides there"""
     return "PASEF" in str(c.acq) and not any(e.method == "FASTag termini (timsTOF)" for e in c.ev)
 
 
-def _mini_search(c, panel, org_fixed):
+def _mini_search(c, panel, org_fixed, cys=True):
     """Mini-search hypotheses (DDA only: DIA spectra have no single precursor): the organism competition (full mode),
     the Cys alkylation competition, and on timsTOF without a tag-rule call the protease competition. 0.1.10: the mass
     errors come from the FASTag placements (hypotheses.placement_accuracy). The Cys competition stays: without it the
@@ -645,7 +677,8 @@ def _mini_search(c, panel, org_fixed):
         if not org_fixed:
             c.ev += oe
         if h.best_db:
-            c.ev += h.alkylation()
+            if cys:
+                c.ev += h.alkylation()
             if _tims_without_tag_call(c):   # 2 of 13 tryptic timsTOF validation runs
                 c.ev += h.enzyme()
     return h
@@ -683,13 +716,54 @@ def _fastag_gaps(c, db):
         log(f"  FASTag: mass-gap histogram against {os.path.basename(db)} without fixed modifications")
         # Cys alkylation, and the same gaps explained as modification combinations (variable mods, enrichment)
         placed = []
+        # default mode (0.1.11): the label as fixed modification, FASTag's Cys calls, its run QC and the placement
+        # counts of the database check; full mode keeps the 0.1.10 pass
+        extras = getattr(a, "fast", False)
+        reports = {} if extras else None
         c.gap_ev = ext.fastag_alkylation(a.fastag, c.spectra_file, db, ftol, funit, threads=a.threads, log=log,
-                                         subsample=_fastag_fraction(c), placements=placed)
+                                         subsample=_fastag_fraction(c), placements=placed, reports=reports,
+                                         fixed=_label_fixed(c) if extras else ())
         if placed:
             c.gap_ev += placement_accuracy(c.run, placed, _label_mods(c), c.hr1, c.hr2)
+        if extras:
+            c.gap_ev += ext.alkylation_evidence(reports.get("alkylation"), reports.get("alkylation_tags"))
+            qev, c.qc = ext.qc_evidence(reports.get("qc"))
+            c.gap_ev += qev
+            c.dbcheck_given = (reports.get("confident", set()), reports.get("placed", set()))
         c.ev += c.gap_ev
     except Exception as e:
         log(f"  FASTag failed: {e}")
+
+
+PANEL_SPECIES = {"human": "Homo sapiens", "mouse": "Mus musculus", "yeast": "Saccharomyces cerevisiae",
+                 "ecoli": "Escherichia coli"}
+
+
+def _db_check(c, organisms):
+    """0.1.11 database check: the share of the spectra with a confident FASTag tag (E <= 1e-4) that place exactly
+    on the given database, against a small fixed panel (FASTag's shipped human, mouse, yeast and E. coli proteomes
+    and the --contaminants), placed in one more FASTag pass on the same spectra (external.database_check). Returns
+    the report entry or None (no FASTag, --check-organism off)."""
+    a, log = c.a, c.log
+    if not a.fastag or a.check_organism == "off" or c.dbcheck_given is None:
+        return None
+    panel, names = ext.dbcheck_panel(a.fastag, a.contaminants, os.path.join(a.panel or a.out, "extra"))
+    if not panel:
+        log("  database check: FASTag's shipped proteomes (share/FASTag/alkylation) not found, skipped")
+        return None
+    with _timed(c, "dbcheck"):
+        log(f"  database check: placing the tags on {', '.join(names)}")
+        try:
+            _, members = ext.fastag_dbcheck(a.fastag, c.spectra_file, panel, *c.ftol, threads=a.threads, log=log,
+                                            subsample=_fastag_fraction(c), fixed=_label_fixed(c))
+        except Exception as e:
+            log(f"  database check failed: {e}")
+            return None
+    given = {_species_key(o) for o in organisms}
+    res = ext.database_check(*c.dbcheck_given, members,
+                             organisms={m for m, sp in PANEL_SPECIES.items() if _species_key(sp) in given})
+    log(f"  database check: {res['status']}" + "".join(f"; {r}" for r in res.get("reasons", [])))
+    return res
 
 
 def _tier2(c, h, panel):
@@ -771,20 +845,21 @@ def _organism_given(c):
             got = (hit, panel[hit]) if hit else (fetch_proteome(o, extra, c.log)
                                                  or fetch_proteome(o, extra, c.log, taxid=_taxon_id(o, c.log)))
             if not got:   # never search without the given organism, nor infer it instead
-                raise SystemExit(f"fast mode: no proteome for {o} (not in --panel, none from UniProt within 3 parent "
+                raise SystemExit(f"no proteome for {o} (not in --panel, none from UniProt within 3 parent "
                                  "taxa, or the download failed); give its FASTA with --fasta")
             if _species_key(got[0]) != _species_key(o):
                 relatives[o] = got[0]
                 c.log(f"  database: {got[0]} proteome; no reference proteome for {o}")
             dbs[got[0]] = got[1]
             names.append(o.replace(" ", "_"))
-        if a.fasta:
-            dbs[_fasta_name(a)] = a.fasta
-            names.append(_fasta_name(a))
+        for f in a.fastas:
+            n = os.path.splitext(os.path.basename(f))[0]
+            dbs[n] = f
+            names.append(n)
         c.ev = [e for e in c.ev if e.parameter != "organism"]
-        c.ev.append(Evidence("organism", names[0], 1.0, "user", "fast mode", "given (fast mode): " + ", ".join(names)
+        c.ev.append(Evidence("organism", names[0], 1.0, "user", "given", "given: " + ", ".join(names)
                              + "".join(f"; database {v} for {k}" for k, v in relatives.items())))
-        c.log(f"  organism given (fast mode): {', '.join(names)}")
+        c.log(f"  organism given: {', '.join(names)}")
         c.union = _union_fasta(dbs, extra) if len(dbs) > 1 else next(iter(dbs.values()))
     return names, {"+".join(dbs): c.union}, {"organisms": names, "fasta": list(dbs.values()),
                                              "union": c.union if len(dbs) > 1 else None, "own_spectra": {},
@@ -865,8 +940,41 @@ def _confirm_with_prose(c, decisions, prose, panel, h):
     return decisions, prose
 
 
+def _fasta_list(a):
+    """--fasta is repeatable (0.1.11): a.fastas keeps the list; a.fasta becomes the one database the 0.1.10 code
+    paths use (several are concatenated once into <panel or out>/extra/union/)"""
+    fl = a.fasta if isinstance(a.fasta, list) else [a.fasta] if a.fasta else []
+    a.fastas = fl
+    if len(fl) > 1:
+        names = {os.path.splitext(os.path.basename(f))[0]: f for f in fl}
+        a.fasta = _union_fasta(names, os.path.join(a.panel or a.out, "extra"))
+    else:
+        a.fasta = fl[0] if fl else None
+
+
+def _strict_fallback(a, log, dbcheck):
+    """--check-organism strict: the database check warned, so the organism is inferred as in --infer-organism (the
+    0.1.10 full mode, organism from the data with the given organisms and FASTA as candidates)"""
+    import copy
+    log("  --check-organism strict: the database check warned; inferring the organism (--infer-organism)")
+    b = copy.copy(a)
+    b.fast, b.infer_organism, b.fasta = False, True, a.fastas or None
+    b.organism_source = "data" if a.panel else a.organism_source
+    rep = analyze(b, log)
+    rep["database_check"] = {**dbcheck, "fallback": "inferred (--check-organism strict)"}
+    return rep
+
+
+ANALYZE_DEFAULTS = {"check_organism": "warn", "mini_search_cys": "fallback", "infer_organism": False,
+                    "contaminants": None}
+
+
 def analyze(a, log=print):
     t0 = time.time()
+    for k, v in ANALYZE_DEFAULTS.items():   # callers that build the namespace themselves (tests, GUI)
+        if not hasattr(a, k):
+            setattr(a, k, v)
+    _fasta_list(a)
     if not a.diaspextract:   # DIA pseudo-DDA spectra automatically when DIAspeXtract is installed
         a.diaspextract = (os.environ.get("PROSE_AUTO_DIASPEXTRACT") or shutil.which("DIAspeXtract")
                           or shutil.which("diaspextract"))
@@ -920,15 +1028,36 @@ def analyze(a, log=print):
     with _timed(c, "text"):
         study, backend, llm_rejected, llm_text_conflicts = _texts_and_readers(c)
 
-    if a.fast:   # the organism is given: no organism detector runs (README "Fast and full mode")
+    dbcheck = None
+    if a.fast:   # the organism is given (the default): no organism detector runs (README "Known organism")
         organisms, panel, db = _organism_given(c)
-        h = _mini_search(c, panel, org_fixed=True)   # the Cys competition (and the timsTOF protease fallback)
         if a.fastag:
-            _fastag_stage(c, h, org_fixed=True)
+            _fastag_stage(c, None, org_fixed=True)
+        # 0.1.11: the mini-search is a fallback: the Cys competition when FASTag and the texts disagree or both
+        # abstain (_cys_fallback), the protease competition on timsTOF without a tag-end call
+        why = {"fallback": _cys_fallback(c), "always": "--mini-search-cys always", "never": None}[a.mini_search_cys]
+        if why or _tims_without_tag_call(c):
+            log(f"  mini-search fallback: {why or 'timsTOF protease (no tag-end call)'}")
+            h = _mini_search(c, panel, org_fixed=True, cys=bool(why))
+        else:
+            h = None
+            log("[6/7] mini-search skipped (FASTag and the texts settle the Cys alkylation)")
+        dbcheck = _db_check(c, organisms)
+        if dbcheck and dbcheck["status"] == "warning" and a.check_organism == "strict":
+            return _strict_fallback(a, log, dbcheck)
     else:
         panel, h = _organism_detected(c, hint, hint_stats, term_stats)
 
     jev, jev_study, jev_report = _jev_last(c, study, hint_stats, term_stats)
+    if a.fast and a.mini_search_cys == "fallback" and not any(e.method == "alkylation competition" for e in c.ev):
+        why = _cys_fallback(c)   # Jev reads last: its Cys answer may contradict FASTag's call
+        if why:
+            log(f"  mini-search fallback after Jev: {why}")
+            if h is None:
+                h = _mini_search(c, panel, org_fixed=True, cys=True)
+            elif h.best_db:
+                with _timed(c, "mini_search_cys"):
+                    c.ev += h.alkylation()
 
     log("[7/7] reconciling")
     decisions = reconcile(c.ev)
@@ -957,7 +1086,7 @@ def analyze(a, log=print):
     c.timings["total"] = round(time.time() - t0, 1)
     return {
         "tool": "prose-auto 0.1 (prototype)",
-        "mode": "fast" if a.fast else "full",
+        "mode": "given" if a.fast else "infer",
         "input": {**c.run.summary(), "given": a.mzml, "pseudo_spectra": c.spectra_file if c.pseudo else None},
         "decisions": {k: d.to_dict() for k, d in decisions.items()},
         "prose": prose,
@@ -971,6 +1100,10 @@ def analyze(a, log=print):
         "consistency": consistency,
         "agreement": agreement,
         "organism_mix": mix,
+        "database_check": dbcheck,
+        "fastag_qc": c.qc or None,
+        "mini_search": {"ran": h is not None, "cys_competition": any(
+            e.method == "alkylation competition" for e in c.ev)},
         "text_conflicts": llm_text_conflicts + (jev_report.get("text_rules", []) if jev_report else []),
         "timings_s": c.timings,
         "digest_hint": {"hint": hint, **hint_stats, "termini": term_stats},
@@ -1007,7 +1140,7 @@ def _organism_detected(c, hint, hint_stats, term_stats):
     return panel, h
 
 
-STATUS = {"auto": "auto", "review": "REVIEW", "default": "default", "unknown": "unknown", "given": "given (fast mode)"}
+STATUS = {"auto": "auto", "review": "REVIEW", "default": "default", "unknown": "unknown", "given": "given"}
 
 
 def _fmt(v):
@@ -1025,7 +1158,8 @@ def markdown(rep):
     L_ = [f"# prose-auto report: {os.path.basename(i['path'])}", "",
           f"{i['instrument'] or 'unknown instrument'}, {i['ms1']} MS1 / {i['ms2']} MS2 / {i['ms3']} MS3 spectra. "
           f"Run time {rep['timings_s'].get('total')} s."
-          + (" Fast mode: the organism is given, not inferred." if rep.get("mode") == "fast" else ""), "",
+          + (" The organism is given, not inferred." if rep.get("mode") == "given" else
+             " The organism is inferred (--infer-organism)."), "",
           "| Parameter | Value | Confidence | Status | From |", "|---|---|---|---|---|"]
     order = ["acquisition", "instrument", "ms1_analyzer", "ms2_analyzer", "fragmentation", "precursor_tolerance",
              "precursor_offset", "fragment_tolerance", "fragment_offset", "charge_range", "label", "cys_alkylation",
@@ -1041,6 +1175,9 @@ def markdown(rep):
     for d in ds.values():
         L_ += [f"- **{d['label']}**: {c}" for c in d["conflicts"]]
     L_ += [f"- {x}" for x in rep["prose"]["notes"]]
+    chk = rep.get("database_check") or {}
+    if chk.get("status") == "warning":
+        L_ += [f"- **Database check: the given database may be wrong or incomplete**: {r}" for r in chk["reasons"]]
     L_ += [f"- Consistency ({r.get('severity')}): **{r.get('parameter')}** {r.get('issue')}"
            for r in rep.get("consistency", [])]
     L_ += [f"- Texts disagree with each other ({r.get('kind', '')}): {r.get('message') or r.get('issue')}"
@@ -1068,8 +1205,14 @@ def markdown(rep):
         L_ += [f"- {i['indicator']}: {', '.join(i['species'])} ({i['strength']:.2f})"
                + (f" — {i['detail']}" if i.get("detail") else "") for i in mix["indicators"]]
     db = rep.get("search_database")
+    if chk:
+        L_ += ["", f"**Database check: {chk['status']}** ({chk['confident_spectra']} spectra with a confident tag; "
+               f"{chk['given_rate']:.1%} place exactly on the given database"
+               + "".join(f"; {m} {r:.1%}" + (f" ({chk['panel_own'][m]:.1%} of its own)" if chk['panel_own'].get(m)
+                                             else "") for m, r in chk["panel_rates"].items()) + ")"
+               + (f". {chk['fallback']}" if chk.get("fallback") else "")]
     if db and db.get("given"):
-        L_ += ["", f"**Search database (given, fast mode): {', '.join(db['organisms'])}**: {', '.join(db['fasta'])}"]
+        L_ += ["", f"**Search database (given): {', '.join(db['organisms'])}**: {', '.join(db['fasta'])}"]
         L_ += [f"- no reference proteome for {k}: the {v} proteome is searched" for k, v in db["relatives"].items()]
     elif db:
         L_ += ["", f"**Search database: the union of {', '.join(db['organisms'])}** (spectra of their own in the "
@@ -1274,6 +1417,27 @@ def _reference_proteomes(query, log):
         return []
 
 
+def _organism_required(accession):
+    """The message when the organism is missing; with an accession it names what the PRIDE record states"""
+    msg = ("prose-auto needs the organism: give --organism (repeat for a mixture) or --fasta, or --infer-organism "
+           "to infer it from the spectra")
+    if not accession:
+        return msg
+    try:
+        ev, _ = repo.pride_evidence(accession, log=lambda *x: None)
+    except Exception:
+        ev = []
+    names = []
+    for e in ev:
+        for n, _ in (e.stats or {}).get("record_organisms") or [[e.value, None]]:
+            if e.parameter == "organism" and n and n not in names:
+                names.append(n)
+    if not names:
+        return msg + f" (the PRIDE record of {accession} names no organism)"
+    return (msg + f". The PRIDE record of {accession} states: " + "; ".join(names) + ". For example: "
+            + " ".join(f'--organism "{n}"' for n in names[:3]))
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="prose-auto", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -1281,7 +1445,9 @@ def main(argv=None):
     an = sub.add_parser("analyze", help="propose search settings for one mzML file")
     an.add_argument("mzml")
     an.add_argument("--panel", help="directory of model-organism FASTA files (one per organism)")
-    an.add_argument("--fasta", help="the user's database; searched in addition to the panel")
+    an.add_argument("--fasta", action="append",
+                    help="the search database (repeat for a mixture: concatenated); with --organism or alone it "
+                         "gives the organism; with --infer-organism it is a candidate")
     an.add_argument("--description", help="free-text description of the experiment, or @file")
     an.add_argument("--methods", help="methods section (file or text)")
     an.add_argument("--accession", help="PXD/MSV accession: PRIDE, MassIVE and curated SDRF records")
@@ -1320,12 +1486,20 @@ def main(argv=None):
     an.add_argument("--max-ms2", type=int, default=20000, help="MS2 spectra read for the detectors")
     an.add_argument("--no-search", action="store_true", help="skip the mini-search")
     an.add_argument("--organism", action="append",
-                    help="the organism the sample comes from (Latin name; repeat for a mixture): a user statement, "
-                         "or with --fast the given organism")
-    an.add_argument("--fast", action="store_true",
-                    help="fast mode: take --organism and/or --fasta as given and run no organism detector (no ProSE "
-                         "or panel organism search, FASTag species, tier 2, mixture test, Jev organism question); "
-                         "several organisms are searched as one union")
+                    help="the organism the sample comes from (Latin name; repeat for a mixture). Required, or "
+                         "--fasta, unless --infer-organism; its proteome comes from --panel, else UniProt")
+    an.add_argument("--infer-organism", action="store_true",
+                    help="infer the organism from the spectra and the texts (the 0.1.10 full mode: ProSE or panel "
+                         "organism search, FASTag species, tier 2, mixture union); --organism is then a statement")
+    an.add_argument("--fast", action="store_true", help=argparse.SUPPRESS)   # 0.1.8-0.1.10 name of the default
+    an.add_argument("--check-organism", choices=("warn", "strict", "off"), default="warn",
+                    help="database check (default mode): the share of confident FASTag tags that place exactly on "
+                         "the given database against FASTag's human, mouse, yeast and E. coli proteomes and the "
+                         "contaminants; warn (default) reports it, strict also infers the organism after a warning "
+                         "(needs --panel), off skips it")
+    an.add_argument("--mini-search-cys", choices=("fallback", "always", "never"), default="fallback",
+                    help="the mini-search Cys competition: fallback (default) when FASTag's call and the texts "
+                         "disagree or both abstain; always (0.1.10); never (ablation)")
     an.add_argument("--organism-source", choices=("auto", "data", "prose", "metadata"), default="auto",
                     help="auto (default): data when an organism is stated and --panel is given (the spectra check the "
                          "stated organism), metadata with --fasta or without a panel, else prose with "
@@ -1335,21 +1509,39 @@ def main(argv=None):
     an.add_argument("--prose-bin", help="ProSE executable for --organism-source prose (default: ProSE on PATH)")
     an.add_argument("--organism-panel", help="signature-protein panel directory (build_sigpanel.py) for "
                     "--organism-source prose: one search covers the whole reference set")
-    an.add_argument("--contaminants", help="contaminant FASTA (cRAP) for the ProSE organism search")
+    an.add_argument("--contaminants", help="contaminant FASTA (cRAP): the ProSE organism search and the database "
+                    "check panel")
     an.add_argument("--sdrf", choices=("use", "jev", "off"), default="use",
                     help="curated SDRF (with --accession): use = evidence and reader input, jev = reader input "
                          "only (Jev/LLM), off = not fetched")
     an.add_argument("-o", "--out", default="prose_auto_out")
     an.add_argument("--json", action="store_true", help="print the report JSON to stdout (for the GUI)")
+    ck = sub.add_parser("check", help="after the search: is the database or are the settings wrong? (FASTag tags "
+                                      "against the identifications)")
+    ck.add_argument("run", help="the spectra searched (mzML, or the run whose --report names its pseudo-spectra)")
+    ck.add_argument("result", help="the ProSE result: idXML (q-values, as ProSE writes them) or mzTab")
+    ck.add_argument("--fasta", action="append", help="the search database (repeatable)")
+    ck.add_argument("--fastag", help="FASTag executable (>= 1.15.2)")
+    ck.add_argument("--report", help="the prose-auto report (.auto.json): pseudo-spectra, label, fragment window")
+    ck.add_argument("--contaminants", help="contaminant FASTA (cRAP) for the check panel")
+    ck.add_argument("--fdr", type=float, default=0.01, help="q-value cutoff of an identification (default 0.01)")
+    ck.add_argument("--threads", type=int, default=0)
+    ck.add_argument("-o", "--out", default="prose_auto_out")
     pn = sub.add_parser("panel", help="download the model-organism FASTA panel from UniProt")
     pn.add_argument("out")
     pn.add_argument("--all-entries", action="store_true", help="TrEMBL too (default: Swiss-Prot only)")
     a = ap.parse_args(argv)
     if a.cmd == "panel":
         fetch_panel(a.out, reviewed=not a.all_entries)
+    if a.cmd == "check":
+        from . import check
+        check.main(a)
     if a.cmd == "analyze":
+        if a.fast and a.infer_organism:
+            ap.error("--fast (the default since 0.1.11) and --infer-organism exclude each other")
+        a.fast = not a.infer_organism
         if a.fast and not (a.organism or a.fasta):
-            ap.error("--fast needs --organism and/or --fasta")
+            raise SystemExit(_organism_required(a.accession))
         log = (lambda *x: print(*x, file=sys.stderr)) if a.json else print
         rep = analyze(a, log)
         os.makedirs(a.out, exist_ok=True)

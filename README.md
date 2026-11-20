@@ -3,10 +3,10 @@
 [![tests](https://github.com/okohlbacher/prose-auto/actions/workflows/tests.yml/badge.svg)](https://github.com/okohlbacher/prose-auto/actions/workflows/tests.yml)
 
 
-`prose-auto` proposes ProSE search settings from an mzML file. It uses the
-spectra and the file metadata, and optionally a FASTA or a model-organism
-panel, a free-text description, a methods section, and the PRIDE/MassIVE/SDRF
-records of a dataset. Every proposed setting comes with a confidence, its
+`prose-auto` proposes ProSE search settings from an mzML file and the organism (or the FASTA) the user
+gives. It uses the spectra and the file metadata, and optionally a free-text description, a methods
+section, and the PRIDE/MassIVE/SDRF records of a dataset. It checks that the database fits the run, before
+the search and, with `prose-auto check`, after it. Every proposed setting comes with a confidence, its
 source and the evidence behind it, and a setting is flagged for review
 when the sources disagree.
 
@@ -20,10 +20,16 @@ Auto Mode report.
 ```bash
 pip install pyopenms numpy pyyaml          # or: pip install -e .
 python -m prose_auto.cli panel proteomes/  # once: UniProt Swiss-Prot of 12 model organisms
-python -m prose_auto.cli analyze run.mzML --panel proteomes/ \
+python -m prose_auto.cli analyze run.mzML --organism "Homo sapiens" --panel proteomes/ \
+    --fastag FASTag --contaminants crap.fasta \
     --description "HeLa, TMTpro 16plex, IAA, Exploris 480" \
     --accession PXD012345 --llm claude -o out/
+python -m prose_auto.cli check run.mzML run.idXML --fasta db.fasta --fastag FASTag --report out/run.auto.json
 ```
+
+Since 0.1.11 the organism is an input: `--organism` (repeatable) or `--fasta` (repeatable) is required. Without
+them prose-auto stops; with `--accession` it names the organisms the PRIDE record states. `--infer-organism`
+infers the organism instead (the 0.1.10 full mode).
 
 The outputs, written per input to `out/`:
 
@@ -41,7 +47,8 @@ can run it as a sidecar.
 
 | Flag | Tool | What it adds |
 |---|---|---|
-| `--fastag <exe>` | [FASTag](https://github.com/okohlbacher/FASTag) >= 1.10.0 | a database-free genus call (`-species -species_evidence best`; reagent genera such as Bos/Sus are skipped when a real genus is close) and, with a FASTA, the Cys alkylation from the tag mass-gap histogram searched without fixed modifications (`-recon_fasta`, `-delta_out`), and the precursor and fragment mass errors of the tag placements |
+| `--fastag <exe>` | [FASTag](https://github.com/okohlbacher/FASTag) >= 1.15.2 | on the given FASTA: the protease from the tag ends, the mass errors of the tag placements, the Cys alkylation (mass gaps, `-alkylation_out` on the placements, the database-free `-alkylation_tags_out`), the run QC (`-qc_out`: analyser class, charges, reporter kits), and the database check; with `--infer-organism` also the species call |
+| `--contaminants <fasta>` | | cRAP: part of the database-check panel (and of the ProSE organism search) |
 | `--fastag-subsample <f>` | FASTag | analyse only a fraction of the MS2 spectra |
 | `--diaspextract <exe>` | [DIAspeXtract](https://github.com/okohlbacher/diaspextract) | converts a diaPASEF `.d` folder (required for `.d` input) or a DIA mzML with ion mobility into pseudo-MS/MS spectra (Orbitrap DIA without ion mobility skips it and stays on the DIA path; DDA-PASEF `.d` is not supported and stops with an error), so the mini-search and FASTag also run on DIA data |
 | `--threads <n>` | both | threads for the external tools |
@@ -159,68 +166,88 @@ The tests use OpenMS test data: BSA1 (LTQ Orbitrap XL, CID/ion trap), the
 DIAuditor and OpenSWATH DIA inputs, and the IsobaricAnalyzer iTRAQ input. A
 fake LLM covers the quote guard.
 
-## Fast and full mode
+## Known organism (the default) and `--infer-organism`
 
-**Full mode** is the default. prose-auto infers the organism and the search database from the spectra and the
-texts.
-
-**Fast mode** takes the organism as known:
+**The default** takes the organism as known:
 
 ```bash
-python -m prose_auto.cli analyze run.mzML --fast --organism "Homo sapiens" --panel proteomes/ -o out/
-python -m prose_auto.cli analyze mix.mzML --fast --organism "Homo sapiens" --organism "Escherichia coli" --panel proteomes/
-python -m prose_auto.cli analyze run.mzML --fast --fasta my_db.fasta
+python -m prose_auto.cli analyze run.mzML --organism "Homo sapiens" --panel proteomes/ --fastag FASTag -o out/
+python -m prose_auto.cli analyze mix.mzML --organism "Homo sapiens" --organism "Escherichia coli" --panel proteomes/
+python -m prose_auto.cli analyze run.mzML --fasta my_db.fasta --fasta crap.fasta
 ```
 
-- **What is given:** `--organism` (repeatable) and/or `--fasta`; `--fast` needs at least one of them.
+- **What is given:** `--organism` (repeatable) and/or `--fasta` (repeatable). Without either, prose-auto stops;
+  with `--accession` the message names the organisms of the PRIDE record (`--organism "Glycine max" ...`).
 - **The search database:**
   - each `--organism` resolves to its panel proteome, else to its UniProt reference proteome (cached under
     `<panel>/extra`);
-  - a species without a UniProt reference proteome is searched against its nearest relative's: the first reference
-    proteome under its NCBI taxon, or under up to 3 parent taxa (synonyms resolve through UniProt taxonomy). The
-    organism stays as given; the report and the console name the database used;
-  - nothing within 3 parent taxa, or a download that still fails after the retries, stops the run with an error.
-    Fast mode never searches without the given organism and never infers it instead;
-  - every resolved fetch is indexed in `<panel>/extra/resolved.tsv`, so a cached proteome needs no UniProt request;
-  - `--fasta` is added as it is;
-  - several databases are concatenated once into `<panel>/extra/union/A+B.fasta`, and that file is the one search
-    database.
-- **Skipped:** everything that only serves the organism:
-  - the ProSE organism search (signature panel);
-  - the organism competition of the panel mini-search;
-  - the FASTag species call and tier 2;
-  - the mixture test and union building;
-  - the organism question to Jev, and the Jev cross-check and indicator agreement of the organism.
-- **Every other organism statement is dropped:** the record, the texts and the description.
-- **Runs as in full mode, against the given database:**
-  - the metadata, mass-accuracy and chemistry detectors and the FASTag termini;
-  - the texts;
-  - the FASTag mass gaps and tag placements (Cys alkylation, variable modifications, enrichment, mass errors);
-  - the mini-search, for the Cys alkylation competition (and the protease on timsTOF when the tag ends give no call,
-    fewer than 175), not for the mass errors;
-  - Jev for every other parameter.
-- **Report:** `mode: "fast"`. The organism decision has status `given` ("given (fast mode)"). `organisms` and
-  the SDRF `characteristics[organism]` list the given organisms. `organism_mix` is null. The organism is left out
-  of `agreement`.
-- **Without `--fast`:** `--organism` is a user statement (confidence 0.9), and the spectra may overrule it.
+  - a species without a UniProt reference proteome is searched against its nearest relative's (the first reference
+    proteome under its NCBI taxon or up to 3 parent taxa). The organism stays as given; the report names the
+    database used. Nothing within 3 parents, or a failed download, stops the run;
+  - every `--fasta` is added as it is; several databases are concatenated once into `<panel>/extra/union/`.
+- **Skipped:** everything that only serves the organism: the ProSE organism search, the organism competition of the
+  mini-search, the FASTag species call, tier 2, the mixture test and union, Jev's organism question. Every other
+  organism statement is dropped.
+- **One FASTag pass on the given database** (k=4 tags, the isobaric label the reporter ions show as fixed
+  modification) gives the mass errors of the placements, the mass gaps (Cys, variable modifications, enrichment),
+  FASTag's Cys calls and the run QC.
+- **The mini-search is a fallback** (`--mini-search-cys fallback`):
+  - the Cys competition runs only when FASTag's Cys call (`-alkylation_out` on the placements, else the
+    database-free `-alkylation_tags_out`) and the texts disagree, or when both abstain; Jev's answer counts as a
+    text and is checked again after Jev reads;
+  - on timsTOF the protease competition runs when the tag ends give no call (fewer than 175);
+  - `always` restores the 0.1.10 competition, `never` uses FASTag's call alone (ablations).
+- **Report:** `mode: "given"`; the organism decision has status `given`; `database_check`, `fastag_qc` and
+  `mini_search` (whether it ran, and the Cys competition) are reported.
 
-**What fast mode changes beyond skipping the organism detectors:**
-- **Enzyme on runs with nothing stated:** in full mode, the ProSE organism search runs when nothing names the
-  organism. Its HLA-first search can then set the enzyme when no other indicator decides. Fast mode has no ProSE
-  organism search, so on those runs the enzyme comes from the tag termini, Jev and the texts only.
-- **Jev cache:** Jev gets neither the organism question nor the organism profile of the searches. Its request
-  differs from full mode's, so fast mode cannot reuse full-mode Jev answers, and its other answers can shift.
-- **Search database:** the organism winner of the mini-search (or the union) feeds the Cys competition and the
-  FASTag mass gaps and tag placements. Fast mode replaces it with the given database; nothing is dropped. A wrong given organism places
-  tags by chance: their precursor errors spread over the window, and no mass error is taken from them (robust SD
-  above a quarter of the window).
+**`--infer-organism`** is the 0.1.10 full mode: the organism and the database come from the spectra and the texts
+(ProSE or panel organism search, FASTag species, tier 2, mixture union); `--organism` and `--fasta` are then
+statements and candidates. It keeps the 0.1.10 FASTag pass (no label fixed, no FASTag Cys call, no QC).
 
-The order of the decisions in both modes, and which detectors feed each parameter, are in
+### Database check (before the search)
+
+A wrong or incomplete FASTA is the main failure when the organism is an input. A tolerance estimate does not catch
+it: on PXD039269, given as aphid (truth soybean), the wrong proteome still gave 8 ppm.
+
+- **Signal:** the spectra with a confident FASTag tag (E ≤ 1e-4) of the gap stage; the share whose tag places on
+  the given database with an agreeing flank mass (one flank: the precursor-dependent flank breaks on isotope
+  errors, unfixed Cys and N-terminal modifications), against a fixed panel placed in one more FASTag pass on the
+  same spectra: FASTag's shipped human, mouse, yeast and E. coli proteomes (UniProt reviewed, 17 MB) and the
+  `--contaminants`.
+- **Warning** (`--check-organism warn`, the default) when fewer than 5 % of the confident-tag spectra place on the
+  given database, or a panel organism alone places at least 3 % of them and at least a tenth of the given share.
+  Fewer than 100 confident-tag spectra: not assessed. `strict` infers the organism after a warning (needs
+  `--panel`); `off` skips the check.
+- **Development calibration** (the 218 release runs, in-sample; see the 0.1.11 report): correct FASTA 158 of 183
+  pass; warnings on 120 of 166 related, 140 of 167 unrelated and 12 of 16 incomplete FASTAs, and on 2 of the 3 known
+  wrong SDRF organisms. Several warnings on "correct" FASTAs look real (pig and zebrafish runs that place more on the
+  human proteome; human runs with a third of their tags on mouse). Cost: one FASTag pass, about 2.4 s per DDA run.
+
+### Post-search check (`prose-auto check`)
+
+```bash
+python -m prose_auto.cli check run.mzML run.idXML --fasta db.fasta --fastag FASTag --contaminants crap.fasta \
+    [--report out/run.auto.json] [--fdr 0.01] -o out/
+```
+
+- **Signal:** the share of the confident-tag spectra the search identified (q ≤ 0.01; raw ID rates vary too much
+  with the sample type), and for the unidentified ones the share whose tags place on the given database against
+  the panel.
+- **Verdicts:** `ok` when at least 15 % of the confident-tag spectra are identified; otherwise `settings likely
+  wrong` when at least 20 % of the unidentified ones place on the given database (check label, protease,
+  modifications, windows), else `database likely wrong or incomplete`, naming a panel organism that places at least
+  10 % of them. ProSE results without q-values (no rescoring below 100 PSMs) identify nothing.
+- **Development calibration** (in-sample): correct FASTA 159 of 183 ok; deliberately wrong settings (label dropped
+  or added, wrong protease) flagged 49 of 50, 35 of them as settings; unrelated FASTAs flagged 163 of 165, related
+  70 of 165, incomplete 2 of 16. The pre-search check is better for related and incomplete FASTAs; only the
+  post-search check sees wrong settings.
+
+The order of the decisions, and which detectors feed each parameter, are in
 [docs/decision_flow.md](docs/decision_flow.md).
 
-## Organism and validation
+## Organism inference (`--infer-organism`) and validation
 
-`--organism-source auto` (the default):
+With `--infer-organism`, `--organism-source auto` (the default there):
 - **An organism is stated and `--panel` is given:** the spectra check the stated organism. The panel mini-search, FASTag and tier 2 run with the stated organisms as evidence, and the data overrule the record only from 5 % of the mini-search spectra.
 - **With `--fasta` or without a panel:** the stated organism is used directly.
 - **Nothing stated:** one ProSE search against the signature panel (`--organism-panel`), else the panel mini-search.
@@ -255,9 +282,13 @@ controls, HLA ligand files 14/14 (unspecific, human); organism mixtures (38 runs
 
 ## Known limits (prototype)
 
-* The mini-search is pure Python; with persistent peptide indexes it takes 10-30 s per run. Since 0.1.10 it
-  decides the organism and the Cys alkylation (and the protease on timsTOF without a tag-rule call), not the mass
-  errors.
+* The mini-search is pure Python; with persistent peptide indexes it takes 10-30 s per run. Since 0.1.11 it is a
+  fallback in the default mode (Cys when FASTag and the texts disagree or both abstain, timsTOF protease); with
+  `--infer-organism` it decides the organism and the Cys alkylation as in 0.1.10.
+* Vendor input: FASTag 1.15.3 reads Thermo `.raw` and Bruker `.d` directly, but prose-auto's own detectors (MS1
+  SILAC pairs and scan-to-scan precision, MS3 reporter ions, the mini-search) read the spectra through pyopenms, and
+  FASTag passes on only the tagged MS2 spectra (`-out_spectra`). So `.raw` still needs an mzML; ddaPASEF `.d` is still
+  converted by FileConverter.
 * Repeated-ion and MS1 scan-to-scan estimates give precision without the offset and are about 2x too small
   alone; the FASTag placement errors or the immonium/y1 probe should decide. On the 120 mass-truth cases the
   placement errors are within 1.5x of a wide-window reference in 58/58 (precursor), 41/41 (high-res fragment) and

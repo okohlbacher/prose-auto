@@ -1,25 +1,33 @@
-# Decision flow (prose-auto 0.1.10)
+# Decision flow (prose-auto 0.1.11)
 
 prose-auto has two modes:
-- **Full mode (the default)** infers the organism and the search database from the spectra and the texts.
-- **Fast mode (`--fast` with `--organism` and/or `--fasta`)** takes the given organisms as true. It runs every other
-  detector against their proteome, or against the union of their proteomes when several are given.
+- **The default (organism given):** `--organism` and/or `--fasta` (both repeatable) are required. Every detector runs
+  against their proteome, or against the union of their proteomes when several are given. A database check warns
+  when the given database does not fit the run.
+- **`--infer-organism`** (the 0.1.10 full mode) infers the organism and the search database from the spectra and the
+  texts.
 
 Both modes decide the parameters in the same order:
 1. **What the file is:** top-down check, then instrument, analyzers, fragmentation, acquisition and charge range.
 2. **What needs no database:** mass accuracy, chemistry and the tag termini.
 3. **What is stated:** repository records, the user's description, methods sections, the file name.
 4. **The organism and the search database.** Only this step differs between the modes.
-5. **What needs the database:** the mini-search Cys competition, and the FASTag mass gaps and tag placements (Cys
-   alkylation, modifications, mass errors).
-6. **The readers and reconciling:** Jev reads last, then reconcile decides each parameter.
+5. **What needs the database:**
+   - default: one FASTag pass on the given database (placements, mass gaps, `-alkylation_out`,
+     `-alkylation_tags_out`, `-qc_out`), the database check (one more FASTag pass on the check panel), and the
+     mini-search only as a fallback (Cys when FASTag and the texts disagree or both abstain; timsTOF protease);
+   - `--infer-organism`: the mini-search (organism and Cys competitions), the FASTag mass gaps and placements.
+6. **The readers and reconciling:** Jev reads last (in the default mode its Cys answer can still start the
+   fallback), then reconcile decides each parameter.
 
-In full mode, a suspected organism mixture adds two more steps after reconciling: the union search, then the
-database-dependent steps run again against the union.
+With `--infer-organism`, a suspected organism mixture adds two more steps after reconciling: the union search, then
+the database-dependent steps run again against the union. After the search, `prose-auto check` tests the result
+(below).
 
 ## Order of the stages
 
-Grey dashed boxes run in full mode only. Fast mode replaces them with the "organism given" box.
+Grey dashed boxes run with `--infer-organism` only. The default replaces them with the "organism given" box and adds
+the database check.
 
 ```mermaid
 flowchart TD
@@ -29,20 +37,21 @@ flowchart TD
     M --> TOL[2a mass accuracy without a database:<br/>repeated ions, lock mass, immonium/y1]
     TOL --> CH[2b chemistry: reporter ions, SILAC pairs,<br/>diagnostic ions, digest hint, FASTag termini]
     CH --> TX[3 texts: repository record, user description,<br/>methods, file name, LLM reader]
-    TX --> MODE{--fast?}
-    MODE -- no --> SRC[4 organism source: auto / data / prose / metadata]
+    TX --> MODE{--infer-organism?}
+    MODE -- yes --> SRC[4 organism source: auto / data / prose / metadata]
     SRC --> PO[ProSE organism search<br/>signature panel, HLA-first]:::full
     SRC --> PM[panel mini-search<br/>organism competition]:::full
     PO --> FS[FASTag species call]:::full
     PM --> FS
     FS --> T2[tier 2: shortlist, UniProt proteomes,<br/>second mini-search]:::full
-    MODE -- yes --> GIV[4 organism given:<br/>proteome per --organism, + --fasta,<br/>union of several]:::fast
+    MODE -- no --> GIV[4 organism given:<br/>proteome per --organism, + --fasta,<br/>union of several]:::fast
     T2 --> DB[(search database)]
     GIV --> DB
-    DB --> MS[5a mini-search on the database:<br/>Cys alkylation competition]
-    MS --> GAP[5b FASTag mass gaps and placements on the database:<br/>Cys alkylation, variable mods, enrichment,<br/>precursor and fragment mass errors]
-    GAP --> JEV[6a Jev reads last: texts + measured profiles<br/>full: + organism profile and organism question]
-    JEV --> REC[6b reconcile: one decision per parameter]
+    DB --> GAP[5a FASTag pass on the database:<br/>placements, mass errors, mass gaps,<br/>Cys calls, run QC]
+    GAP --> CHK[5b database check:<br/>placements on human, mouse, yeast,<br/>E. coli, cRAP]:::fast
+    CHK --> MS[5c mini-search fallback: Cys competition<br/>if FASTag and texts disagree or abstain;<br/>timsTOF protease without a tag call]
+    MS --> JEV[6a Jev reads last: texts + measured profiles<br/>full: + organism profile and organism question]
+    JEV --> REC[6b reconcile: one decision per parameter<br/>default: Cys fallback once more after Jev]
     REC --> MIX{organism mix<br/>suspected?}:::full
     MIX -- yes --> UN[union: candidates mini-searched,<br/>own spectra, UniProt]:::full
     UN --> REDO[Cys competition, FASTag gaps and placements<br/>against the union, reconcile again]:::full
@@ -56,7 +65,7 @@ flowchart TD
 ## Which detectors feed which decision
 
 An edge means that the detector gives evidence for that parameter. Grey dashed detectors run in full mode only.
-Detectors marked "db" need the search database, so in fast mode they run against the given proteome.
+Detectors marked "db" need the search database, so in the default mode they run against the given proteome.
 
 ```mermaid
 flowchart LR
@@ -73,9 +82,11 @@ flowchart LR
         TERM[FASTag termini]
     end
     subgraph db[spectra against the database]
-        MINI[mini-search Cys competition, db]
+        MINI[mini-search Cys competition, db<br/>default: fallback only]
         PLACE[FASTag placements, db]
         GAPS[FASTag mass gaps, db]
+        ALK[FASTag -alkylation_out, db]
+        QC[FASTag run QC]
     end
     subgraph orgdet[organism detectors]
         PROSE[ProSE organism search]:::full
@@ -125,6 +136,10 @@ flowchart LR
     PROSE -. HLA-first .-> ENZ
 
     DIAG --> CYS
+    ALK --> CYS
+    QC -. low confidence .-> INS
+    QC -. low confidence .-> CHG
+    QC -. low confidence .-> LAB
     MINI --> CYS
     GAPS --> CYS
     TXT --> CYS
@@ -150,15 +165,15 @@ flowchart LR
 
 ## Per parameter
 
-| Parameter | Evidence, in decision order | Fast mode |
+| Parameter | Evidence, in decision order | Default (organism given) |
 |---|---|---|
 | organism, search database | user, record, texts, then the organism source: the ProSE organism search when nothing is stated, else the panel mini-search with the FASTag species call and tier 2; Jev's organism answer; after reconciling, the mixture test and the union (3 organisms at most) | given; no detector runs; several organisms are one union |
-| instrument, analyzers, fragmentation, acquisition | mzML metadata (Bruker `analysis.tdf`) first, then the record, the texts and Jev | unchanged |
+| instrument, analyzers, fragmentation, acquisition | mzML metadata (Bruker `analysis.tdf`) first, then the record, the texts and Jev | FASTag QC analyser class as low-confidence metadata (a disagreement shows as a conflict) |
 | charge range | precursor charges up to 9 kDa (DIA: the pseudo-spectra), clamped to 1–20 | unchanged |
 | precursor / fragment tolerance and offset | database-free measurement (repeated ions, lock mass, immonium/y1), then the mass errors of the FASTag placements on the database; texts and Jev only as coarse windows | placements on the given proteome |
 | enzyme | user and record first; then the FASTag tag-termini call (margin ≥ 0.15; on timsTOF the K/R and residue shares of the tag ends, with fewer than 175 tag ends the mini-search protease competition) or Jev (p ≥ 0.8), the more confident one; then keywords. In full mode, the ProSE organism search (HLA-first) also decides when nothing else does | no ProSE organism search |
-| Cys alkylation | diagnostic ions (weak), the mini-search competition (CAM / none / others) on the database, the FASTag mass gaps on the database, texts, Jev | competition and gaps on the given proteome |
-| label | reporter ions, SILAC pairs, FASTag N-terminal gaps, texts, Jev | unchanged |
+| Cys alkylation | diagnostic ions (weak), the mini-search competition (CAM / none / others) on the database, the FASTag mass gaps on the database, texts, Jev | FASTag `-alkylation_out` (a database result like the competition, 0.86) and `-alkylation_tags_out` (0.6), the gaps, texts, Jev; the competition only as the fallback |
+| label | reporter ions, SILAC pairs, FASTag N-terminal gaps, texts, Jev | plus FASTag QC reporter kits (0.35); the label becomes a fixed modification of the FASTag pass |
 | enrichment | diagnostic ions, FASTag mass-gap combinations on the database, texts, Jev | gaps on the given proteome |
 | variable mods | FASTag mass-gap combinations on the database, texts, Jev, implied by the enrichment | gaps on the given proteome |
 
@@ -167,3 +182,10 @@ its mass errors are replaced by those of the FASTag placements. It decides the p
 ends give no call (fewer than 175; the tag-profile call fails there because the MS2 scans start above y1 of K and R).
 Without the Cys competition the SDRF Cys score rose by 2 of 132 runs, but the runs whose decision changed lost 9.5 %
 of their ProSE PSMs.
+
+## Database checks (0.1.11)
+
+| Check | When | Signal | Verdict |
+|---|---|---|---|
+| database check | default mode, before the search | share of the confident-tag spectra (E ≤ 1e-4) placed on the given database with an agreeing flank; per panel member (human, mouse, yeast, E. coli, cRAP) the share it places and the given database does not | warning below 5 %, or a member with ≥ 3 % and ≥ a tenth of the given share; `--check-organism strict` then infers the organism |
+| `prose-auto check` | after the search | share of the confident-tag spectra identified; where the unidentified ones place | ok (≥ 15 % identified), settings likely wrong (≥ 20 % of the unidentified place on the given database), else database likely wrong or incomplete |

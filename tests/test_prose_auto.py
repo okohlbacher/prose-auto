@@ -522,11 +522,11 @@ def test_organism_from_metadata_searches_only_the_given_db(tmp_path):
     mix = os.path.join(ROOT, "share", "OpenMS", "examples", "TOPPAS", "data", "BSA_Identification",
                        "18Protein_SoCe_Tr_detergents_trace.fasta")
     out = tmp_path / "out"
-    cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fasta", mix, "--organism-source", "metadata",
-              "--spectra", "1200", "-o", str(out)])
+    cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fasta", mix, "--infer-organism", "--organism-source",
+              "metadata", "--spectra", "1200", "-o", str(out)])
     rep = json.load(open(out / "BSA1.auto.json"))
     org = rep["decisions"]["organism"]
-    assert org["value"] == "18Protein_SoCe_Tr_detergents_trace"
+    assert rep["mode"] == "infer" and org["value"] == "18Protein_SoCe_Tr_detergents_trace"
     assert all(e["source"] != "search" for e in org["evidence"])     # no data-based organism call
     assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # hypotheses ran on the given DB
 
@@ -546,18 +546,20 @@ def test_fast_mode_takes_the_given_organisms(tmp_path):
               "-o", str(out)])
     rep = json.load(open(out / "BSA1.auto.json"))
     org = rep["decisions"]["organism"]
-    assert rep["mode"] == "fast" and org["status"] == "given"
-    assert [e["method"] for e in org["evidence"]] == ["fast mode"]       # the description's yeast is dropped
+    assert rep["mode"] == "given" and org["status"] == "given"
+    assert [e["method"] for e in org["evidence"]] == ["given"]       # the description's yeast is dropped
     assert rep["organisms"] == ["Bos_taurus", "Homo_sapiens"] and rep["organism_mix"] is None
     assert rep["search_database"]["union"].endswith("Bos_taurus+Homo_sapiens.fasta")
     assert rep["sdrf"]["characteristics[organism]"] == "Bos taurus;Homo sapiens"
     assert "organism" not in rep["agreement"]["parameters"]
     assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # the mini-search ran on the union
+    # 0.1.11: no FASTag and no text names the Cys alkylation, so the competition runs as the fallback
     assert any(e["method"] == "alkylation competition" for e in rep["decisions"]["cys_alkylation"]["evidence"])
+    assert rep["mini_search"] == {"ran": True, "cys_competition": True}
     # 0.1.10: the mini-search runs for the Cys competition only; the mass errors come from the FASTag placements
     assert not any(e["method"] == "mini-search PSMs" for e in rep["decisions"]["precursor_tolerance"]["evidence"])
     assert not {"organism_prose", "organism_tier2", "mixture_candidates"} & set(rep["timings_s"])
-    assert "given (fast mode)" in (out / "BSA1.auto.md").read_text()
+    assert "The organism is given" in (out / "BSA1.auto.md").read_text()
     with pytest.raises(SystemExit):
         cli.main(["analyze", os.path.join(BSA, "BSA1.mzML"), "--fast", "-o", str(out)])
 
@@ -745,7 +747,7 @@ def test_diaspextract_exit_11_falls_back_to_dda(tmp_path):
                        "18Protein_SoCe_Tr_detergents_trace.fasta")
     out = tmp_path / "out"
     cli.main(["analyze", str(d), "--diaspextract", dia, "--fileconverter", fc, "--fasta", mix,
-              "--organism-source", "metadata", "--spectra", "600", "-o", str(out)])
+              "--spectra", "600", "-o", str(out)])
     rep = json.load(open(out / "run.auto.json"))
     assert rep["decisions"]["acquisition"]["value"] == "DDA (ddaPASEF)"
 

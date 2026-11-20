@@ -62,7 +62,7 @@ def test_analyze_aborts_with_exit_3(tmp_path, monkeypatch):
     monkeypatch.setattr(cli, "load_mzml", lambda *a, **k: _run(lysate))
     out = tmp_path / "o"
     with pytest.raises(SystemExit) as e:
-        cli.main(["analyze", str(tmp_path / "td.mzML"), "-o", str(out)])
+        cli.main(["analyze", str(tmp_path / "td.mzML"), "--organism", "Homo sapiens", "-o", str(out)])
     assert e.value.code == td.EXIT_NO_DIGEST
     rep = json.load(open(out / "td.auto.json"))
     assert rep["no_digest"]["class"] == "top-down" and "decisions" not in rep and not (out / "td.prose.ini").exists()

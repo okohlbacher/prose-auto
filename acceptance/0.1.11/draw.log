@@ -1,0 +1,56 @@
+seed 20261120; 2691 excluded accessions
+query 'Glu-C': 197 projects
+protease:Glu-C: 10 of 10 (pool 27)
+query 'Asp-N': 85 projects
+protease:Asp-N: 10 of 10 (pool 12)
+query 'chymotrypsin': 559 projects
+protease:chymotrypsin: 10 of 10 (pool 78)
+query 'Lys-C': 600 projects
+query 'LysC': 600 projects
+query 'endoproteinase Lys-C': 316 projects
+protease:Lys-C: 10 of 10 (pool 24)
+query 'TMTpro SPS': 5 projects
+query 'SPS-MS3': 525 projects
+query 'MS3': 600 projects
+label:TMTpro SPS-MS3: 6 of 6 (pool 301)
+query 'TMTpro': 600 projects
+label:TMTpro: 8 of 8 (pool 562)
+query 'TMT': 600 projects
+label:TMT: 10 of 10 (pool 366)
+query 'iTRAQ': 600 projects
+label:iTRAQ: 8 of 8 (pool 585)
+query 'SILAC': 600 projects
+label:SILAC: 8 of 8 (pool 562)
+query 'glycoproteomics': 426 projects
+enrichment:glyco: 6 of 6 (pool 362)
+query 'phosphoproteomics': 600 projects
+enrichment:phospho: 8 of 8 (pool 551)
+query 'Astral': 563 projects
+instrument:Astral: 8 of 8 (pool 414)
+query 'timsTOF': 600 projects
+instrument:timsTOF DDA: 8 of 8 (pool 182)
+query 'diaPASEF': 600 projects
+instrument:timsTOF DIA: 8 of 8 (pool 522)
+query 'TripleTOF': 600 projects
+instrument:TOF: 6 of 6 (pool 578)
+query 'LTQ Orbitrap': 600 projects
+instrument:ion trap MS2: 8 of 8 (pool 534)
+query 'data-independent acquisition': 67 projects
+acquisition:Orbitrap DIA: 10 of 10 (pool 25)
+query 'plant proteome': 32 projects
+organism:plant: 6 of 6 (pool 23)
+query 'yeast proteome': 101 projects
+organism:fungus: 5 of 5 (pool 64)
+query 'bacterial': 67 projects
+organism:bacterium: 6 of 6 (pool 12)
+query 'zebrafish proteome': 10 projects
+organism:other vertebrate: 5 of 5 (pool 9)
+query 'drosophila proteome': 17 projects
+organism:invertebrate: 4 of 4 (pool 16)
+query 'mouse proteome': 414 projects
+organism:mouse or rat: 6 of 6 (pool 321)
+query 'label-free': 73 projects
+baseline:Orbitrap DDA label-free human: 13 of 13 (pool 19)
+query 'benchmark': 566 projects
+mixed species: 10 of 10 (pool 96)
+held-out 187 runs, wrong-database 40 runs (10 multi-species)

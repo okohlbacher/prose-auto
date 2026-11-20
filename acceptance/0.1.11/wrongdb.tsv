@@ -1,0 +1,41 @@
+stratum	accession	file	mb	instruments	organisms	experiment	quantification
+protease:Asp-N	PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	172	LTQ Orbitrap Elite	Homo sapiens (human)	Shotgun proteomics	
+protease:chymotrypsin	PXD013038	FCarrieri_161006_05.raw	614	LTQ Orbitrap Velos	Homo sapiens (human)	Gel-based experiment	
+protease:Glu-C	PXD018333	H3982FD.raw	626	Q Exactive HF-X	Homo sapiens (human)	Affinity purification coupled with mass spectrometry proteomics	MS1 intensity based label-free quantification method
+organism:mouse or rat	PXD018425	tc_o292_F6A_f08265.raw	644	Orbitrap Fusion	Mus musculus (mouse)	Shotgun proteomics	TMT
+label:iTRAQ	PXD019413	Pig3-4.wiff	138	TripleTOF 5600	Sus scrofa domesticus (domestic pig)	Shotgun proteomics	iTRAQ
+organism:fungus	PXD020369	20190712_Snow_phos_3f.raw	3207	Orbitrap Fusion Lumos	Saccharomyces cerevisiae (baker's yeast)	SWATH MS	Label free
+protease:Lys-C	PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	1364	Q Exactive Plus	Homo sapiens (human)	Affinity purification coupled with mass spectrometry proteomics; Shotgun proteomics	SILAC
+enrichment:phospho	PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	629	Orbitrap Fusion Lumos	Homo sapiens (human)	Shotgun proteomics	TMT
+enrichment:phospho	PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	449	Q Exactive HF	Homo sapiens (human)	Shotgun proteomics	
+organism:invertebrate	PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	1185	Q Exactive	Drosophila melanogaster (fruit fly)	Shotgun proteomics	MS1 intensity based label-free quantification method
+organism:plant	PXD045331	wo_nucs_Base6_L03618.RAW	159	LTQ FT	Zea mays (maize)	Shotgun proteomics	
+instrument:timsTOF DIA	PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	5670	timsTOF Pro 2	Mus musculus (mouse)	Bottom-up proteomics	diaPASEF
+organism:mouse or rat	PXD050840	P10_DIA_R4_20230107.raw	781	Orbitrap Fusion Lumos	Mus musculus (mouse)	Shotgun proteomics	
+enrichment:phospho	PXD051981	220419_36811_KA_L.raw	946	Orbitrap Fusion Lumos	Homo sapiens (human)	Data-dependent acquisition	Normalized Spectral Abundance Factor - NSAF
+instrument:ion trap MS2	PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	580	LTQ Orbitrap Velos	Homo sapiens (human)	Data-dependent acquisition	
+label:TMTpro	PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	1145	Orbitrap Eclipse	Homo sapiens (human)	Bottom-up proteomics	TMT
+enrichment:phospho	PXD059726	XB07482DPST_D06_1.raw	5459	Orbitrap Astral	Mus musculus (mouse)	Data-independent acquisition; Bottom-up proteomics	
+label:TMTpro SPS-MS3	PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	419	Orbitrap Eclipse	Mus musculus (mouse)	Bottom-up proteomics	TMT16PLEX; TMT
+label:TMTpro	PXD060120	20220827_HF2_01_PK_1_TMT12.raw	1784	Q Exactive HF	Homo sapiens (human)	Bottom-up proteomics	TMT
+instrument:timsTOF DIA	PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	1026	timsTOF fleX	Mus musculus (mouse)	diaPASEF; Data-independent acquisition; Bottom-up proteomics	label-free quantification
+label:iTRAQ	PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	1591	Q Exactive	Homo sapiens (human)	Data-dependent acquisition	iTRAQ
+label:TMTpro	PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	3582	Orbitrap Exploris 480	Neisseria gonorrhoeae	Bottom-up proteomics	TMT
+instrument:TOF	PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	639	TripleTOF 5600; Q Exactive HF	Dendrobaena veneta	Bottom-up proteomics	
+instrument:timsTOF DIA	PXD064921	250527_SG_EarlyTimeInh_rerun_SECR_MIX_4_R2_S1-A4_1_14757.d.ZIP	2003	Bruker Daltonics timsTOF series	Homo sapiens (human)	Top-down proteomics; Data-independent acquisition	
+label:TMT	PXD066618	OH_20210818_TMTA_pST4.raw	1698	Q Exactive Plus	Homo sapiens (human)	Data-dependent acquisition	
+label:TMT	PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	1235	Orbitrap Eclipse	Homo sapiens (human)	Data-dependent acquisition; Bottom-up proteomics	TMT
+protease:Lys-C	PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	1829	timsTOF SCP	Saccharomyces cerevisiae (baker's yeast)	Chemical cross-linking coupled with mass spectrometry proteomics	
+acquisition:Orbitrap DIA	PXD082651	XB01822B1DAR1_M18_LNs2.raw	547	Orbitrap Exploris 480	Mus musculus (mouse)	Data-independent acquisition	
+organism:bacterium	PXD084660	Seq94432_HFX.raw	887	Q Exactive HF	Listeria monocytogenes serotype 1/2a (strain 10403s)	Bottom-up proteomics	
+baseline:Orbitrap DDA label-free human	PXD087517	12_KL_MVIC_A722_sph.raw	655	Orbitrap Fusion Lumos	Homo sapiens (human)	Data-dependent acquisition	
+mixed species	PXD016554	IParfentev_050718_Ecoli_DSPred3_F26.raw	982	Orbitrap Fusion Lumos; Q Exactive	Homo sapiens (human); Saccharomyces cerevisiae (baker's yeast)	Chemical cross-linking coupled with mass spectrometry proteomics	
+mixed species	PXD038377	AAS_P2009_155.raw	1894	Q Exactive HF-X	Mus musculus (mouse); Saccharomyces cerevisiae (strain atcc 204508 / s288c) (baker's yeast)	Shotgun proteomics; SWATH MS	SWATH MS
+mixed species	PXD007145	20171106_LUMOS1_nLC13_AH_TechBench2_TMTMS2L_2.raw	1383	Orbitrap Fusion Lumos	Homo sapiens (human); Saccharomyces cerevisiae (baker's yeast)	Shotgun proteomics	Label free; TMT; SILAC
+mixed species	PXD012703	FB20180825_SCA_TMTopt_LowInput_2_5_mgmL_1_4x.raw	289	Orbitrap Fusion Lumos; Q Exactive HF-X; Q Exactive Plus	Homo sapiens (human); Mus musculus (mouse)	Shotgun proteomics	MS1 intensity based label-free quantification method; TMT
+mixed species	PXD039399	0927_0B90B_20ms30CE_1020DDAR1.raw	1746	LTQ Orbitrap Elite	Homo sapiens (human); Saccharomyces cerevisiae (baker's yeast)	Shotgun proteomics; SWATH MS	
+mixed species	PXD022589	20201011_LU1_DaIt_Aurora5_HEK2_BOXCAR_SWATH_bRP_C.raw	3885	6520A Quadrupole Time-of-Flight LC/MS; TripleTOF 5600; Q Exactive HF	Homo sapiens (human); Escherichia coli; Candida albicans (yeast)	All-ion fragmentation; SWATH MS	TIC
+mixed species	PXD046292	C2.raw	203	LTQ Orbitrap Velos	Fungi; Rasamsonia emersonii	Data-dependent acquisition; Bottom-up proteomics	precursor ion
+mixed species	PXD063632	Haonan_20220809_DIA_MIX_1_1.raw	1046	Orbitrap Exploris 480	Human gut metagenome; Bacteria	Data-independent acquisition	Relative quantification
+mixed species	PXD022582	20190802_HFX4_SeHu_HeLa-library-HpH-16frac_8.raw	1151	6410 Triple Quadrupole LC/MS; Q Exactive HF; QSTAR	Homo sapiens (human); Saccharomyces cerevisiae (baker's yeast); Escherichia coli	Shotgun proteomics	TIC
+mixed species	PXD052080	Popeye_20231030_MGE_HStdia_S2_LF_5x_D5_3_5080.d.tar	515	timsTOF Pro 2; Orbitrap Exploris 480	Homo sapiens (human); Escherichia coli	Shotgun proteomics	

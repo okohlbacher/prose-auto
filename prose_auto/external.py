@@ -106,8 +106,8 @@ def fastag_species(fastag, mzml, frag_tol=20.0, frag_unit="ppm", fixed=("Carbami
     return [Evidence("organism", call["name"], conf, "data", "FASTag species", detail, {"taxa": table})]
 
 
-FASTAG_MIN_VERSION = (1, 10, 0)   # -digest_out, -label_out, -massgap_out, -species_evidence; 1.9.0 keeps reversed
-                                  # (b-ion) placements
+FASTAG_MIN_VERSION = (1, 15, 2)   # 1.10.0: -digest_out, -label_out, -massgap_out, -species_evidence; 1.15.2: -alkylation_out,
+                                  # -alkylation_tags_out, -qc_out reporter kits (1.15.3 gives 1.10.0's tags, ends and placements)
 DIGEST_MODELS = os.path.join(os.path.dirname(__file__), "data", "prose_auto_013_digest_models.tsv")
 _NLABEL = {"TMT6/10/11plex": ("TMT", 229.162932), "TMTpro (16/18plex)": ("TMTpro", 304.207146),
            "iTRAQ4plex": ("iTRAQ4", 144.102063)}
@@ -141,7 +141,7 @@ def require_fastag(fastag):
     v = fastag_version(fastag)
     if not v or v < FASTAG_MIN_VERSION:
         raise RuntimeError(f"prose-auto needs FASTag >= {'.'.join(map(str, FASTAG_MIN_VERSION))} (-digest_out, "
-                           f"-label_out, -massgap_out, -species_evidence); {fastag} reports "
+                           f"-label_out, -massgap_out, -alkylation_out, -qc_out); {fastag} reports "
                            f"{'.'.join(map(str, v)) if v else 'no version'}")
 
 
@@ -152,7 +152,10 @@ def _report(path):
 
 def _num(rep, section, key, default=0.0):
     v = rep.get((section, key), "-")
-    return default if v in ("-", "") else float(v)
+    try:
+        return default if v in ("-", "", "n/a") else float(v)
+    except ValueError:
+        return default
 
 
 def fastag_termini(fastag, mzml, frag_tol=20.0, frag_unit="ppm", subsample=0.25, threads=0, log=print):
@@ -262,20 +265,34 @@ def fastag_shortlist(evs, n=3):
     return (real or names)[:n]
 
 
+CONFIDENT_EVALUE = 1e-4               # the tags the database check counts
+
+
+def _gap_cmd(fastag, mzml, fasta, tmp, frag_tol, frag_unit, threads, subsample, fixed=()):
+    """The tagging and placement pass of the gap stage (and of the database check, on another FASTA): k=4 tags
+    extended by 6, placed with -recon_min_length 5 (the size-derived default, 6-7 on a proteome, placed 2.5-14x
+    fewer spectra) and no fixed modification but a label, so the Cys alkylation shows as a mass gap."""
+    cmd = [fastag, "-in", mzml, "-out", os.path.join(tmp, "tags.tsv"), "-tag_length", 4, "-extension", 6,
+           "-threads", threads, "-recon_fasta", fasta, "-recon_out", os.path.join(tmp, "recon.tsv"),
+           "-recon_min_length", 5, "-fixed_modifications"] + list(fixed) + _frag_args(frag_tol, frag_unit)
+    return cmd + (["-subsample_fraction", subsample] if subsample else [])
+
+
 def fastag_alkylation(fastag, mzml, fasta, frag_tol=20.0, frag_unit="ppm", threads=0, log=print, subsample=0.0,
-                      placements=None):
+                      placements=None, reports=None, fixed=()):
     """Cys alkylation and modification combinations from FASTag's mass-gap report (-massgap_out: tags placed on
     fasta without fixed modifications). placements, a list, receives (spectrum native id, peptide) of the first
-    placement per spectrum: the mass errors (hypotheses.placement_accuracy)."""
+    placement per spectrum: the mass errors (hypotheses.placement_accuracy). reports, a dict,
+    adds -alkylation_out, -alkylation_tags_out and -qc_out to the pass and receives them ("alkylation",
+    "alkylation_tags", "qc") with the database-check counts of the given database ("confident", "placed": sets of
+    spectra). fixed: a label as fixed modification (an isobaric label is part of every gap otherwise, and
+    -alkylation_out finds no Cys form)."""
     with tempfile.TemporaryDirectory(prefix="fastag_") as tmp:
         mg = os.path.join(tmp, "massgap.tsv")
-        cmd = [fastag, "-in", mzml, "-out", os.path.join(tmp, "tags.tsv"), "-tag_length", 4, "-extension", 6,
-               "-threads", threads, "-recon_fasta", fasta, "-recon_out", os.path.join(tmp, "recon.tsv"),
-               "-massgap_out", mg,
-               "-recon_min_length", 5,   # the size-derived default (6-7 on a proteome) placed 2.5-14x fewer spectra
-               "-fixed_modifications"] + _frag_args(frag_tol, frag_unit)
-        if subsample:
-            cmd += ["-subsample_fraction", subsample]
+        cmd = _gap_cmd(fastag, mzml, fasta, tmp, frag_tol, frag_unit, threads, subsample, fixed) + ["-massgap_out", mg]
+        out = {"alkylation": "alk.tsv", "alkylation_tags": "alkt.tsv", "qc": "qc.tsv"} if reports is not None else {}
+        for k, f in out.items():
+            cmd += [f"-{k}_out", os.path.join(tmp, f)]
         _run(cmd, log)
         rc = os.path.join(tmp, "recon.tsv")
         if placements is not None and os.path.exists(rc):
@@ -284,7 +301,206 @@ def fastag_alkylation(fastag, mzml, fasta, frag_tol=20.0, frag_unit="ppm", threa
                 if r["spectrum"] not in seen:
                     seen.add(r["spectrum"])
                     placements.append((r["spectrum"], r["peptide"]))
+        if reports is not None:
+            for k, f in out.items():
+                p = os.path.join(tmp, f)
+                reports[k] = _report(p) if os.path.exists(p) else {}
+            reports["confident"], placed = exact_placements(tmp)
+            reports["placed"] = placed.get("", set())
         return massgap_evidence(_report(mg) if os.path.exists(mg) else {})
+
+
+# flank masses that must agree for a placement to count: the flank that depends on the precursor mass breaks on
+# isotope errors, unfixed Cys and N-terminal modifications (an exact placement for only 1 in 3 placed spectra of a
+# label-free Orbitrap run), so one agreeing flank counts (calibration: v0111/README_0111.md)
+DBCHECK_FLANKS = 1
+
+
+def exact_placements(tmp, sep="|", flanks=DBCHECK_FLANKS):
+    """The database check's counts from a FASTag tags.tsv and recon.tsv in tmp: the spectra with a confident tag
+    (E <= CONFIDENT_EVALUE), and per database label the spectra whose confident tag places with at least `flanks`
+    agreeing flank masses (2: both, exact). The label is the protein accession's prefix up to sep in a check panel
+    (dbcheck_panel), "" in any other FASTA. FASTag lists every protein a tag places on, so one pass serves every
+    member of a panel."""
+    conf = {}
+    for r in _tsv(os.path.join(tmp, "tags.tsv")):
+        try:
+            if float(r["evalue"]) <= CONFIDENT_EVALUE:
+                conf.setdefault(r["spectrum"], set()).add(r["tag"])
+        except (KeyError, ValueError):
+            continue
+    placed = {}
+    rc = os.path.join(tmp, "recon.tsv")
+    for r in (_tsv(rc) if os.path.exists(rc) else []):
+        if (r["nterm_match"] == "1") + (r["cterm_match"] == "1") >= flanks and r["tag"] in conf.get(r["spectrum"], ()):
+            prot = r["protein"]
+            label = prot.split(sep, 1)[0] if prot.startswith(DBCHECK_PREFIX) else ""
+            placed.setdefault(label, set()).add(r["spectrum"])
+    return set(conf), placed
+
+
+DBCHECK_PREFIX = "dbcheck_"   # accession prefix of the check panel members: dbcheck_human|sp|P12345|...
+
+
+def fastag_share(fastag, sub):
+    """FASTag's shipped data folder <sub> (alkylation, digest, taxonomy): share-FASTag-<sub> next to the executable
+    (the release bundle), else <prefix>/share/FASTag/<sub>"""
+    d = os.path.dirname(os.path.realpath(fastag))
+    for p in (os.path.join(d, f"share-FASTag-{sub}"), os.path.join(d, "..", "share", "FASTag", sub)):
+        if os.path.isdir(p):
+            return os.path.normpath(p)
+    return None
+
+
+def dbcheck_panel(fastag, contaminants, cache):
+    """The database check's panel as one labelled FASTA, written once to <cache>/dbcheck_panel.fasta: FASTag's
+    shipped human, mouse, yeast and E. coli proteomes (UniProt reviewed, share/FASTag/alkylation, 17 MB) and the
+    contaminants. Returns (path, member names) or (None, []) without the shipped proteomes."""
+    import gzip
+    share = fastag_share(fastag, "alkylation")
+    members = [(n, os.path.join(share, f"{n}.fasta.gz")) for n in ("human", "mouse", "yeast", "ecoli")] if share else []
+    members = [m for m in members if os.path.exists(m[1])]
+    if not members:
+        return None, []
+    if contaminants:
+        members.append(("contaminants", contaminants))
+    names = [n for n, _ in members]
+    dst = os.path.join(cache, "dbcheck_panel" + ("+contaminants" if contaminants else "") + ".fasta")
+    if not os.path.exists(dst):
+        os.makedirs(cache, exist_ok=True)
+        part = f"{dst}.{os.getpid()}.part"
+        with open(part, "w") as out:
+            for n, p in members:
+                with (gzip.open(p, "rt") if p.endswith(".gz") else open(p)) as fh:
+                    for line in fh:
+                        out.write(f">{DBCHECK_PREFIX}{n}|{line[1:]}" if line.startswith(">") else line)
+        os.replace(part, dst)
+    return dst, names
+
+
+def fastag_dbcheck(fastag, mzml, panel_fasta, frag_tol=20.0, frag_unit="ppm", threads=0, log=print, subsample=0.0,
+                   fixed=()):
+    """The database check's panel pass: the gap stage's tagging (same spectra, same subsample seed) placed on the
+    check panel. Returns (confident spectra, {member: spectra placed exactly})."""
+    with tempfile.TemporaryDirectory(prefix="fastag_dbcheck_") as tmp:
+        cmd = _gap_cmd(fastag, mzml, panel_fasta, tmp, frag_tol, frag_unit, threads, subsample, fixed)
+        _run(cmd + ["-max_evalue", CONFIDENT_EVALUE], log)
+        conf, placed = exact_placements(tmp)
+    return conf, {k[len(DBCHECK_PREFIX):]: v for k, v in placed.items() if k}
+
+
+# Database check thresholds, calibrated on the development set (the 218 release runs with their correct FASTA and
+# with related, unrelated and incomplete ones; in-sample): 158 of 183 correct FASTAs pass, 120/166 related, 140/167
+# unrelated and 12/16 incomplete ones warn (v0111/README_0111.md). A run with fewer confident tags is not assessed.
+DBCHECK_MIN_TAGS = 100
+DBCHECK_MIN_RATE = 0.05    # share placed on the given FASTA below this: warn (correct FASTAs: median 0.51)
+DBCHECK_OWN_MIN = 0.03     # a panel member alone places this share of the confident spectra ...
+DBCHECK_OWN_REL = 0.10     # ... and at least this fraction of the given FASTA's share: warn
+
+
+def database_check(confident, given, members, organisms=()):
+    """The policy on the placement counts: the share of the spectra with a confident tag that place on the given
+    FASTA (contaminants count as explained), and per panel member the share it places that the given FASTA does
+    not ("own"). Warns when the given share is low or a member has many spectra of its own (in absolute terms and
+    against the given share); with too few confident tags it abstains. organisms (taxa.key of the given organisms) leave a member out that the user gave.
+    Returns a dict for the report."""
+    n = len(confident)
+    crap = members.get("contaminants", set())
+    explained = (given | crap) & confident
+    rate = len(explained) / n if n else 0.0
+    rates = {m: round(len(s & confident) / n, 4) for m, s in members.items()} if n else {}
+    own = {m: round(len((s & confident) - explained) / n, 4) for m, s in members.items() if m != "contaminants"} \
+        if n else {}
+    out = {"confident_spectra": n, "given_rate": round(rate, 4), "panel_rates": rates, "panel_own": own,
+           "thresholds": {"min_tags": DBCHECK_MIN_TAGS, "min_rate": DBCHECK_MIN_RATE, "own_min": DBCHECK_OWN_MIN,
+                          "own_rel": DBCHECK_OWN_REL, "flanks": DBCHECK_FLANKS}}
+    if n < DBCHECK_MIN_TAGS:
+        return {**out, "status": "not assessed", "reasons": [f"{n} spectra with a confident tag (E <= "
+                                                             f"{CONFIDENT_EVALUE:g}), {DBCHECK_MIN_TAGS} needed"]}
+    reasons = []
+    if rate < DBCHECK_MIN_RATE:
+        reasons.append(f"only {rate:.1%} of the {n} spectra with a confident tag place on the given database "
+                       f"(at least {DBCHECK_MIN_RATE:.0%} expected)")
+    bar = max(DBCHECK_OWN_MIN, DBCHECK_OWN_REL * rate)
+    for m, x in sorted(own.items(), key=lambda kv: -kv[1]):
+        if x >= bar and m not in organisms:
+            reasons.append(f"the {m} proteome places {x:.1%} of the spectra with a confident tag that the given "
+                           f"database does not (below {bar:.1%} expected)")
+    return {**out, "status": "warning" if reasons else "ok", "reasons": reasons}
+
+
+ALK_VALUE = {"Carbamidomethyl": "Carbamidomethyl (C)", "Propionamide": "Propionamide (C)",
+             "Nethylmaleimide": "Nethylmaleimide (C)", "Methylthio": "Methylthio (C)",
+             "Carboxymethyl": "Carboxymethyl (C)", "none": "none (free Cys)", "unmodified": "none (free Cys)"}
+
+
+def alkylation_evidence(alk, alkt):
+    """FASTag's Cys calls: -alkylation_out (placements of single-Cys peptides on the given database; experimental)
+    and -alkylation_tags_out (database-free; held-out 37 of 40 calls right, 17 of 57 runs abstained). A call is
+    evidence, a no-call none; the mini-search competition is the fallback (cli._cys_fallback). The placement call is a
+    database result like the competition (source search, above the mass-gap peak: on the 218 release runs it agreed
+    with the competition's winner on all 87 runs it called); the database-free call is data."""
+    ev = []
+    for rep, sec, method, conf, src in ((alk, "alkylation_call", "FASTag alkylation (placements)", 0.86, "search"),
+                                        (alkt, "alkylation_tags_call", "FASTag alkylation (tags)", 0.6, "data")):
+        status = (rep or {}).get((sec, "status"))
+        if status != "call":
+            continue
+        reagent = rep.get((sec, "reagent"), "-")
+        val = ALK_VALUE.get(reagent)
+        if not val:
+            continue
+        share = _num(rep, sec, "share")
+        ev.append(Evidence("cys_alkylation", val, conf, src, method,
+                           f"FASTag calls {reagent}: share {share:.2f} of the binned spectra", {"share": share}))
+    return ev
+
+
+QC_KIT_LABEL = {"tmt6plex": "TMT6plex", "tmt10plex": "TMT10/11plex", "tmt11plex": "TMT10/11plex",
+                "tmt16plex": "TMTpro (16/18plex)", "tmt18plex": "TMTpro (16/18plex)", "itraq4plex": "iTRAQ4plex",
+                "itraq8plex": "iTRAQ8plex"}
+QC_ANALYZER = {"FTMS": "ORBITRAP", "ITMS": "IT", "TOF": "TOF"}
+
+
+def qc_evidence(qc):
+    """FASTag's run QC (-qc_out, experimental) next to the header: the MS1/MS2 analyser class (from the filter
+    string or the instrument configuration), the precursor charge histogram and the isobaric reporter kits. They
+    are low-confidence evidence: the header and prose-auto's own detectors decide, a disagreeing analyser class
+    shows as a conflict. Returns (evidence, summary for the report)."""
+    if not qc:
+        return [], {}
+    ev, summ = [], {}
+    for lvl in (1, 2):
+        counts = {cls: int(_num(qc, "qc", f"count_ms{lvl}_{cls}")) for cls in QC_ANALYZER}
+        tot = int(_num(qc, "qc", f"count_ms{lvl}"))
+        top = max(counts, key=counts.get)
+        summ[f"ms{lvl}_analyzer_class"] = {k: v for k, v in counts.items() if v}
+        res = qc.get(("qc", f"resolution_{top}_ms{lvl}"), "n/a")
+        if res not in ("n/a", "-", ""):
+            summ[f"ms{lvl}_resolution"] = res
+        if tot and counts[top] >= 0.9 * tot:
+            ev.append(Evidence(f"ms{lvl}_analyzer", QC_ANALYZER[top], 0.5, "metadata", "FASTag QC",
+                               f"FASTag QC: {counts[top]} of {tot} MS{lvl} spectra read out in {top}"
+                               + (f", resolution {res}" if res not in ("n/a", "-", "") else "")))
+    hist = {int(k.split("_")[-1]): int(float(v)) for (s, k), v in qc.items()
+            if s == "qc" and k.startswith("precursor_charge_") and not k.endswith("share") and k[-1].isdigit()}
+    hist = {z: n for z, n in hist.items() if z > 0 and n}
+    if hist:
+        summ["charge_histogram"] = hist
+        tot, acc, lo, hi = sum(hist.values()), 0, None, None
+        for z in sorted(hist):
+            acc += hist[z]
+            lo = z if lo is None and acc >= 0.005 * tot else lo
+            hi = z if hi is None and acc >= 0.995 * tot else hi
+        ev.append(Evidence("charge_range", [lo, hi], 0.35, "metadata", "FASTag QC",
+                           f"FASTag QC: 99% of the header precursor charges lie in {lo}..{hi}", {"histogram": hist}))
+    kits = [k for k in qc.get(("qc", "reporter_compatible_kits"), "-").split(",") if k in QC_KIT_LABEL]
+    summ["reporter_kits"] = kits
+    if kits:
+        ev.append(Evidence("label", QC_KIT_LABEL[kits[0]], 0.35, "data", "FASTag QC reporter kits",
+                           "FASTag QC: reporter channels compatible with " + ", ".join(kits)))
+    summ["tag_yield"] = _num(qc, "qc", "tag_yield", None)
+    return ev, summ
 
 
 # FASTag modification name -> ProSE names (the variable modifications a dominant gap proposes)

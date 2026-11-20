@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.1.11 (2026-11-20)
+
+The organism is given
+- `--organism` and/or `--fasta` (both repeatable) are required. Without them prose-auto stops; with `--accession` it
+  names the organisms of the PRIDE record. `--infer-organism` is the 0.1.10 full mode. `--fast` is accepted as the
+  old name of the default.
+- The report has `mode: "given"` (or `"infer"`), `database_check`, `fastag_qc` and `mini_search`.
+
+FASTag 1.15
+- Requires FASTag >= 1.15.2. On 4 runs, 1.15.3 gives 1.10.0's tags, species ranking, tag-end evidence and
+  placements; the mass-gap Cys call is unchanged, the variable-modification candidates differ.
+- Default mode: the isobaric label the reporter ions show is a fixed modification of the FASTag pass, which adds
+  `-alkylation_out` (a database result, 0.86), `-alkylation_tags_out` (0.6) and `-qc_out` (analyser class,
+  charges, reporter kits as low-confidence evidence next to the header).
+- Vendor input is not used: prose-auto's detectors need an mzML with MS1 and MS3.
+
+Mini-search as a fallback
+- Default mode: the Cys competition runs only when FASTag's call and the texts disagree or both abstain, checked
+  again after Jev; the timsTOF protease competition as before. `--mini-search-cys always|never` for ablations.
+- 218 release runs (development, in-sample): the competition ran on 30 of 215. `-alkylation_out` agreed with
+  0.1.10's competition on all 87 runs it called (72 no call). FASTag's call alone lost 0.21 % of the PSMs on the
+  fallback runs (PXD073447 −9.2 %), so the competition stays as the fallback.
+- SDRF scores as 0.1.10 fast except Cys 124/131 (125). ProSE IDs on the 99 runs whose command changed: PSMs +0.16 %,
+  peptides +0.38 %, protein groups +0.40 %.
+- Idle node, median per run: the changed steps take 7.3 → 7.6 s (DDA), 16.5 → 7.7 s (DIA), 11.9 → 8.5 s (timsTOF).
+
+Database checks
+- Before the search (`--check-organism warn|strict|off`): the share of confident-tag spectra (E <= 1e-4) placing on
+  the given database with one agreeing flank, against FASTag's human, mouse, yeast and E. coli proteomes and
+  `--contaminants`, in one more FASTag pass (2–3 s). Warns below 5 %, or when a panel member places >= 3 % and >= a
+  tenth of the given share on its own. Development: 158/183 correct databases pass; 120/166 related, 140/167
+  unrelated and 12/16 incomplete warn.
+- After the search: `prose-auto check run.mzML run.idXML --fasta ... --fastag ...`. ok when >= 15 % of the
+  confident-tag spectra are identified; otherwise settings likely wrong when >= 20 % of the unidentified ones place
+  on the given database, else database likely wrong or incomplete. Development: 159/183 correct ok; wrong settings
+  49/50 flagged (35 as settings); unrelated databases 163/165, related 70/165, incomplete 2/16.
+
+Preregistration
+- `acceptance/0.1.11/PREREG.md`: held-out benchmark (187 runs by quota, 40-run wrong-database set), drawn with seed
+  20261120 by `draw_sets.py`; not run.
+
 ## 0.1.10 (2026-11-05)
 
 Mass errors from FASTag
