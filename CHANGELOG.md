@@ -60,8 +60,9 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
   round, no human adjudicator; a still-disputed field is not annotated (a disputed organism or class: not verified).
   The held-out harness `acceptance/0.1.12/heldout/` (arm templates, IBMI stages, BinAC2 arrays A, B, B2 and C,
   `FREEZE.md` writer, annotation driver, transfer) with `tests/test_heldout.py`. Conversion check: total and MS2
-  counts of the vendor file (FASTag) against the mzML. best_psm in its own array (B2); `fast_0110` gets auto's
-  `--organism`. Dry run on two development runs (IBMI and BinAC2) passed end to end, best_psm aside.
+  counts of the vendor file (FASTag) against the mzML. best_psm: unspecific cleavage only in the final search (label and Cys chosen under the best specific
+  protease), in its own array B2 on 1 TB nodes; `fast_0110` gets auto's
+  `--organism`. Dry run on two development runs (IBMI and BinAC2) passed end to end.
 
 ## 0.1.11 (2026-11-20)
 

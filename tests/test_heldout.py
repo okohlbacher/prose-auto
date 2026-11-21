@@ -241,3 +241,34 @@ def test_best_psm_is_its_own_array():
     import inspect
     assert "best_psm(" not in inspect.getsource(HN.task)          # array B: 6 h; best_psm can take days (B2)
     assert "best_psm(p, o)" in inspect.getsource(HN.best_psm_task)
+
+
+def test_best_psm_unspecific_only_in_final(tmp_path, monkeypatch):
+    """amendment 2026-11-22c: unspecific wins the protease step -> label and Cys are chosen with the best specific
+    protease; the final full search is unspecific"""
+    PSMS = {"Trypsin": 800, "Lys-C": 700, "Arg-C": 100, "Chymotrypsin": 0, "Glu-C": 0, "Asp-N": 0,
+            "unspecific cleavage": 1000}
+    calls = []
+
+    def fake_search(spectra, db, cli, o, name):
+        enz = A._vals(cli, "-Search:enzyme")[0]
+        fixed = A._vals(cli, "-Search:modifications:fixed")
+        calls.append((name, enz, o))
+        n = {v: k for k, v in __import__("prose_auto.prose_params", fromlist=["x"]).ENZYME_NAMES.items()}
+        base = PSMS[n.get(enz, enz)]
+        return {"psm": {"accepted": base + (100 if "TMT6plex (K)" in fixed else 0), "combined": 0.5}}
+
+    monkeypatch.setattr(HN, "search", fake_search)
+    monkeypatch.setattr(HN, "subset_mzml", lambda s, out: out)
+    monkeypatch.setattr(HN, "X", str(tmp_path))
+    p = {"run": "PXD1/a.raw", "spectra": "a.mzML", "db": "db.fasta", "best_psm": {
+        "start": {"protease": "Trypsin", "label": "label free", "cys": "Carbamidomethyl (C)"},
+        "enrichment": "none", "prec": [10, "ppm"], "frag": [20, "ppm"]}}
+    HN.best_psm(p, str(tmp_path / "bp"))
+    j = json.load(open(tmp_path / "bp" / "best_psm.json"))
+    assert j["steps"][0]["to"] == "unspecific cleavage" and j["steps"][0]["label_cys_under"] == "Trypsin"
+    later = [c for c in calls if c[0] == "subset" and ("/label/" in c[2] or "/cys/" in c[2])]
+    assert later and all(c[1] == "Trypsin" for c in later)
+    assert j["result"] == {"protease": "unspecific cleavage", "label": "TMT6plex", "cys": "Carbamidomethyl (C)"}
+    assert calls[-1][0] == "run" and calls[-1][1] == "unspecific cleavage"
+    assert A.best_specific("Trypsin", PSMS) == "Trypsin"

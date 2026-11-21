@@ -935,18 +935,25 @@ def check(spectra, idxml, fasta, report, o):
 
 def best_psm(p, o):
     """§4 best_psm: on the 5,000-MS2 subset, one factor at a time (arms.BEST_PSM_FACTORS), then the full run"""
+    os.makedirs(o, exist_ok=True)
     sub = subset_mzml(p["spectra"], f"{X}/subset/{fname(p['run'])}.mzML")
     cur = dict(p["best_psm"]["start"])
-    steps = []
+    steps, under = [], None      # under: the specific protease of the label and Cys steps when unspecific won
     for factor, cands in A.BEST_PSM_FACTORS:
         scores = {}
         for v in dict.fromkeys([cur[factor]] + list(cands)):
             s = {**cur, factor: v, "enrichment": p["best_psm"]["enrichment"]}
+            if under and factor != "protease":
+                s["protease"] = under
+            tag = re.sub(r'[^A-Za-z0-9]+', '_', v or 'none') + (f"__{re.sub(r'[^A-Za-z0-9]+', '_', under)}" if s.get(
+                "protease") == under and under else "")
             ev = search(sub, p["db"], A.settings_cli(s, p["best_psm"]["prec"], p["best_psm"]["frag"]),
-                        f"{o}/subset/{factor}/{re.sub(r'[^A-Za-z0-9]+', '_', v or 'none')}", "subset")
+                        f"{o}/subset/{factor}/{tag}", "subset")
             scores[v] = A.subset_psms(ev)
         new = A.best_psm_step(cur[factor], scores)
         steps.append({"factor": factor, "scores": scores, "from": cur[factor], "to": new})
+        if factor == "protease" and new == A.UNSPECIFIC:
+            under = steps[-1]["label_cys_under"] = A.best_specific(cur[factor], scores)
         cur[factor] = new
     json.dump({"steps": steps, "result": cur}, open(f"{o}/best_psm.json", "w"), indent=1)
     final = {**cur, "enrichment": p["best_psm"]["enrichment"]}
@@ -993,8 +1000,8 @@ def task(i):
 
 
 def best_psm_task(i):
-    """array B2: best_psm of release run i, on its own walltime (an unspecific winner makes every later subset search
-    and the full search unspecific: hours each)"""
+    """array B2: best_psm of release run i, on a high-memory node (>= 1 TB: the unspecific subset candidate and, when
+    it wins, the final full search peak at about 900 GB) and its own walltime"""
     check_frozen([TOOLS[t] for t in FROZEN_TOOLS])
     k = open(f"{H}/plan/release.txt").read().split()[i - 1]
     p = json.load(open(f"{H}/plan/{fname(k)}.json"))

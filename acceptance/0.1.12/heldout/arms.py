@@ -154,6 +154,16 @@ def best_psm_step(current, scores):
     return best
 
 
+UNSPECIFIC = "unspecific cleavage"
+
+
+def best_specific(current, scores):
+    """amendment 2026-11-22c: when unspecific cleavage wins the protease step, the label and Cys steps search with the
+    specific protease the rule would have chosen without the unspecific candidate (an unspecific subset search peaks at
+    900 GB RAM and takes about 4.5 h); unspecific is searched once more, in the final full search"""
+    return best_psm_step(current, {v: s for v, s in scores.items() if v != UNSPECIFIC})
+
+
 def subset_psms(ev):
     """a subset search's score from its eval.json: PSMs at 1 % FDR, 0 when the entrapment FDP exceeds 1 %"""
     if not ev:

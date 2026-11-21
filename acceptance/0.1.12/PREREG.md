@@ -412,7 +412,7 @@ shuffled twin of every target, seed 0; the decoys are reversed. The ProSE build 
 | **reference** | the adjudicated annotation (§3.2) with the measured windows (§3.3) |
 | **SDRF** | the authors' settings as stated: the submitted or curated SDRF if one exists, else the methods as transcribed by the annotators. A field nobody states takes the ProSE default, never auto's |
 | **defaults** | ProSE defaults plus the organism: Trypsin/P, Carbamidomethyl (C) fixed, Oxidation (M) variable, ProSE's default windows and charges |
-| **best_psm** (comparator, not truth) | on the subset, one factor at a time from the reference settings:<br>• protease (trypsin, the five non-tryptic proteases, unspecific);<br>• label (none, TMT, TMTpro, iTRAQ4/8, SILAC);<br>• Cys alkylation (CAM, none, propionamide, NEM, methylthio, carboxymethyl).<br>A candidate is kept when it beats the current value by ≥ 5 % in PSMs at 1 % entrapment FDP. The full run is then searched with the result |
+| **best_psm** (comparator, not truth) | on the subset, one factor at a time from the reference settings:<br>• protease (trypsin, the five non-tryptic proteases, unspecific);<br>• label (none, TMT, TMTpro, iTRAQ4/8, SILAC);<br>• Cys alkylation (CAM, none, propionamide, NEM, methylthio, carboxymethyl).<br>A candidate is kept when it beats the current value by ≥ 5 % in PSMs at 1 % entrapment FDP. If unspecific wins the protease step, label and Cys are chosen under the best specific protease (amendment 2026-11-22c). The full run is then searched with the result |
 
 **Wrong-database and wrong-settings searches (S6).** Every scenario (§2.3) is searched on its own database:
 1. **Pre-search:** prose-auto analyze runs with the auto flags, with the scenario database given as `--fasta` instead of
@@ -694,7 +694,7 @@ On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to e
 | 4. Annotators A and B, reconciliation (`annotate.py`) | the author's laptop, where the agent CLIs (Claude, Codex, Kimi) run; the sheets are copied there and the answers back | two agent calls per run, a third and fourth for each disputed run |
 | 4. Verification and window searches (`harness.py verify`, `windows`) | BinAC2, array A | 300 tasks, one subset search and one mini-search each |
 | 5a. Every prose-auto `analyze`: the auto arm, the ablations of §7, the S6 pre-search analyses | IBMI, on a claimed node, 8 at a time with 8 threads | about 2,000 analyses at a median 145 s (pilot): about 10 h. They call Jev, whose key reaches only IBMI and only over ssh stdin, so they do not run on BinAC2 |
-| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2, 6 h), B2 (its best_psm, 3 days) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per run and 213 scenario searches |
+| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2, 6 h), B2 (its best_psm, on high-memory nodes: 1,000 GB, 2 days) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per run and 213 scenario searches |
 | 5c. Post-search checks (`prose-auto check`, which runs FASTag) | BinAC2, in the task of their search | — |
 | 6. `extract.py`, `score.py` | IBMI | minutes |
 
@@ -985,8 +985,8 @@ The 300-run draw, its seed and both P3 gates are unchanged.
      counts come from the frozen FASTag reading the `.raw` (Thermo RawFileReader) or `.d` directly, in one full pass
      (`-census` input_spectra, `-qc_out` count_ms2), never from the converted file. A partial conversion loses spectra
      and fails;
-     No frozen tool reads `.wiff` independently, so a `.wiff` run rests on the converter's validated index (8 drawn
-     runs, 1 wrong-database run);
+     No frozen tool reads `.wiff` independently, so the `.wiff` runs (8 drawn, 1 wrong-database) have only the
+     mzML-side count: the converter's validated index, with no vendor count to compare;
    - **verification of DIA runs** (§3.1) searches the subset of DIAspeXtract's pseudo-spectra. The reference windows
      of DIA and timsTOF runs are the instrument standard (the pilot's rule; §3.3 named no exception);
    - **the five non-tryptic proteases** of best_psm are Lys-C, Arg-C, Chymotrypsin, Glu-C and Asp-N; a candidate
@@ -996,8 +996,14 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    - **`FREEZE.md`** also holds the corpus protocol (`corpus.py`, `entrap.py`), the 0.1.10 code and FASTag 1.10.0
      of `fast_0110`, both FileConverter builds, the pxd converter registry and the BinAC2 container image. The
      analyses (step 5a), the plans and the search databases are appended before the BinAC2 release;
-   - **best_psm runs in its own array (B2, 3 days per task).** When unspecific cleavage wins the protease step, every
-     later subset search and the full search are unspecific: in the dry run (PXD000561, 5,000 MS2, 8 threads) one
-     such subset search took 3 to 5 h. The rule is unchanged;
+   - **best_psm: unspecific cleavage only in the final search** (the author's decision, option 2: "Unspecific in
+     final only"). Unspecific stays a protease candidate. When it wins the protease step, the label and Cys steps
+     search with the specific protease the rule would have chosen without it (`arms.best_specific`), and unspecific is
+     searched once more, in the final full search. Label and Cys are then chosen under a different protease than the
+     final search uses; `best_psm.json` records it (`label_cys_under`). The reason: in the dry run (PXD000561, 5,000
+     MS2, human + entrapment, 8 threads) one unspecific subset search peaked at 900 GB RAM and took about 4.5 h,
+     and a run where unspecific wins needed about 12 of them;
+   - **best_psm runs in its own array (B2) on high-memory nodes** (`--mem=1000gb`, 2 days per task): the unspecific
+     subset candidate of every run, and the final search where it wins, need about 900 GB;
    - **`fast_0110`** gets the same `--organism` as auto: 0.1.10 fast mode refuses to run without it.
 

@@ -7,7 +7,7 @@
 #SBATCH --output=pa0112-%x-%A_%a.out
 # PREREG 0.1.12 §10.1, arrays A (verify, windows), B (task), B2 (best_psm) and C (scenario) on BinAC2:
 #   sbatch --array=1-N%40 heldout.slurm STAGE        STAGE: verify | windows | task | scenario
-#   sbatch --array=1-N%40 --time=3-00:00:00 heldout.slurm best_psm
+#   sbatch --array=1-N%16 --mem=1000gb --time=2-00:00:00 heldout.slurm best_psm   (high-memory nodes: ~900 GB peak)
 # A dry run sets HELDOUT_DRY=<file of KEY=VALUE lines> (PROSE_AUTO_H, _RUNS, _WRONGDB, _FREEZE, HELDOUT_NO_JEV)
 # A rerun asks for twice the memory and time: sbatch --mem=256gb --time=12:00:00 --array=I heldout.slurm STAGE
 # The frozen IBMI tree is mirrored in the workspace (<ws>/ceph -> /ceph inside the container); --cpus-per-task counts
