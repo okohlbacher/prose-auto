@@ -307,6 +307,34 @@ def accounting(drawn, ref, tab=None):
                                                               "not executed": not_exec}, cls
 
 
+def eligible_before_arms(d, heldout):
+    """the conditional top-up rule's count (§2.1), before any arm runs: the drawn runs of heldout that are bottom-up
+    with a verified organism (reference.tsv; class no-proteome = no reference database) and a complete conversion
+    (DIR/conversion.tsv: run, status ok | failed; failed covers download, conversion and the MS2-count check). It
+    reads nothing of any arm or endpoint. Every drawn run must have a reference row or a failed conversion, else the
+    annotation is incomplete and the rule may not run. Returns (eligible count, the accounting counts)."""
+    drawn = [f"{r['accession']}/{r['file']}" for r in read(heldout, ["accession", "file"])]
+    ref = read(f"{d}/reference.tsv", ["run", "class", "organism_verified"])
+    conv = read(f"{d}/conversion.tsv", ["run", "status"])
+    _enum(ref, "class", CLASSES, "reference.tsv")
+    _enum(ref, "organism_verified", {"yes", "no"}, "reference.tsv")
+    _enum(conv, "status", {"ok", "failed"}, "conversion.tsv")
+    _unique(ref, ["run"], "reference.tsv")
+    _unique(conv, ["run"], "conversion.tsv")
+    known = set(drawn)
+    for r in ref + conv:
+        if r["run"] not in known:
+            raise InputError(f"run {r['run']} is not in the draw")
+    failed = {r["run"] for r in conv if r["status"] == "failed"}
+    ok = {r["run"] for r in conv if r["status"] == "ok"}
+    has_ref = {r["run"] for r in ref}
+    open_ = [r for r in drawn if r not in failed and not (r in ok and r in has_ref)]
+    if open_:
+        raise InputError(f"{len(open_)} drawn runs are neither annotated and converted nor failed: {open_[:3]}")
+    runs, counts, _ = accounting(drawn, [r for r in ref if r["run"] not in failed])
+    return len(runs), counts
+
+
 def _count(row, field):
     return 0.0 if row["status"] == "stopped" else row[field]
 

@@ -85,7 +85,8 @@ held-out predicates and queries, one or two runs per stratum.
   carried forward, the joint power is about 0.64, mostly through P3. If the held-out attrition is as high as the
   pilot's lower bound allows, the study gets no verdict in most simulations. **Power under plausible attrition is
   well below 0.8.** The draw and the gates stay as decided (§0, the author's decision); the risk is stated here, not
-  removed.
+  removed. The stated assurance is the predictive power (§9), and the conditional top-up (§2.1) guards the 120-run
+  minimum.
 - **The design grid** (`power_grid.txt`, conditional, 200 simulations per cell), joint power at the pilot effect /
   ×0.98 with 2 % fewer compliant / ×0.97 with 5 % fewer:
 
@@ -159,6 +160,27 @@ held-out predicates and queries, one or two runs per stratum.
     unless `heldout.tsv` is still the 187-run file.
 
 The wrong-database set and the scenarios are unchanged: `scenarios.py` rebuilds `scenarios.tsv` byte for byte.
+
+**The conditional top-up** (amendment 2026-11-22b):
+- **When it is checked:** once, after the blind annotation (§3) and the download, conversion and MS2-count check
+  (§10 step 3) of all 300 runs, before any arm runs.
+- **The count:** `score.eligible_before_arms` counts the eligible runs from `reference.tsv` and `conversion.tsv`
+  only: bottom-up, a verified organism, a reference database (not no-proteome), and a complete conversion. It reads
+  nothing of any arm or endpoint. It stops when a drawn run is neither annotated and converted nor failed.
+- **The rule:** with fewer than 120 eligible runs, `draw_topup.py --batch K DIR` draws batch K of
+  min(50, 500 − drawn) runs:
+  - the same strata, queries, predicates and file rule;
+  - the 187-run quotas scaled to the new total, minus the runs each stratum already has (at least 0); unfilled
+    places pass on as before;
+  - the exclusions of the top-up plus every drawn run and every candidate so far;
+  - the seeds, fixed now: batch 1 20261201, batch 2 20261202, batch 3 20261203, batch 4 20261204.
+- **After a batch:** its runs are annotated and converted by the same protocol, and the count is repeated.
+- **When it ends:**
+  - at ≥ 120 eligible runs, when the arms start;
+  - at the cap of 500 drawn runs, or when every pool is exhausted, with "no verdict" for P1–P3 and the study (§2.2).
+- **Safeguards:** `draw_topup.py` refuses a batch unless the count is below 120, `heldout.tsv` holds exactly the
+  runs of the batches before (300 + 50 (K − 1)) and the cap is open. Each batch's runs, candidates, log and the new
+  `heldout.tsv` hash go into `FREEZE.md` before its annotation.
 
 **Excluded from the draw:** the 2,691 accessions in `exclude.txt`. These are every PXD named in the prose-auto
 development tree:
@@ -517,6 +539,28 @@ texts or to a conservative default, and the report says so. `score.py` computes 
 | FASTag QC evidence | FASTag QC's own MS2 analyser call (its ≥ 90 % rule) agrees with the header's own evidence (the scan header or `analysis.tdf`, read from the report's evidence before reconciliation, never the reconciled decision) in ≥ 98 % of the eligible runs with header evidence. A run where FASTag QC made no call, or did not run, stays in the denominator as a disagreement; calls, no-calls and runs without header evidence are reported | removed from the evidence |
 | database checks | the gates below | that check's verdicts are marked experimental |
 
+**The stated assurance for P1–P3** (`power_decision.txt`, `power_decision.py`, amendment 2026-11-22b). The
+predictive power, with the 19 pilot runs resampled in each simulation, is the power this study claims:
+- **The adopted design** (300 drawn, X 0.75, margin −0.05):
+  - joint power 0.64, P(no verdict) 0.05;
+  - 0.60 and 0.52 with 2 % and 5 % fewer compliant auto runs;
+  - a minimum of 0.45 with one pilot project left out (PXD065759);
+  - at the pilot's lower attrition bound, 0.18, with P(no verdict) 0.74, before the conditional top-up of §2.1.
+- **The limit is the pilot's uncertainty about the P3 effect, not the size.** P1 and P2 reach 0.95–1.00 from 300
+  drawn runs, while P3's paired compliance difference rests on 12 pilot runs and two projects.
+
+| Drawn | Margin | Joint (P1 / P2 / P3) | P(no verdict) | Eligible 5–95 % | 2 % / 5 % fewer compliant | One project left out, minimum |
+|---|---|---|---|---|---|---|
+| **300** | **−0.05** | **0.64 (0.95 / 0.92 / 0.66)** | **0.05** | **119–226** | **0.60 / 0.52** | **0.45** |
+| 300 | −0.10 | 0.75 (0.96 / 0.94 / 0.76) | 0.04 | 122–226 | 0.68 / 0.65 | 0.57 |
+| 400 | −0.05 | 0.69 (1.00 / 0.96 / 0.72) | 0.00 | 156–302 | 0.65 / 0.53 | 0.51 |
+| 400 | −0.10 | 0.80 (1.00 / 0.98 / 0.81) | 0.00 | 164–297 | 0.73 / 0.69 | 0.64 |
+| 500 | −0.05 | 0.74 (1.00 / 0.98 / 0.76) | 0.00 | 200–376 | 0.69 / 0.59 | 0.49 |
+| 500 | −0.10 | 0.82 (1.00 / 0.98 / 0.83) | 0.00 | 211–385 | 0.76 / 0.69 | 0.64 |
+
+1,000 simulations per 300 cell and 500 per 400 and 500 cell, 200 per left-out project. The author kept 300 drawn
+runs and the −0.05 margin, with the conditional top-up.
+
 **The check gates.** Each gate is an exact one-sided binomial test of H0 "share ≤ bound", run on the assessed
 scenarios. The p-values of all nine gates are adjusted together by Holm at 0.05. The family is always all nine: a
 gate without an assessed scenario keeps p = 1 and does not pass.
@@ -573,7 +617,8 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
      - `extract.py`, `score.py`, `scenarios.py`, `resolve_uniprot.py`, `refdb.py` and `power.py`, with `power.txt`,
        `power_grid.txt` and `power_inputs/` (the calibration rows `power.py` read);
      - `heldout.tsv` (300 runs), `topup.tsv`, `wrongdb.tsv`, `scenarios.tsv` and `refdb_draw.tsv`, with
-       `draw_sets.py` and `draw_topup.py`;
+       `draw_sets.py` and `draw_topup.py` (with the conditional top-up's seeds);
+     - `power_decision.py` and `power_decision.txt`;
      - `uniprot/` and `uniprot_heldout/` (lineages, candidates, the request log);
      - every FASTA;
      - the binaries and environment of §1 (FASTag bundle, ProSE, DIAspeXtract, FileConverter, mzpeak-convert,
@@ -585,7 +630,7 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
    - commit it.
 3. **Download and convert:** the SHA-256 of every mzML is appended to `FREEZE.md`, with each run's MS2 count
    against its vendor index (§2.2: a partial conversion is missing).
-4. **Annotation** (§3):
+4. **Annotation** (§3), then the conditional top-up (§2.1), whose batches are annotated the same way:
    - `reference_A.tsv`, `reference_B.tsv` and the adjudication log (each disagreement, the decision, the reason) are
      frozen;
    - then `reference.tsv` and `adjudicated.tsv` are frozen;
@@ -882,4 +927,20 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    - the workspace owner, extension (`proseauto` to 2026-12-21) and fallback;
    - the quota then and now (3.88 TB free on 2026-11-22), with a scratch fallback.
 9. **README_0112.md:** the development-proxy power section is marked superseded.
+
+### 2026-11-22b, 0.1.12 (before sign-off; the author's decision on the predictive power)
+
+1. **Kept:** 300 drawn runs, X 0.75, margin −0.05, the seed and every gate. This was the author's choice among the
+   predictive cells for 300, 400 and 500 drawn runs and the −0.05 and −0.10 margins.
+2. **The conditional top-up** (§2.1):
+   - it is checked after the blind annotation and conversion of all 300 runs, before any arm;
+   - with fewer than 120 eligible runs, batches of 50 are drawn with seeds 20261201–20261204, fixed now;
+   - it ends at ≥ 120, or with "no verdict" at the 500-run cap or when the pools are exhausted;
+   - the count reads annotation and conversion only (`score.eligible_before_arms`), and `draw_topup.py --batch`
+     accepts a batch only by that count;
+   - tested in `test_conditional_topup_rule`.
+3. **The stated assurance** (§9):
+   - the predictive power and its decision table (`power_decision.txt`, `power_decision.py`), now in this folder and
+     in `SHA256SUMS`;
+   - the limit is the pilot's uncertainty about the P3 effect, not the size.
 

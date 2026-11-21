@@ -52,6 +52,10 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
     high attrition.
   - Check bounds: specificity 0.65; related_distant pre 0.50 and post 0.25.
   - Execution plan: hand-off, hashes and reruns on both sites.
+- Amendment 2026-11-22b: 300 drawn runs and the −0.05 margin kept. Conditional top-up before any arm: with fewer
+  than 120 eligible runs, batches of 50 (seeds 20261201–20261204) up to 500 drawn, else no verdict; implemented in
+  `score.eligible_before_arms` and `draw_topup.py --batch`. Stated assurance: predictive joint power 0.64
+  (`power_decision.txt`).
 
 ## 0.1.11 (2026-11-20)
 

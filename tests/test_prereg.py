@@ -553,3 +553,31 @@ def test_power_uses_the_scorer_and_the_manifest():
     assert abs(lo - 0.3836) < 1e-3 and abs(12 / 19 * (1 - loss) - lo) < 1e-12
     r = subprocess.run([sys.executable, os.path.join(D, "power.py"), "x", "y"], capture_output=True, text=True)
     assert r.returncode != 0 and "pass --overwrite" in r.stderr
+
+
+def test_conditional_topup_rule(tmp_path):
+    """amendment 2026-11-22b: the pre-arm eligibility count (annotation and conversion only) and draw_topup.py's batch
+    mode, which refuses unless fewer than 120 runs are eligible, the batch number fits the draw and the cap is open"""
+    runs = [l.split("\t")[1] + "/" + l.split("\t")[2] for l in open(os.path.join(D, "heldout.tsv")).read().splitlines()[1:]]
+    ref = [(r, "bottom-up", "yes" if i < 130 else "no") for i, r in enumerate(runs[:250])]
+    ref += [(r, "no-proteome", "no") for r in runs[250:280]]
+    conv = [(r, "ok") for r in runs[:280]] + [(r, "failed") for r in runs[280:]]
+    conv[0] = (runs[0], "failed")                        # a failed conversion is missing, even with an annotation
+    _tsv(tmp_path / "reference.tsv", ["run", "class", "organism_verified"], ref)
+    _tsv(tmp_path / "conversion.tsv", ["run", "status"], conv)
+    n, counts = SC.eligible_before_arms(str(tmp_path), os.path.join(D, "heldout.tsv"))
+    assert n == 129 and counts["missing"] == 21 and counts["no-proteome"] == 30
+    import subprocess
+    import sys
+    r = subprocess.run([sys.executable, os.path.join(D, "draw_topup.py"), "--batch", "1", str(tmp_path)],
+                       capture_output=True, text=True)
+    assert r.returncode != 0 and "129 eligible runs, 120 needed: no top-up" in r.stderr
+    r = subprocess.run([sys.executable, os.path.join(D, "draw_topup.py"), "--batch", "2", str(tmp_path)],
+                       capture_output=True, text=True)
+    assert r.returncode != 0 and "expected 350" in r.stderr
+    _tsv(tmp_path / "conversion.tsv", ["run", "status"], conv[:-1])   # a run neither annotated nor failed
+    with pytest.raises(SC.InputError, match="neither annotated and converted nor failed"):
+        SC.eligible_before_arms(str(tmp_path), os.path.join(D, "heldout.tsv"))
+    TU = _load("draw_topup")
+    q = TU.quotas({"a": 10, "b": 5}, 30, {"a": 25, "b": 5})
+    assert q == {"a": 0, "b": 5}                          # scaled 20/10, minus what each has, at least 0
