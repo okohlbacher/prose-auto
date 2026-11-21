@@ -1,0 +1,1167 @@
+run	source	arm	kind	check	verdict
+PXD000806	scenario		correct	pre	ok
+PXD000806	scenario		related_close	pre	ok
+PXD000806	scenario		unrelated	pre	warning
+PXD001186	scenario		correct	pre	ok
+PXD001186	scenario		related_close	pre	warning
+PXD001186	scenario		unrelated	pre	warning
+PXD001587	scenario		correct	pre	ok
+PXD001587	scenario		related_close	pre	warning
+PXD001587	scenario		unrelated	pre	warning
+PXD001774	scenario		correct	pre	not assessed
+PXD001774	scenario		unrelated	pre	not assessed
+PXD002411	scenario		correct	pre	ok
+PXD002411	scenario		related_close	pre	warning
+PXD002411	scenario		unrelated	pre	warning
+PXD002429	scenario		correct	pre	ok
+PXD002429	scenario		related_close	pre	warning
+PXD002429	scenario		unrelated	pre	warning
+PXD003643	scenario		correct	pre	ok
+PXD003643	scenario		unrelated	pre	ok
+PXD004143	scenario		correct	pre	not assessed
+PXD004143	scenario		related_close	pre	not assessed
+PXD004143	scenario		unrelated	pre	not assessed
+PXD004725	scenario		correct	pre	ok
+PXD004725	scenario		related_close	pre	warning
+PXD004725	scenario		unrelated	pre	warning
+PXD004732	scenario		correct	pre	ok
+PXD004732	scenario		related_close	pre	warning
+PXD004732	scenario		unrelated	pre	warning
+PXD005236	scenario		correct	pre	ok
+PXD005236	scenario		unrelated	pre	warning
+PXD006096	scenario		correct	pre	ok
+PXD006096	scenario		related_close	pre	warning
+PXD006096	scenario		unrelated	pre	warning
+PXD006536	scenario		correct	pre	ok
+PXD006536	scenario		unrelated	pre	ok
+PXD006745	scenario		correct	pre	ok
+PXD006745	scenario		unrelated	pre	warning
+PXD006905	scenario		correct	pre	not assessed
+PXD006905	scenario		related_distant	pre	not assessed
+PXD006905	scenario		unrelated	pre	not assessed
+PXD008579	scenario		correct	pre	warning
+PXD008579	scenario		related_close	pre	warning
+PXD008579	scenario		unrelated	pre	warning
+PXD009049	scenario		correct	pre	ok
+PXD009049	scenario		unrelated	pre	warning
+PXD009938	scenario		correct	pre	ok
+PXD009938	scenario		related_close	pre	ok
+PXD009938	scenario		unrelated	pre	warning
+PXD010271	scenario		correct	pre	warning
+PXD010271	scenario		related_close	pre	warning
+PXD010271	scenario		unrelated	pre	warning
+PXD010376	scenario		correct	pre	ok
+PXD010376	scenario		unrelated	pre	warning
+PXD010429	scenario		correct	pre	ok
+PXD010429	scenario		related_close	pre	warning
+PXD010429	scenario		unrelated	pre	warning
+PXD010809	scenario		correct	pre	ok
+PXD010809	scenario		unrelated	pre	ok
+PXD010941	scenario		correct	pre	ok
+PXD010941	scenario		related_close	pre	warning
+PXD010941	scenario		unrelated	pre	warning
+PXD011080	scenario		correct	pre	not assessed
+PXD011080	scenario		unrelated	pre	not assessed
+PXD011848	scenario		correct	pre	ok
+PXD011848	scenario		related_close	pre	warning
+PXD011848	scenario		unrelated	pre	warning
+PXD012636	scenario		correct	pre	warning
+PXD012636	scenario		related_close	pre	ok
+PXD012636	scenario		unrelated	pre	warning
+PXD012758	scenario		correct	pre	not assessed
+PXD012758	scenario		related_close	pre	not assessed
+PXD012758	scenario		unrelated	pre	not assessed
+PXD012764	scenario		correct	pre	ok
+PXD012764	scenario		unrelated	pre	ok
+PXD014225	scenario		correct	pre	not assessed
+PXD014225	scenario		related_close	pre	not assessed
+PXD014225	scenario		unrelated	pre	not assessed
+PXD014311	scenario		correct	pre	not assessed
+PXD014311	scenario		related_close	pre	not assessed
+PXD014311	scenario		unrelated	pre	not assessed
+PXD016112	scenario		correct	pre	not assessed
+PXD016112	scenario		related_close	pre	not assessed
+PXD016112	scenario		unrelated	pre	not assessed
+PXD016519	scenario		correct	pre	ok
+PXD016519	scenario		unrelated	pre	warning
+PXD017052	scenario		correct	pre	ok
+PXD017052	scenario		related_close	pre	warning
+PXD017052	scenario		unrelated	pre	warning
+PXD017817	scenario		correct	pre	ok
+PXD017817	scenario		unrelated	pre	ok
+PXD018024	scenario		correct	pre	ok
+PXD018024	scenario		related_close	pre	warning
+PXD018024	scenario		unrelated	pre	warning
+PXD018027	scenario		correct	pre	ok
+PXD018027	scenario		unrelated	pre	ok
+PXD018348	scenario		correct	pre	ok
+PXD018348	scenario		unrelated	pre	ok
+PXD019291	scenario		correct	pre	ok
+PXD019291	scenario		unrelated	pre	ok
+PXD019591	scenario		correct	pre	ok
+PXD019591	scenario		related_close	pre	warning
+PXD019591	scenario		unrelated	pre	warning
+PXD019906	scenario		correct	pre	ok
+PXD019906	scenario		unrelated	pre	ok
+PXD020394	scenario		correct	pre	ok
+PXD020394	scenario		related_close	pre	warning
+PXD020394	scenario		unrelated	pre	warning
+PXD021394	scenario		correct	pre	ok
+PXD021394	scenario		related_close	pre	warning
+PXD021394	scenario		unrelated	pre	warning
+PXD023077	scenario		correct	pre	ok
+PXD023077	scenario		related_distant	pre	ok
+PXD023077	scenario		unrelated	pre	warning
+PXD023090	scenario		correct	pre	ok
+PXD023090	scenario		related_close	pre	warning
+PXD023090	scenario		unrelated	pre	warning
+PXD024405	scenario		correct	pre	not assessed
+PXD024405	scenario		related_close	pre	not assessed
+PXD024405	scenario		unrelated	pre	not assessed
+PXD024661	scenario		correct	pre	ok
+PXD024661	scenario		related_close	pre	ok
+PXD024661	scenario		unrelated	pre	warning
+PXD025560	scenario		correct	pre	ok
+PXD025560	scenario		related_close	pre	warning
+PXD025560	scenario		unrelated	pre	warning
+PXD027038	scenario		correct	pre	not assessed
+PXD027038	scenario		unrelated	pre	not assessed
+PXD027767	scenario		correct	pre	ok
+PXD027767	scenario		unrelated	pre	warning
+PXD031090	scenario		correct	pre	ok
+PXD031090	scenario		related_close	pre	warning
+PXD031090	scenario		unrelated	pre	warning
+PXD032263	scenario		correct	pre	ok
+PXD032263	scenario		related_close	pre	warning
+PXD032263	scenario		unrelated	pre	warning
+PXD033100	scenario		correct	pre	not assessed
+PXD033100	scenario		unrelated	pre	not assessed
+PXD033162	scenario		correct	pre	ok
+PXD033162	scenario		unrelated	pre	ok
+PXD034623	scenario		correct	pre	ok
+PXD034623	scenario		related_close	pre	warning
+PXD034623	scenario		unrelated	pre	warning
+PXD035256	scenario		correct	pre	ok
+PXD035256	scenario		related_close	pre	warning
+PXD035256	scenario		unrelated	pre	warning
+PXD035354	scenario		correct	pre	ok
+PXD035354	scenario		related_close	pre	warning
+PXD035354	scenario		unrelated	pre	warning
+PXD036463	scenario		correct	pre	ok
+PXD036463	scenario		related_close	pre	warning
+PXD036463	scenario		unrelated	pre	warning
+PXD037340	scenario		correct	pre	ok
+PXD037340	scenario		related_close	pre	warning
+PXD037340	scenario		unrelated	pre	warning
+PXD038809	scenario		correct	pre	ok
+PXD038809	scenario		related_close	pre	warning
+PXD038809	scenario		unrelated	pre	warning
+PXD041263	scenario		correct	pre	ok
+PXD041263	scenario		unrelated	pre	warning
+PXD041747	scenario		correct	pre	ok
+PXD041747	scenario		related_close	pre	ok
+PXD041747	scenario		unrelated	pre	ok
+PXD043057	scenario		correct	pre	ok
+PXD043057	scenario		related_close	pre	warning
+PXD043057	scenario		unrelated	pre	warning
+PXD043214	scenario		correct	pre	ok
+PXD043214	scenario		related_close	pre	warning
+PXD043214	scenario		unrelated	pre	warning
+PXD043707	scenario		correct	pre	warning
+PXD043707	scenario		related_close	pre	warning
+PXD043707	scenario		unrelated	pre	warning
+PXD043814	scenario		correct	pre	ok
+PXD043814	scenario		related_close	pre	ok
+PXD043814	scenario		unrelated	pre	warning
+PXD044053	scenario		correct	pre	ok
+PXD044053	scenario		related_close	pre	warning
+PXD044053	scenario		unrelated	pre	warning
+PXD045216	scenario		correct	pre	ok
+PXD045216	scenario		unrelated	pre	warning
+PXD045899	scenario		correct	pre	ok
+PXD045899	scenario		related_close	pre	warning
+PXD045899	scenario		unrelated	pre	warning
+PXD046211	scenario		correct	pre	not assessed
+PXD046211	scenario		related_close	pre	not assessed
+PXD046211	scenario		unrelated	pre	not assessed
+PXD046446	scenario		correct	pre	ok
+PXD046446	scenario		related_close	pre	warning
+PXD046446	scenario		unrelated	pre	warning
+PXD046503	scenario		correct	pre	warning
+PXD046503	scenario		related_close	pre	ok
+PXD046503	scenario		unrelated	pre	warning
+PXD046634	scenario		correct	pre	not assessed
+PXD046634	scenario		unrelated	pre	not assessed
+PXD048529	scenario		correct	pre	ok
+PXD048529	scenario		related_close	pre	warning
+PXD048529	scenario		unrelated	pre	warning
+PXD049412	scenario		correct	pre	ok
+PXD049412	scenario		unrelated	pre	warning
+PXD049692	scenario		correct	pre	ok
+PXD049692	scenario		related_close	pre	warning
+PXD049692	scenario		unrelated	pre	warning
+PXD050618	scenario		correct	pre	ok
+PXD050618	scenario		related_close	pre	warning
+PXD050618	scenario		unrelated	pre	warning
+PXD052483	scenario		correct	pre	ok
+PXD052483	scenario		related_close	pre	ok
+PXD052483	scenario		unrelated	pre	warning
+PXD052824	scenario		correct	pre	not assessed
+PXD052824	scenario		unrelated	pre	not assessed
+PXD053053	scenario		correct	pre	not assessed
+PXD053053	scenario		related_close	pre	not assessed
+PXD053053	scenario		unrelated	pre	not assessed
+PXD053406	scenario		correct	pre	ok
+PXD053406	scenario		related_close	pre	ok
+PXD053406	scenario		unrelated	pre	ok
+PXD054073	scenario		correct	pre	ok
+PXD054073	scenario		related_close	pre	warning
+PXD054073	scenario		unrelated	pre	warning
+PXD055136	scenario		correct	pre	ok
+PXD055136	scenario		unrelated	pre	warning
+PXD057432	scenario		correct	pre	ok
+PXD057432	scenario		related_close	pre	warning
+PXD057432	scenario		unrelated	pre	warning
+PXD058770	scenario		correct	pre	warning
+PXD058770	scenario		related_close	pre	warning
+PXD058770	scenario		unrelated	pre	warning
+PXD059676	scenario		correct	pre	warning
+PXD059676	scenario		related_distant	pre	warning
+PXD059676	scenario		unrelated	pre	warning
+PXD060638	scenario		correct	pre	warning
+PXD060638	scenario		related_close	pre	warning
+PXD060638	scenario		unrelated	pre	warning
+PXD060724	scenario		correct	pre	warning
+PXD060724	scenario		related_close	pre	warning
+PXD060724	scenario		unrelated	pre	warning
+PXD061563	scenario		correct	pre	ok
+PXD061563	scenario		related_close	pre	warning
+PXD061563	scenario		unrelated	pre	warning
+PXD061636	scenario		correct	pre	ok
+PXD061636	scenario		related_close	pre	warning
+PXD061636	scenario		unrelated	pre	warning
+PXD061695	scenario		correct	pre	ok
+PXD061695	scenario		unrelated	pre	ok
+PXD061893	scenario		correct	pre	ok
+PXD061893	scenario		related_close	pre	warning
+PXD061893	scenario		unrelated	pre	warning
+PXD061926	scenario		correct	pre	ok
+PXD061926	scenario		unrelated	pre	warning
+PXD062749	scenario		correct	pre	not assessed
+PXD062749	scenario		related_close	pre	not assessed
+PXD062749	scenario		unrelated	pre	not assessed
+PXD063917	scenario		correct	pre	ok
+PXD063917	scenario		related_close	pre	warning
+PXD063917	scenario		unrelated	pre	warning
+PXD064675	scenario		correct	pre	ok
+PXD064675	scenario		related_close	pre	warning
+PXD064675	scenario		unrelated	pre	warning
+PXD066108	scenario		correct	pre	ok
+PXD066108	scenario		related_distant	pre	ok
+PXD066108	scenario		unrelated	pre	warning
+PXD066278	scenario		correct	pre	ok
+PXD066278	scenario		related_close	pre	warning
+PXD066278	scenario		unrelated	pre	warning
+PXD066361	scenario		correct	pre	warning
+PXD066361	scenario		unrelated	pre	warning
+PXD066483	scenario		correct	pre	ok
+PXD066483	scenario		unrelated	pre	ok
+PXD066672	scenario		correct	pre	ok
+PXD066672	scenario		incomplete	pre	warning
+PXD066890	scenario		correct	pre	ok
+PXD066890	scenario		unrelated	pre	ok
+PXD066944	scenario		correct	pre	ok
+PXD066944	scenario		related_close	pre	warning
+PXD066944	scenario		unrelated	pre	warning
+PXD067654	scenario		correct	pre	not assessed
+PXD067654	scenario		related_close	pre	not assessed
+PXD067654	scenario		unrelated	pre	not assessed
+PXD068335	scenario		correct	pre	ok
+PXD068335	scenario		unrelated	pre	ok
+PXD068555	scenario		correct	pre	warning
+PXD068555	scenario		unrelated	pre	warning
+PXD070049	scenario		correct	pre	not assessed
+PXD070049	scenario		unrelated	pre	not assessed
+PXD071075	scenario		correct	pre	not assessed
+PXD071075	scenario		related_close	pre	not assessed
+PXD071075	scenario		unrelated	pre	not assessed
+PXD071251	scenario		correct	pre	ok
+PXD071251	scenario		related_close	pre	warning
+PXD071251	scenario		unrelated	pre	warning
+PXD073447	scenario		correct	pre	ok
+PXD073447	scenario		related_close	pre	ok
+PXD073447	scenario		unrelated	pre	ok
+PXD073687	scenario		correct	pre	ok
+PXD073687	scenario		related_close	pre	warning
+PXD073687	scenario		unrelated	pre	warning
+PXD074582	scenario		correct	pre	ok
+PXD074582	scenario		related_distant	pre	warning
+PXD074582	scenario		unrelated	pre	ok
+PXD075765	scenario		correct	pre	ok
+PXD075765	scenario		unrelated	pre	warning
+PXD076528	scenario		correct	pre	ok
+PXD076528	scenario		related_close	pre	warning
+PXD076528	scenario		unrelated	pre	warning
+PXD076863	scenario		correct	pre	ok
+PXD076863	scenario		related_close	pre	warning
+PXD076863	scenario		unrelated	pre	warning
+PXD077697	scenario		correct	pre	ok
+PXD077697	scenario		unrelated	pre	ok
+PXD077960	scenario		correct	pre	not assessed
+PXD077960	scenario		related_close	pre	not assessed
+PXD077960	scenario		unrelated	pre	not assessed
+PXD078436	scenario		correct	pre	ok
+PXD078436	scenario		unrelated	pre	warning
+PXD000044	scenario		correct	pre	not assessed
+PXD000044	scenario		incomplete	pre	not assessed
+PXD000279	scenario		correct	pre	ok
+PXD000279	scenario		incomplete	pre	warning
+PXD006349	scenario		correct	pre	ok
+PXD006349	scenario		related_close	pre	ok
+PXD006349	scenario		unrelated	pre	warning
+PXD006679	scenario		correct	pre	ok
+PXD006679	scenario		unrelated	pre	warning
+PXD007040	scenario		correct	pre	not assessed
+PXD007040	scenario		related_close	pre	not assessed
+PXD007040	scenario		unrelated	pre	not assessed
+PXD007885	scenario		correct	pre	ok
+PXD007885	scenario		incomplete	pre	ok
+PXD008611	scenario		correct	pre	ok
+PXD008611	scenario		incomplete	pre	warning
+PXD010700	scenario		correct	pre	ok
+PXD010700	scenario		unrelated	pre	warning
+PXD012772	scenario		correct	pre	ok
+PXD012772	scenario		incomplete	pre	warning
+PXD016055	scenario		correct	pre	ok
+PXD016055	scenario		related_close	pre	warning
+PXD016055	scenario		unrelated	pre	warning
+PXD016470	scenario		correct	pre	ok
+PXD016470	scenario		incomplete	pre	ok
+PXD016579	scenario		correct	pre	not assessed
+PXD016579	scenario		incomplete	pre	not assessed
+PXD017035	scenario		correct	pre	ok
+PXD017035	scenario		incomplete	pre	warning
+PXD020401	scenario		correct	pre	ok
+PXD020401	scenario		related_close	pre	warning
+PXD020401	scenario		unrelated	pre	warning
+PXD020815	scenario		correct	pre	ok
+PXD020815	scenario		incomplete	pre	warning
+PXD027945	scenario		correct	pre	ok
+PXD027945	scenario		related_close	pre	warning
+PXD027945	scenario		unrelated	pre	warning
+PXD028735	scenario		correct	pre	ok
+PXD028735	scenario		related_close	pre	warning
+PXD028735	scenario		unrelated	pre	warning
+PXD033381	scenario		correct	pre	ok
+PXD033381	scenario		related_close	pre	warning
+PXD033381	scenario		unrelated	pre	warning
+PXD033852	scenario		correct	pre	not assessed
+PXD033852	scenario		related_close	pre	not assessed
+PXD033852	scenario		unrelated	pre	not assessed
+PXD035449	scenario		correct	pre	ok
+PXD035449	scenario		incomplete	pre	warning
+PXD035857	scenario		correct	pre	ok
+PXD035857	scenario		incomplete	pre	ok
+PXD036799	scenario		correct	pre	ok
+PXD036799	scenario		incomplete	pre	warning
+PXD039576	scenario		correct	pre	ok
+PXD039576	scenario		incomplete	pre	warning
+PXD041573	scenario		correct	pre	ok
+PXD041573	scenario		unrelated	pre	warning
+PXD041711	scenario		correct	pre	ok
+PXD041711	scenario		related_close	pre	warning
+PXD041711	scenario		unrelated	pre	warning
+PXD042267	scenario		correct	pre	ok
+PXD042267	scenario		incomplete	pre	warning
+PXD044300	scenario		correct	pre	ok
+PXD044300	scenario		unrelated	pre	ok
+PXD045500	scenario		correct	pre	ok
+PXD045500	scenario		incomplete	pre	warning
+PXD046460	scenario		correct	pre	ok
+PXD046460	scenario		incomplete	pre	warning
+PXD058521	scenario		correct	pre	warning
+PXD058521	scenario		unrelated	pre	warning
+PXD065430	scenario		correct	pre	ok
+PXD065430	scenario		related_close	pre	ok
+PXD065430	scenario		unrelated	pre	ok
+PXD073843	scenario		correct	pre	ok
+PXD073843	scenario		incomplete	pre	ok
+PXD078382	scenario		correct	pre	ok
+PXD078382	scenario		related_close	pre	warning
+PXD078382	scenario		unrelated	pre	warning
+PXD081656	scenario		correct	pre	ok
+PXD081656	scenario		related_close	pre	ok
+PXD081656	scenario		unrelated	pre	warning
+PXD000266	scenario		correct	pre	ok
+PXD000266	scenario		related_close	pre	ok
+PXD000266	scenario		unrelated	pre	warning
+PXD001473	scenario		correct	pre	not assessed
+PXD001473	scenario		unrelated	pre	not assessed
+PXD001540	scenario		correct	pre	ok
+PXD001540	scenario		related_close	pre	warning
+PXD001540	scenario		unrelated	pre	warning
+PXD001670	scenario		correct	pre	ok
+PXD001670	scenario		unrelated	pre	warning
+PXD001739	scenario		correct	pre	not assessed
+PXD001739	scenario		related_close	pre	not assessed
+PXD001739	scenario		unrelated	pre	not assessed
+PXD003382	scenario		correct	pre	ok
+PXD003382	scenario		unrelated	pre	warning
+PXD003397	scenario		correct	pre	ok
+PXD003397	scenario		related_close	pre	ok
+PXD003397	scenario		unrelated	pre	warning
+PXD003531	scenario		correct	pre	ok
+PXD003531	scenario		related_close	pre	warning
+PXD003531	scenario		unrelated	pre	warning
+PXD003575	scenario		correct	pre	ok
+PXD003575	scenario		related_close	pre	ok
+PXD003575	scenario		unrelated	pre	ok
+PXD003808	scenario		correct	pre	ok
+PXD003808	scenario		related_close	pre	warning
+PXD003808	scenario		unrelated	pre	warning
+PXD004133	scenario		correct	pre	ok
+PXD004133	scenario		unrelated	pre	warning
+PXD004541	scenario		correct	pre	ok
+PXD004541	scenario		related_close	pre	warning
+PXD004541	scenario		unrelated	pre	warning
+PXD004644	scenario		correct	pre	not assessed
+PXD004644	scenario		related_close	pre	not assessed
+PXD004644	scenario		unrelated	pre	not assessed
+PXD005340	scenario		correct	pre	ok
+PXD005340	scenario		unrelated	pre	ok
+PXD006272	scenario		correct	pre	ok
+PXD006272	scenario		unrelated	pre	warning
+PXD007875	scenario		correct	pre	ok
+PXD007875	scenario		related_close	pre	ok
+PXD007875	scenario		unrelated	pre	warning
+PXD008287	scenario		correct	pre	warning
+PXD008287	scenario		related_close	pre	warning
+PXD008287	scenario		unrelated	pre	warning
+PXD009612	scenario		correct	pre	warning
+PXD009612	scenario		unrelated	pre	warning
+PXD010744	scenario		correct	pre	ok
+PXD010744	scenario		related_close	pre	ok
+PXD010744	scenario		unrelated	pre	warning
+PXD013899	scenario		correct	pre	not assessed
+PXD013899	scenario		unrelated	pre	not assessed
+PXD014367	scenario		correct	pre	warning
+PXD014367	scenario		unrelated	pre	warning
+PXD014764	scenario		correct	pre	ok
+PXD014764	scenario		related_close	pre	warning
+PXD014764	scenario		unrelated	pre	warning
+PXD014778	scenario		correct	pre	ok
+PXD014778	scenario		related_close	pre	warning
+PXD014778	scenario		unrelated	pre	warning
+PXD015108	scenario		correct	pre	not assessed
+PXD015108	scenario		related_distant	pre	not assessed
+PXD015108	scenario		unrelated	pre	not assessed
+PXD015959	scenario		correct	pre	ok
+PXD015959	scenario		related_close	pre	warning
+PXD015959	scenario		unrelated	pre	warning
+PXD016465	scenario		correct	pre	warning
+PXD016465	scenario		related_close	pre	warning
+PXD016465	scenario		unrelated	pre	warning
+PXD023400	scenario		correct	pre	ok
+PXD023400	scenario		related_close	pre	warning
+PXD023400	scenario		unrelated	pre	warning
+PXD024085	scenario		correct	pre	warning
+PXD024085	scenario		unrelated	pre	ok
+PXD024702	scenario		correct	pre	not assessed
+PXD024702	scenario		related_close	pre	not assessed
+PXD024702	scenario		unrelated	pre	not assessed
+PXD027712	scenario		correct	pre	ok
+PXD027712	scenario		related_close	pre	ok
+PXD027712	scenario		unrelated	pre	warning
+PXD027795	scenario		correct	pre	warning
+PXD027795	scenario		unrelated	pre	warning
+PXD028358	scenario		correct	pre	ok
+PXD028358	scenario		unrelated	pre	warning
+PXD030111	scenario		correct	pre	warning
+PXD030111	scenario		unrelated	pre	warning
+PXD031975	scenario		correct	pre	ok
+PXD031975	scenario		unrelated	pre	warning
+PXD032835	scenario		correct	pre	ok
+PXD032835	scenario		related_close	pre	warning
+PXD032835	scenario		unrelated	pre	warning
+PXD033741	scenario		correct	pre	ok
+PXD033741	scenario		related_close	pre	warning
+PXD033741	scenario		unrelated	pre	warning
+PXD034335	scenario		correct	pre	ok
+PXD034335	scenario		related_close	pre	ok
+PXD034335	scenario		unrelated	pre	warning
+PXD036580	scenario		correct	pre	ok
+PXD036580	scenario		unrelated	pre	warning
+PXD037434	scenario		correct	pre	warning
+PXD037434	scenario		unrelated	pre	ok
+PXD039269	scenario		correct	pre	ok
+PXD039269	scenario		related_close	pre	ok
+PXD039269	scenario		unrelated	pre	ok
+PXD039882	scenario		correct	pre	ok
+PXD039882	scenario		unrelated	pre	warning
+PXD040230	scenario		correct	pre	ok
+PXD040230	scenario		related_distant	pre	warning
+PXD040230	scenario		unrelated	pre	warning
+PXD044741	scenario		correct	pre	ok
+PXD044741	scenario		related_distant	pre	warning
+PXD044741	scenario		unrelated	pre	warning
+PXD045163	scenario		correct	pre	ok
+PXD045163	scenario		unrelated	pre	warning
+PXD047517	scenario		correct	pre	warning
+PXD047517	scenario		related_close	pre	warning
+PXD047517	scenario		unrelated	pre	warning
+PXD049123	scenario		correct	pre	ok
+PXD049123	scenario		related_close	pre	warning
+PXD049123	scenario		unrelated	pre	warning
+PXD049370	scenario		correct	pre	ok
+PXD049370	scenario		related_close	pre	ok
+PXD049370	scenario		unrelated	pre	warning
+PXD050504	scenario		correct	pre	warning
+PXD050504	scenario		related_close	pre	ok
+PXD050504	scenario		unrelated	pre	warning
+PXD050844	scenario		correct	pre	warning
+PXD050844	scenario		related_close	pre	warning
+PXD050844	scenario		unrelated	pre	warning
+PXD055189	scenario		correct	pre	ok
+PXD055189	scenario		related_close	pre	warning
+PXD055189	scenario		unrelated	pre	ok
+PXD059369	scenario		correct	pre	ok
+PXD059369	scenario		related_close	pre	warning
+PXD059369	scenario		unrelated	pre	warning
+PXD061541	scenario		correct	pre	ok
+PXD061541	scenario		related_close	pre	warning
+PXD061541	scenario		unrelated	pre	warning
+PXD061649	scenario		correct	pre	warning
+PXD061649	scenario		related_distant	pre	warning
+PXD061649	scenario		unrelated	pre	warning
+PXD063740	scenario		correct	pre	ok
+PXD063740	scenario		unrelated	pre	warning
+PXD063744	scenario		correct	pre	ok
+PXD063744	scenario		unrelated	pre	warning
+PXD065331	scenario		correct	pre	warning
+PXD065331	scenario		related_distant	pre	warning
+PXD065331	scenario		unrelated	pre	warning
+PXD074950	scenario		correct	pre	ok
+PXD074950	scenario		related_close	pre	warning
+PXD074950	scenario		unrelated	pre	warning
+PXD076520	scenario		correct	pre	ok
+PXD076520	scenario		related_close	pre	warning
+PXD076520	scenario		unrelated	pre	warning
+PXD078554	scenario		correct	pre	ok
+PXD078554	scenario		related_close	pre	warning
+PXD078554	scenario		unrelated	pre	warning
+PXD079013	scenario		correct	pre	ok
+PXD079013	scenario		unrelated	pre	warning
+PXD083141	scenario		correct	pre	ok
+PXD083141	scenario		related_distant	pre	warning
+PXD083141	scenario		unrelated	pre	warning
+PXD084909	scenario		correct	pre	ok
+PXD084909	scenario		related_close	pre	warning
+PXD084909	scenario		unrelated	pre	warning
+PXD019291	scenario		unrelated	post	database
+PXD019291	scenario		correct	post	ok
+PXD052483	scenario		correct	post	ok
+PXD052483	scenario		related_close	post	database
+PXD061636	scenario		unrelated	post	database
+PXD061636	scenario		correct	post	ok
+PXD061636	scenario		related_close	post	ok
+PXD062749	scenario		unrelated	post	not assessed
+PXD062749	scenario		correct	post	not assessed
+PXD062749	scenario		related_close	post	not assessed
+PXD059676	scenario		wrong_protease	post	settings
+PXD059676	scenario		wrong_label	post	settings
+PXD059676	scenario		unrelated	post	database
+PXD059676	scenario		correct	post	ok
+PXD059676	scenario		related_distant	post	ok
+PXD006905	scenario		unrelated	post	not assessed
+PXD006905	scenario		correct	post	not assessed
+PXD006905	scenario		related_distant	post	not assessed
+PXD023077	scenario		unrelated	post	database
+PXD023077	scenario		correct	post	ok
+PXD023077	scenario		related_distant	post	ok
+PXD010809	scenario		unrelated	post	database
+PXD010809	scenario		correct	post	ok
+PXD061893	scenario		unrelated	post	database
+PXD061893	scenario		correct	post	ok
+PXD061893	scenario		related_close	post	database
+PXD054073	scenario		unrelated	post	database
+PXD054073	scenario		correct	post	ok
+PXD054073	scenario		related_close	post	ok
+PXD046446	scenario		unrelated	post	database
+PXD046446	scenario		correct	post	ok
+PXD046446	scenario		related_close	post	ok
+PXD049412	scenario		unrelated	post	database
+PXD049412	scenario		correct	post	database
+PXD016112	scenario		unrelated	post	not assessed
+PXD016112	scenario		correct	post	not assessed
+PXD016112	scenario		related_close	post	not assessed
+PXD068555	scenario		unrelated	post	database
+PXD068555	scenario		correct	post	ok
+PXD071075	scenario		unrelated	post	not assessed
+PXD071075	scenario		correct	post	not assessed
+PXD071075	scenario		related_close	post	not assessed
+PXD035354	scenario		unrelated	post	database
+PXD035354	scenario		correct	post	ok
+PXD035354	scenario		related_close	post	ok
+PXD002411	scenario		unrelated	post	database
+PXD002411	scenario		correct	post	ok
+PXD002411	scenario		related_close	post	ok
+PXD000806	scenario		unrelated	post	database
+PXD000806	scenario		correct	post	database
+PXD000806	scenario		related_close	post	database
+PXD044053	scenario		wrong_protease	post	settings
+PXD044053	scenario		wrong_label	post	settings
+PXD044053	scenario		unrelated	post	database
+PXD044053	scenario		correct	post	ok
+PXD044053	scenario		related_close	post	ok
+PXD037340	scenario		unrelated	post	database
+PXD037340	scenario		correct	post	ok
+PXD037340	scenario		related_close	post	ok
+PXD066890	scenario		unrelated	post	database
+PXD066890	scenario		correct	post	ok
+PXD041747	scenario		unrelated	post	database
+PXD041747	scenario		correct	post	ok
+PXD041747	scenario		related_close	post	ok
+PXD066672	scenario		incomplete	post	ok
+PXD066672	scenario		correct	post	ok
+PXD064675	scenario		unrelated	post	database
+PXD064675	scenario		correct	post	ok
+PXD064675	scenario		related_close	post	ok
+PXD053053	scenario		unrelated	post	not assessed
+PXD053053	scenario		correct	post	not assessed
+PXD053053	scenario		related_close	post	not assessed
+PXD019906	scenario		unrelated	post	database
+PXD019906	scenario		correct	post	ok
+PXD066278	scenario		unrelated	post	database
+PXD066278	scenario		correct	post	ok
+PXD066278	scenario		related_close	post	ok
+PXD052824	scenario		wrong_protease	post	not assessed
+PXD052824	scenario		wrong_label	post	not assessed
+PXD052824	scenario		unrelated	post	not assessed
+PXD052824	scenario		correct	post	not assessed
+PXD006096	scenario		unrelated	post	database
+PXD006096	scenario		correct	post	settings
+PXD006096	scenario		related_close	post	settings
+PXD049692	scenario		unrelated	post	database
+PXD049692	scenario		correct	post	ok
+PXD049692	scenario		related_close	post	ok
+PXD075765	scenario		wrong_protease	post	settings
+PXD075765	scenario		wrong_label	post	settings
+PXD075765	scenario		unrelated	post	database
+PXD075765	scenario		correct	post	ok
+PXD006745	scenario		wrong_protease	post	settings
+PXD006745	scenario		wrong_label	post	settings
+PXD006745	scenario		unrelated	post	database
+PXD006745	scenario		correct	post	ok
+PXD074582	scenario		unrelated	post	database
+PXD074582	scenario		correct	post	database
+PXD074582	scenario		related_distant	post	database
+PXD001587	scenario		unrelated	post	database
+PXD001587	scenario		correct	post	ok
+PXD001587	scenario		related_close	post	ok
+PXD018024	scenario		unrelated	post	database
+PXD018024	scenario		correct	post	ok
+PXD018024	scenario		related_close	post	ok
+PXD011848	scenario		unrelated	post	database
+PXD011848	scenario		correct	post	settings
+PXD011848	scenario		related_close	post	settings
+PXD018348	scenario		unrelated	post	database
+PXD018348	scenario		correct	post	ok
+PXD024661	scenario		unrelated	post	database
+PXD024661	scenario		correct	post	ok
+PXD024661	scenario		related_close	post	ok
+PXD043707	scenario		unrelated	post	database
+PXD043707	scenario		correct	post	ok
+PXD043707	scenario		related_close	post	ok
+PXD060638	scenario		unrelated	post	database
+PXD060638	scenario		correct	post	ok
+PXD060638	scenario		related_close	post	ok
+PXD010429	scenario		wrong_protease	post	settings
+PXD010429	scenario		wrong_label	post	settings
+PXD010429	scenario		unrelated	post	database
+PXD010429	scenario		correct	post	ok
+PXD010429	scenario		related_close	post	ok
+PXD010941	scenario		unrelated	post	database
+PXD010941	scenario		correct	post	ok
+PXD010941	scenario		related_close	post	ok
+PXD043214	scenario		unrelated	post	database
+PXD043214	scenario		correct	post	ok
+PXD043214	scenario		related_close	post	ok
+PXD010271	scenario		unrelated	post	database
+PXD010271	scenario		correct	post	ok
+PXD010271	scenario		related_close	post	ok
+PXD061926	scenario		unrelated	post	database
+PXD061926	scenario		correct	post	ok
+PXD021394	scenario		unrelated	post	database
+PXD021394	scenario		correct	post	ok
+PXD021394	scenario		related_close	post	settings
+PXD071251	scenario		unrelated	post	database
+PXD071251	scenario		correct	post	ok
+PXD071251	scenario		related_close	post	ok
+PXD045899	scenario		unrelated	post	database
+PXD045899	scenario		correct	post	ok
+PXD045899	scenario		related_close	post	ok
+PXD005236	scenario		wrong_protease	post	database
+PXD005236	scenario		wrong_label	post	database
+PXD005236	scenario		unrelated	post	database
+PXD005236	scenario		correct	post	ok
+PXD033162	scenario		unrelated	post	database
+PXD033162	scenario		correct	post	ok
+PXD045216	scenario		unrelated	post	database
+PXD045216	scenario		correct	post	ok
+PXD060724	scenario		unrelated	post	database
+PXD060724	scenario		correct	post	database
+PXD060724	scenario		related_close	post	database
+PXD038809	scenario		unrelated	post	database
+PXD038809	scenario		correct	post	ok
+PXD038809	scenario		related_close	post	database
+PXD077697	scenario		unrelated	post	database
+PXD077697	scenario		correct	post	ok
+PXD020394	scenario		unrelated	post	database
+PXD020394	scenario		correct	post	ok
+PXD020394	scenario		related_close	post	ok
+PXD046211	scenario		unrelated	post	not assessed
+PXD046211	scenario		correct	post	not assessed
+PXD046211	scenario		related_close	post	not assessed
+PXD046503	scenario		unrelated	post	database
+PXD046503	scenario		correct	post	ok
+PXD046503	scenario		related_close	post	ok
+PXD058770	scenario		wrong_protease	post	settings
+PXD058770	scenario		wrong_label	post	settings
+PXD058770	scenario		unrelated	post	database
+PXD058770	scenario		correct	post	ok
+PXD058770	scenario		related_close	post	database
+PXD012758	scenario		unrelated	post	not assessed
+PXD012758	scenario		correct	post	not assessed
+PXD012758	scenario		related_close	post	not assessed
+PXD019591	scenario		unrelated	post	database
+PXD019591	scenario		correct	post	ok
+PXD019591	scenario		related_close	post	ok
+PXD043057	scenario		unrelated	post	database
+PXD043057	scenario		correct	post	ok
+PXD043057	scenario		related_close	post	ok
+PXD009938	scenario		unrelated	post	database
+PXD009938	scenario		correct	post	ok
+PXD009938	scenario		related_close	post	ok
+PXD066361	scenario		wrong_protease	post	settings
+PXD066361	scenario		wrong_label	post	settings
+PXD066361	scenario		unrelated	post	database
+PXD066361	scenario		correct	post	ok
+PXD018027	scenario		unrelated	post	database
+PXD018027	scenario		correct	post	ok
+PXD068335	scenario		unrelated	post	database
+PXD068335	scenario		correct	post	ok
+PXD057432	scenario		unrelated	post	database
+PXD057432	scenario		correct	post	ok
+PXD057432	scenario		related_close	post	settings
+PXD004143	scenario		unrelated	post	not assessed
+PXD004143	scenario		correct	post	not assessed
+PXD004143	scenario		related_close	post	not assessed
+PXD066483	scenario		unrelated	post	database
+PXD066483	scenario		correct	post	ok
+PXD035256	scenario		unrelated	post	database
+PXD035256	scenario		correct	post	ok
+PXD035256	scenario		related_close	post	ok
+PXD006536	scenario		wrong_protease	post	settings
+PXD006536	scenario		wrong_label	post	settings
+PXD006536	scenario		unrelated	post	database
+PXD006536	scenario		correct	post	ok
+PXD061695	scenario		unrelated	post	database
+PXD061695	scenario		correct	post	database
+PXD066944	scenario		wrong_protease	post	settings
+PXD066944	scenario		wrong_label	post	settings
+PXD066944	scenario		unrelated	post	database
+PXD066944	scenario		correct	post	ok
+PXD066944	scenario		related_close	post	ok
+PXD070049	scenario		unrelated	post	not assessed
+PXD070049	scenario		correct	post	not assessed
+PXD003643	scenario		unrelated	post	database
+PXD003643	scenario		correct	post	settings
+PXD012764	scenario		unrelated	post	database
+PXD012764	scenario		correct	post	settings
+PXD031090	scenario		unrelated	post	database
+PXD031090	scenario		correct	post	ok
+PXD031090	scenario		related_close	post	ok
+PXD014311	scenario		unrelated	post	not assessed
+PXD014311	scenario		correct	post	not assessed
+PXD014311	scenario		related_close	post	not assessed
+PXD032263	scenario		unrelated	post	database
+PXD032263	scenario		correct	post	ok
+PXD032263	scenario		related_close	post	ok
+PXD061563	scenario		unrelated	post	database
+PXD061563	scenario		correct	post	ok
+PXD061563	scenario		related_close	post	ok
+PXD077960	scenario		unrelated	post	not assessed
+PXD077960	scenario		correct	post	not assessed
+PXD077960	scenario		related_close	post	not assessed
+PXD073447	scenario		unrelated	post	database
+PXD073447	scenario		correct	post	ok
+PXD073447	scenario		related_close	post	ok
+PXD001774	scenario		unrelated	post	not assessed
+PXD001774	scenario		correct	post	not assessed
+PXD048529	scenario		unrelated	post	database
+PXD048529	scenario		correct	post	ok
+PXD048529	scenario		related_close	post	ok
+PXD011080	scenario		unrelated	post	not assessed
+PXD011080	scenario		correct	post	not assessed
+PXD053406	scenario		unrelated	post	database
+PXD053406	scenario		correct	post	ok
+PXD053406	scenario		related_close	post	ok
+PXD004732	scenario		unrelated	post	database
+PXD004732	scenario		correct	post	ok
+PXD004732	scenario		related_close	post	ok
+PXD046634	scenario		unrelated	post	not assessed
+PXD046634	scenario		correct	post	not assessed
+PXD043814	scenario		unrelated	post	database
+PXD043814	scenario		correct	post	ok
+PXD043814	scenario		related_close	post	ok
+PXD025560	scenario		unrelated	post	database
+PXD025560	scenario		correct	post	ok
+PXD025560	scenario		related_close	post	settings
+PXD067654	scenario		unrelated	post	not assessed
+PXD067654	scenario		correct	post	not assessed
+PXD067654	scenario		related_close	post	not assessed
+PXD055136	scenario		unrelated	post	database
+PXD055136	scenario		correct	post	ok
+PXD009049	scenario		wrong_protease	post	settings
+PXD009049	scenario		wrong_label	post	settings
+PXD009049	scenario		unrelated	post	database
+PXD009049	scenario		correct	post	ok
+PXD016519	scenario		unrelated	post	database
+PXD016519	scenario		correct	post	ok
+PXD002429	scenario		unrelated	post	database
+PXD002429	scenario		correct	post	ok
+PXD002429	scenario		related_close	post	ok
+PXD012636	scenario		unrelated	post	database
+PXD012636	scenario		correct	post	ok
+PXD012636	scenario		related_close	post	ok
+PXD076863	scenario		unrelated	post	database
+PXD076863	scenario		correct	post	ok
+PXD076863	scenario		related_close	post	ok
+PXD041263	scenario		unrelated	post	database
+PXD041263	scenario		correct	post	ok
+PXD010376	scenario		unrelated	post	database
+PXD010376	scenario		correct	post	ok
+PXD036463	scenario		unrelated	post	database
+PXD036463	scenario		correct	post	ok
+PXD036463	scenario		related_close	post	ok
+PXD008579	scenario		wrong_protease	post	database
+PXD008579	scenario		wrong_label	post	database
+PXD008579	scenario		unrelated	post	database
+PXD008579	scenario		correct	post	ok
+PXD008579	scenario		related_close	post	database
+PXD078436	scenario		unrelated	post	database
+PXD078436	scenario		correct	post	ok
+PXD001186	scenario		unrelated	post	database
+PXD001186	scenario		correct	post	ok
+PXD001186	scenario		related_close	post	ok
+PXD017052	scenario		unrelated	post	database
+PXD017052	scenario		correct	post	ok
+PXD017052	scenario		related_close	post	database
+PXD076528	scenario		wrong_protease	post	settings
+PXD076528	scenario		wrong_label	post	settings
+PXD076528	scenario		unrelated	post	database
+PXD076528	scenario		correct	post	ok
+PXD076528	scenario		related_close	post	ok
+PXD023090	scenario		unrelated	post	database
+PXD023090	scenario		correct	post	ok
+PXD023090	scenario		related_close	post	ok
+PXD063917	scenario		unrelated	post	database
+PXD063917	scenario		correct	post	ok
+PXD063917	scenario		related_close	post	ok
+PXD004725	scenario		unrelated	post	database
+PXD004725	scenario		correct	post	database
+PXD004725	scenario		related_close	post	database
+PXD050618	scenario		unrelated	post	database
+PXD050618	scenario		correct	post	ok
+PXD050618	scenario		related_close	post	ok
+PXD073687	scenario		unrelated	post	database
+PXD073687	scenario		correct	post	ok
+PXD073687	scenario		related_close	post	database
+PXD027038	scenario		unrelated	post	not assessed
+PXD027038	scenario		correct	post	not assessed
+PXD027767	scenario		unrelated	post	database
+PXD027767	scenario		correct	post	settings
+PXD014225	scenario		unrelated	post	not assessed
+PXD014225	scenario		correct	post	not assessed
+PXD014225	scenario		related_close	post	not assessed
+PXD034623	scenario		unrelated	post	database
+PXD034623	scenario		correct	post	ok
+PXD034623	scenario		related_close	post	ok
+PXD017817	scenario		unrelated	post	database
+PXD017817	scenario		correct	post	database
+PXD066108	scenario		unrelated	post	database
+PXD066108	scenario		correct	post	ok
+PXD066108	scenario		related_distant	post	ok
+PXD073843	scenario		incomplete	post	ok
+PXD073843	scenario		correct	post	ok
+PXD028735	scenario		correct	post	ok
+PXD045500	scenario		incomplete	post	ok
+PXD045500	scenario		correct	post	ok
+PXD033381	scenario		unrelated	post	database
+PXD033381	scenario		correct	post	ok
+PXD033381	scenario		related_close	post	ok
+PXD039576	scenario		incomplete	post	ok
+PXD039576	scenario		correct	post	ok
+PXD000279	scenario		incomplete	post	ok
+PXD000279	scenario		correct	post	ok
+PXD046460	scenario		incomplete	post	database
+PXD046460	scenario		correct	post	ok
+PXD081656	scenario		unrelated	post	database
+PXD081656	scenario		correct	post	ok
+PXD081656	scenario		related_close	post	ok
+PXD042267	scenario		incomplete	post	ok
+PXD042267	scenario		correct	post	ok
+PXD017035	scenario		incomplete	post	database
+PXD017035	scenario		correct	post	ok
+PXD041573	scenario		unrelated	post	database
+PXD041573	scenario		correct	post	ok
+PXD036799	scenario		incomplete	post	ok
+PXD036799	scenario		correct	post	ok
+PXD006679	scenario		unrelated	post	database
+PXD006679	scenario		correct	post	ok
+PXD065430	scenario		unrelated	post	database
+PXD065430	scenario		correct	post	database
+PXD065430	scenario		related_close	post	database
+PXD007885	scenario		incomplete	post	ok
+PXD007885	scenario		correct	post	ok
+PXD012772	scenario		incomplete	post	ok
+PXD012772	scenario		correct	post	ok
+PXD078382	scenario		unrelated	post	database
+PXD078382	scenario		correct	post	settings
+PXD078382	scenario		related_close	post	settings
+PXD035857	scenario		incomplete	post	ok
+PXD035857	scenario		correct	post	ok
+PXD016579	scenario		incomplete	post	not assessed
+PXD016579	scenario		correct	post	not assessed
+PXD033852	scenario		wrong_protease	post	not assessed
+PXD033852	scenario		wrong_label	post	not assessed
+PXD033852	scenario		unrelated	post	not assessed
+PXD033852	scenario		correct	post	not assessed
+PXD033852	scenario		related_close	post	not assessed
+PXD000044	scenario		incomplete	post	not assessed
+PXD000044	scenario		correct	post	not assessed
+PXD035449	scenario		incomplete	post	ok
+PXD035449	scenario		correct	post	ok
+PXD020815	scenario		incomplete	post	ok
+PXD020815	scenario		correct	post	ok
+PXD008611	scenario		incomplete	post	ok
+PXD008611	scenario		correct	post	ok
+PXD058521	scenario		unrelated	post	database
+PXD058521	scenario		correct	post	ok
+PXD016470	scenario		incomplete	post	ok
+PXD016470	scenario		correct	post	ok
+PXD006349	scenario		unrelated	post	database
+PXD006349	scenario		correct	post	ok
+PXD006349	scenario		related_close	post	ok
+PXD020401	scenario		unrelated	post	database
+PXD020401	scenario		correct	post	ok
+PXD020401	scenario		related_close	post	ok
+PXD010700	scenario		unrelated	post	database
+PXD010700	scenario		correct	post	ok
+PXD027945	scenario		unrelated	post	database
+PXD027945	scenario		correct	post	ok
+PXD027945	scenario		related_close	post	ok
+PXD044300	scenario		unrelated	post	database
+PXD044300	scenario		correct	post	ok
+PXD007040	scenario		unrelated	post	not assessed
+PXD007040	scenario		correct	post	not assessed
+PXD007040	scenario		related_close	post	not assessed
+PXD016055	scenario		unrelated	post	database
+PXD016055	scenario		correct	post	ok
+PXD016055	scenario		related_close	post	ok
+PXD041711	scenario		wrong_protease	post	database
+PXD041711	scenario		wrong_label	post	database
+PXD041711	scenario		unrelated	post	database
+PXD041711	scenario		correct	post	ok
+PXD041711	scenario		related_close	post	ok
+PXD004133	scenario		unrelated	post	database
+PXD004133	scenario		correct	post	ok
+PXD037434	scenario		wrong_protease	post	database
+PXD037434	scenario		wrong_label	post	database
+PXD037434	scenario		unrelated	post	database
+PXD037434	scenario		correct	post	database
+PXD014367	scenario		unrelated	post	database
+PXD014367	scenario		correct	post	settings
+PXD009612	scenario		unrelated	post	database
+PXD009612	scenario		correct	post	ok
+PXD013899	scenario		unrelated	post	not assessed
+PXD013899	scenario		correct	post	not assessed
+PXD044741	scenario		unrelated	post	database
+PXD044741	scenario		correct	post	ok
+PXD044741	scenario		related_distant	post	database
+PXD001739	scenario		unrelated	post	not assessed
+PXD001739	scenario		correct	post	not assessed
+PXD001739	scenario		related_close	post	not assessed
+PXD055189	scenario		unrelated	post	ok
+PXD055189	scenario		correct	post	ok
+PXD055189	scenario		related_close	post	ok
+PXD015959	scenario		unrelated	post	database
+PXD015959	scenario		correct	post	ok
+PXD015959	scenario		related_close	post	database
+PXD005340	scenario		unrelated	post	database
+PXD005340	scenario		correct	post	settings
+PXD039269	scenario		wrong_protease	post	settings
+PXD039269	scenario		wrong_label	post	settings
+PXD039269	scenario		unrelated	post	database
+PXD039269	scenario		correct	post	ok
+PXD039269	scenario		related_close	post	database
+PXD028358	scenario		unrelated	post	database
+PXD028358	scenario		correct	post	ok
+PXD032835	scenario		unrelated	post	database
+PXD032835	scenario		correct	post	ok
+PXD032835	scenario		related_close	post	ok
+PXD074950	scenario		unrelated	post	database
+PXD074950	scenario		correct	post	ok
+PXD074950	scenario		related_close	post	database
+PXD000266	scenario		unrelated	post	database
+PXD000266	scenario		correct	post	ok
+PXD000266	scenario		related_close	post	ok
+PXD061649	scenario		unrelated	post	database
+PXD061649	scenario		correct	post	database
+PXD061649	scenario		related_distant	post	database
+PXD039882	scenario		unrelated	post	database
+PXD039882	scenario		correct	post	ok
+PXD001540	scenario		unrelated	post	database
+PXD001540	scenario		correct	post	ok
+PXD001540	scenario		related_close	post	ok
+PXD023400	scenario		wrong_protease	post	settings
+PXD023400	scenario		wrong_label	post	settings
+PXD023400	scenario		unrelated	post	database
+PXD023400	scenario		correct	post	ok
+PXD023400	scenario		related_close	post	ok
+PXD036580	scenario		unrelated	post	database
+PXD036580	scenario		correct	post	ok
+PXD034335	scenario		unrelated	post	database
+PXD034335	scenario		correct	post	ok
+PXD034335	scenario		related_close	post	ok
+PXD001473	scenario		unrelated	post	not assessed
+PXD001473	scenario		correct	post	not assessed
+PXD079013	scenario		unrelated	post	database
+PXD079013	scenario		correct	post	ok
+PXD001670	scenario		unrelated	post	database
+PXD001670	scenario		correct	post	database
+PXD033741	scenario		unrelated	post	database
+PXD033741	scenario		correct	post	ok
+PXD033741	scenario		related_close	post	ok
+PXD050504	scenario		unrelated	post	database
+PXD050504	scenario		correct	post	ok
+PXD050504	scenario		related_close	post	ok
+PXD027712	scenario		unrelated	post	database
+PXD027712	scenario		correct	post	ok
+PXD027712	scenario		related_close	post	ok
+PXD003531	scenario		unrelated	post	database
+PXD003531	scenario		correct	post	ok
+PXD003531	scenario		related_close	post	ok
+PXD049370	scenario		unrelated	post	database
+PXD049370	scenario		correct	post	ok
+PXD049370	scenario		related_close	post	database
+PXD014764	scenario		unrelated	post	database
+PXD014764	scenario		correct	post	ok
+PXD014764	scenario		related_close	post	ok
+PXD050844	scenario		unrelated	post	database
+PXD050844	scenario		correct	post	database
+PXD050844	scenario		related_close	post	database
+PXD083141	scenario		wrong_protease	post	settings
+PXD083141	scenario		wrong_label	post	settings
+PXD083141	scenario		unrelated	post	database
+PXD083141	scenario		correct	post	ok
+PXD083141	scenario		related_distant	post	database
+PXD003382	scenario		unrelated	post	database
+PXD003382	scenario		correct	post	database
+PXD007875	scenario		wrong_protease	post	settings
+PXD007875	scenario		wrong_label	post	settings
+PXD007875	scenario		unrelated	post	database
+PXD007875	scenario		correct	post	ok
+PXD007875	scenario		related_close	post	ok
+PXD078554	scenario		unrelated	post	database
+PXD078554	scenario		correct	post	ok
+PXD078554	scenario		related_close	post	ok
+PXD076520	scenario		unrelated	post	database
+PXD076520	scenario		correct	post	ok
+PXD076520	scenario		related_close	post	ok
+PXD045163	scenario		unrelated	post	database
+PXD045163	scenario		correct	post	ok
+PXD010744	scenario		unrelated	post	database
+PXD010744	scenario		correct	post	ok
+PXD010744	scenario		related_close	post	ok
+PXD004644	scenario		unrelated	post	not assessed
+PXD004644	scenario		correct	post	not assessed
+PXD004644	scenario		related_close	post	not assessed
+PXD061541	scenario		unrelated	post	database
+PXD061541	scenario		correct	post	ok
+PXD061541	scenario		related_close	post	ok
+PXD030111	scenario		wrong_protease	post	database
+PXD030111	scenario		wrong_label	post	database
+PXD030111	scenario		unrelated	post	database
+PXD030111	scenario		correct	post	ok
+PXD040230	scenario		unrelated	post	database
+PXD040230	scenario		correct	post	ok
+PXD040230	scenario		related_distant	post	database
+PXD065331	scenario		unrelated	post	database
+PXD065331	scenario		correct	post	ok
+PXD065331	scenario		related_distant	post	ok
+PXD014778	scenario		wrong_protease	post	settings
+PXD014778	scenario		wrong_label	post	settings
+PXD014778	scenario		unrelated	post	database
+PXD014778	scenario		correct	post	ok
+PXD014778	scenario		related_close	post	settings
+PXD003575	scenario		wrong_protease	post	settings
+PXD003575	scenario		wrong_label	post	ok
+PXD003575	scenario		unrelated	post	database
+PXD003575	scenario		correct	post	ok
+PXD003575	scenario		related_close	post	ok
+PXD006272	scenario		unrelated	post	database
+PXD006272	scenario		correct	post	ok
+PXD031975	scenario		unrelated	post	database
+PXD031975	scenario		correct	post	ok
+PXD084909	scenario		unrelated	post	database
+PXD084909	scenario		correct	post	ok
+PXD084909	scenario		related_close	post	ok
+PXD024702	scenario		wrong_protease	post	not assessed
+PXD024702	scenario		wrong_label	post	not assessed
+PXD024702	scenario		unrelated	post	not assessed
+PXD024702	scenario		correct	post	not assessed
+PXD024702	scenario		related_close	post	not assessed
+PXD008287	scenario		unrelated	post	database
+PXD008287	scenario		correct	post	ok
+PXD008287	scenario		related_close	post	ok
+PXD063744	scenario		unrelated	post	database
+PXD063744	scenario		correct	post	ok
+PXD049123	scenario		wrong_protease	post	settings
+PXD049123	scenario		wrong_label	post	settings
+PXD049123	scenario		unrelated	post	database
+PXD049123	scenario		correct	post	ok
+PXD049123	scenario		related_close	post	settings
+PXD047517	scenario		unrelated	post	database
+PXD047517	scenario		correct	post	database
+PXD047517	scenario		related_close	post	database
+PXD003397	scenario		unrelated	post	database
+PXD003397	scenario		correct	post	ok
+PXD003397	scenario		related_close	post	ok
+PXD059369	scenario		unrelated	post	database
+PXD059369	scenario		correct	post	ok
+PXD059369	scenario		related_close	post	settings
+PXD003808	scenario		unrelated	post	database
+PXD003808	scenario		correct	post	ok
+PXD003808	scenario		related_close	post	ok
+PXD024085	scenario		wrong_protease	post	database
+PXD024085	scenario		wrong_label	post	database
+PXD024085	scenario		unrelated	post	ok
+PXD024085	scenario		correct	post	database
+PXD016465	scenario		unrelated	post	database
+PXD016465	scenario		correct	post	ok
+PXD016465	scenario		related_close	post	ok
+PXD063740	scenario		unrelated	post	database
+PXD063740	scenario		correct	post	ok
+PXD027795	scenario		wrong_protease	post	database
+PXD027795	scenario		wrong_label	post	database
+PXD027795	scenario		unrelated	post	database
+PXD027795	scenario		correct	post	database
+PXD004541	scenario		unrelated	post	database
+PXD004541	scenario		correct	post	ok
+PXD004541	scenario		related_close	post	ok
+PXD015108	scenario		wrong_protease	post	not assessed
+PXD015108	scenario		wrong_label	post	not assessed
+PXD015108	scenario		unrelated	post	not assessed
+PXD015108	scenario		correct	post	not assessed
+PXD015108	scenario		related_distant	post	not assessed

@@ -1,29 +1,28 @@
-primary pools: astral 1, iontrap 1, nontryptic 2, orbitrap DDA 6, orbitrap DIA 1, tof DDA 1; no runs in tof DIA: drawn from all runs
-lost before the endpoints: 0.368 of the drawn runs ({'drawn': 19, 'bottom-up': 12, 'top-down': 0, 'no-proteome': 0, 'organism not verified': 5, 'missing': 2})
-held-out draw: 300 runs, 292 not tagged top-down, by pool: astral 13, iontrap 12, nontryptic 61, orbitrap DDA 158, orbitrap DIA 16, tof DDA 20, tof DIA 12
-primary data: 12 runs; median PSM ratio auto/reference 1.098 (n=12), auto/defaults 1.250 (n=12); FDP-compliant auto 11/12 = 0.917, reference 10/12 = 0.833; one-sided 95 % lower bounds auto 0.661, reference 0.562
-design grid (joint power of P1, P2 and P3 with both gates; P1 / P2 / P3 in brackets):
-drawn 187, X 0.70, margin -0.05: pilot effect 0.23 (0.26/0.26/0.23); x0.98 and 2 % fewer compliant 0.14 (0.18/0.18/0.14); x0.97 and 5 % fewer 0.14 (0.23/0.23/0.14)
-drawn 187, X 0.70, margin -0.10: pilot effect 0.27 (0.27/0.27/0.27); x0.98 and 2 % fewer compliant 0.23 (0.24/0.24/0.23); x0.97 and 5 % fewer 0.23 (0.24/0.24/0.23)
-drawn 187, X 0.75, margin -0.05: pilot effect 0.20 (0.22/0.22/0.20); x0.98 and 2 % fewer compliant 0.17 (0.21/0.21/0.17); x0.97 and 5 % fewer 0.14 (0.23/0.23/0.14)
-drawn 187, X 0.75, margin -0.10: pilot effect 0.21 (0.21/0.21/0.21); x0.98 and 2 % fewer compliant 0.22 (0.23/0.23/0.22); x0.97 and 5 % fewer 0.17 (0.23/0.23/0.17)
-drawn 187, X 0.80, margin -0.05: pilot effect 0.17 (0.20/0.20/0.17); x0.98 and 2 % fewer compliant 0.15 (0.22/0.22/0.15); x0.97 and 5 % fewer 0.07 (0.26/0.26/0.07)
-drawn 187, X 0.80, margin -0.10: pilot effect 0.17 (0.20/0.20/0.17); x0.98 and 2 % fewer compliant 0.14 (0.28/0.28/0.14); x0.97 and 5 % fewer 0.07 (0.25/0.25/0.07)
-drawn 250, X 0.70, margin -0.05: pilot effect 0.92 (1.00/1.00/0.92); x0.98 and 2 % fewer compliant 0.85 (1.00/1.00/0.85); x0.97 and 5 % fewer 0.70 (1.00/1.00/0.70)
-drawn 250, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.96 (1.00/1.00/0.96); x0.97 and 5 % fewer 0.94 (1.00/1.00/0.94)
-drawn 250, X 0.75, margin -0.05: pilot effect 0.92 (1.00/1.00/0.92); x0.98 and 2 % fewer compliant 0.85 (1.00/1.00/0.85); x0.97 and 5 % fewer 0.65 (1.00/1.00/0.65)
-drawn 250, X 0.75, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.94 (1.00/1.00/0.94); x0.97 and 5 % fewer 0.79 (1.00/1.00/0.79)
-drawn 250, X 0.80, margin -0.05: pilot effect 0.85 (1.00/1.00/0.85); x0.98 and 2 % fewer compliant 0.64 (1.00/1.00/0.64); x0.97 and 5 % fewer 0.23 (1.00/1.00/0.23)
-drawn 250, X 0.80, margin -0.10: pilot effect 0.82 (1.00/1.00/0.82); x0.98 and 2 % fewer compliant 0.59 (1.00/1.00/0.59); x0.97 and 5 % fewer 0.25 (1.00/1.00/0.25)
-drawn 300, X 0.70, margin -0.05: pilot effect 0.96 (1.00/1.00/0.96); x0.98 and 2 % fewer compliant 0.95 (1.00/1.00/0.95); x0.97 and 5 % fewer 0.73 (1.00/1.00/0.73)
-drawn 300, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 1.00 (1.00/1.00/1.00); x0.97 and 5 % fewer 0.98 (1.00/1.00/0.98)
-drawn 300, X 0.75, margin -0.05: pilot effect 0.97 (1.00/1.00/0.97); x0.98 and 2 % fewer compliant 0.95 (1.00/1.00/0.95); x0.97 and 5 % fewer 0.69 (1.00/1.00/0.69)
-drawn 300, X 0.75, margin -0.10: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.94 (1.00/1.00/0.94)
-drawn 300, X 0.80, margin -0.05: pilot effect 0.97 (1.00/1.00/0.97); x0.98 and 2 % fewer compliant 0.88 (1.00/1.00/0.88); x0.97 and 5 % fewer 0.42 (1.00/1.00/0.42)
-drawn 300, X 0.80, margin -0.10: pilot effect 0.97 (1.00/1.00/0.97); x0.98 and 2 % fewer compliant 0.85 (1.00/1.00/0.85); x0.97 and 5 % fewer 0.42 (1.00/1.00/0.42)
-drawn 400, X 0.70, margin -0.05: pilot effect 0.98 (1.00/1.00/0.98); x0.98 and 2 % fewer compliant 0.97 (1.00/1.00/0.97); x0.97 and 5 % fewer 0.82 (1.00/1.00/0.82)
-drawn 400, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 1.00 (1.00/1.00/1.00); x0.97 and 5 % fewer 0.98 (1.00/1.00/0.98)
-drawn 400, X 0.75, margin -0.05: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.94 (1.00/1.00/0.94); x0.97 and 5 % fewer 0.80 (1.00/1.00/0.80)
-drawn 400, X 0.75, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.89 (1.00/1.00/0.89)
-drawn 400, X 0.80, margin -0.05: pilot effect 0.93 (1.00/1.00/0.93); x0.98 and 2 % fewer compliant 0.69 (1.00/1.00/0.69); x0.97 and 5 % fewer 0.17 (1.00/1.00/0.17)
-drawn 400, X 0.80, margin -0.10: pilot effect 0.94 (1.00/1.00/0.94); x0.98 and 2 % fewer compliant 0.66 (1.00/1.00/0.66); x0.97 and 5 % fewer 0.18 (1.00/1.00/0.18)
+command: python power.py pilot/score power_inputs 800 --grid --workers=8
+pilot: {'drawn': 19, 'bottom-up': 12, 'top-down': 0, 'no-proteome': 0, 'organism not verified': 5, 'missing': 2, 'not executed': 0}; eligible share 12/19, two-sided 95 % lower bound 0.384 (extra loss 0.393)
+held-out design: 300 drawn, 8 tagged top-down and 17 no-proteome fixed, 275 drawn from the 19 pilot runs
+design grid: joint power (P1 / P2 / P3 in brackets), 200 simulations per cell, conditional:
+drawn 187, X 0.70, margin -0.05: pilot effect 0.07 (0.07/0.07/0.07); x0.98 and 2 % fewer compliant 0.04 (0.04/0.04/0.04); x0.97 and 5 % fewer 0.04 (0.06/0.06/0.04); P(no verdict) 0.93
+drawn 187, X 0.70, margin -0.10: pilot effect 0.04 (0.04/0.04/0.04); x0.98 and 2 % fewer compliant 0.04 (0.04/0.04/0.04); x0.97 and 5 % fewer 0.04 (0.05/0.05/0.04); P(no verdict) 0.96
+drawn 187, X 0.75, margin -0.05: pilot effect 0.07 (0.07/0.07/0.07); x0.98 and 2 % fewer compliant 0.04 (0.06/0.06/0.04); x0.97 and 5 % fewer 0.02 (0.04/0.04/0.02); P(no verdict) 0.94
+drawn 187, X 0.75, margin -0.10: pilot effect 0.03 (0.03/0.03/0.03); x0.98 and 2 % fewer compliant 0.05 (0.05/0.05/0.05); x0.97 and 5 % fewer 0.05 (0.06/0.06/0.05); P(no verdict) 0.97
+drawn 187, X 0.80, margin -0.05: pilot effect 0.04 (0.05/0.05/0.04); x0.98 and 2 % fewer compliant 0.03 (0.04/0.04/0.03); x0.97 and 5 % fewer 0.04 (0.07/0.07/0.04); P(no verdict) 0.95
+drawn 187, X 0.80, margin -0.10: pilot effect 0.05 (0.06/0.06/0.05); x0.98 and 2 % fewer compliant 0.06 (0.07/0.07/0.06); x0.97 and 5 % fewer 0.03 (0.06/0.06/0.03); P(no verdict) 0.94
+drawn 250, X 0.70, margin -0.05: pilot effect 0.93 (1.00/1.00/0.93); x0.98 and 2 % fewer compliant 0.91 (1.00/1.00/0.91); x0.97 and 5 % fewer 0.66 (1.00/1.00/0.66); P(no verdict) 0.00
+drawn 250, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.92 (0.99/0.99/0.92); P(no verdict) 0.00
+drawn 250, X 0.75, margin -0.05: pilot effect 0.96 (1.00/1.00/0.96); x0.98 and 2 % fewer compliant 0.82 (1.00/1.00/0.82); x0.97 and 5 % fewer 0.63 (0.99/0.99/0.63); P(no verdict) 0.00
+drawn 250, X 0.75, margin -0.10: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.95 (1.00/1.00/0.95); P(no verdict) 0.00
+drawn 250, X 0.80, margin -0.05: pilot effect 0.93 (1.00/1.00/0.93); x0.98 and 2 % fewer compliant 0.85 (1.00/1.00/0.85); x0.97 and 5 % fewer 0.61 (1.00/1.00/0.61); P(no verdict) 0.00
+drawn 250, X 0.80, margin -0.10: pilot effect 0.98 (1.00/1.00/0.98); x0.98 and 2 % fewer compliant 0.93 (1.00/1.00/0.93); x0.97 and 5 % fewer 0.68 (1.00/1.00/0.68); P(no verdict) 0.00
+drawn 300, X 0.70, margin -0.05: pilot effect 0.97 (1.00/1.00/0.97); x0.98 and 2 % fewer compliant 0.92 (1.00/1.00/0.92); x0.97 and 5 % fewer 0.67 (1.00/1.00/0.67); P(no verdict) 0.00
+drawn 300, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.94 (1.00/1.00/0.94); P(no verdict) 0.00
+drawn 300, X 0.75, margin -0.05: pilot effect 0.97 (1.00/1.00/0.97); x0.98 and 2 % fewer compliant 0.93 (1.00/1.00/0.93); x0.97 and 5 % fewer 0.66 (1.00/1.00/0.66); P(no verdict) 0.00
+drawn 300, X 0.75, margin -0.10: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.98 (1.00/1.00/0.98); P(no verdict) 0.00
+drawn 300, X 0.80, margin -0.05: pilot effect 0.96 (1.00/1.00/0.96); x0.98 and 2 % fewer compliant 0.88 (1.00/1.00/0.88); x0.97 and 5 % fewer 0.68 (1.00/1.00/0.68); P(no verdict) 0.00
+drawn 300, X 0.80, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.96 (1.00/1.00/0.96); x0.97 and 5 % fewer 0.79 (1.00/1.00/0.79); P(no verdict) 0.00
+drawn 400, X 0.70, margin -0.05: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.96 (1.00/1.00/0.96); x0.97 and 5 % fewer 0.84 (1.00/1.00/0.84); P(no verdict) 0.00
+drawn 400, X 0.70, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.99 (1.00/1.00/0.99); x0.97 and 5 % fewer 0.99 (1.00/1.00/0.99); P(no verdict) 0.00
+drawn 400, X 0.75, margin -0.05: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.95 (1.00/1.00/0.95); x0.97 and 5 % fewer 0.78 (1.00/1.00/0.78); P(no verdict) 0.00
+drawn 400, X 0.75, margin -0.10: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 1.00 (1.00/1.00/1.00); x0.97 and 5 % fewer 0.99 (1.00/1.00/0.99); P(no verdict) 0.00
+drawn 400, X 0.80, margin -0.05: pilot effect 1.00 (1.00/1.00/1.00); x0.98 and 2 % fewer compliant 0.96 (1.00/1.00/0.96); x0.97 and 5 % fewer 0.80 (1.00/1.00/0.80); P(no verdict) 0.00
+drawn 400, X 0.80, margin -0.10: pilot effect 0.99 (1.00/1.00/0.99); x0.98 and 2 % fewer compliant 0.98 (1.00/1.00/0.98); x0.97 and 5 % fewer 0.90 (1.00/1.00/0.90); P(no verdict) 0.00

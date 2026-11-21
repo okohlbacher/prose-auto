@@ -8,7 +8,12 @@ stratum whose pool runs out passes its unfilled places on, one at a time, to the
 have candidates (logged). One run per project; a project counts for the first stratum that takes it.
 
 python3 draw_topup.py  ->  topup.tsv, topup_candidates.tsv, draw_topup.log, and the 113 rows appended to heldout.tsv
-(only when heldout.tsv is still the 187-run draw: its SHA-256 below; otherwise the script stops)."""
+(only when heldout.tsv is still the 187-run draw: its SHA-256 below; otherwise the script stops).
+
+python3 draw_topup.py --replay  ->  topup_replay.tsv, draw_topup_replay.log: the same draw against today's PRIDE, with
+the first 187 rows of heldout.tsv as the 187-run draw; heldout.tsv is not touched. The draw reads PRIDE's live search
+results and file lists, which were not archived, so a replay can only show that today's PRIDE gives the same runs;
+the frozen record is the append itself (topup.tsv = rows 188-300 of heldout.tsv)."""
 import collections
 import hashlib
 import math
@@ -37,18 +42,19 @@ def quotas(have):
     return {k: q[k] - have[k] for k in have}
 
 
-def main():
+def main(replay=False):
     held = HERE / "heldout.tsv"
-    if hashlib.sha256(held.read_bytes()).hexdigest() != HELDOUT_187:
+    first = "".join(held.read_text().splitlines(keepends=True)[:188])
+    if hashlib.sha256((first if replay else held.read_text()).encode()).hexdigest() != HELDOUT_187:
         sys.exit("heldout.tsv is not the 187-run draw; restore it before drawing the top-up")
     rng = random.Random(SEED)
     lines = []
     log = lambda s: (lines.append(s), print(s, flush=True))
     excl = set()
-    for f in ("exclude.txt", "heldout.tsv", "wrongdb.tsv", "candidates.tsv", "pilot/pilot.tsv",
-              "pilot/pilot_candidates.tsv"):
+    for f in ("exclude.txt", "wrongdb.tsv", "candidates.tsv", "pilot/pilot.tsv", "pilot/pilot_candidates.tsv"):
         excl |= set(re.findall(r"PXD\d{6}", (HERE / f).read_text()))
-    have = collections.Counter(l.split("\t")[0] for l in held.read_text().splitlines()[1:])
+    excl |= set(re.findall(r"PXD\d{6}", first))
+    have = collections.Counter(l.split("\t")[0] for l in first.splitlines()[1:])
     want = quotas(have)
     log(f"seed {SEED}; {len(excl)} excluded accessions; top-up {sum(want.values())} runs to {N_TOTAL}")
     seen, chosen, cand, pools, got = set(excl), [], [], {}, collections.Counter()
@@ -98,6 +104,10 @@ def main():
             log(f"{short} places left unfilled: every pool is empty")
             break
     rows = "".join("\t".join(str(r[k]) for k in COLS) + "\n" for r in chosen)
+    if replay:
+        (HERE / "topup_replay.tsv").write_text("\t".join(COLS) + "\n" + rows)
+        (HERE / "draw_topup_replay.log").write_text("\n".join(lines) + "\n")
+        return
     (HERE / "topup.tsv").write_text("\t".join(COLS) + "\n" + rows)
     (HERE / "topup_candidates.tsv").write_text("stratum\taccession\tfile\n" + "".join("\t".join(r) + "\n" for r in cand))
     with open(held, "a") as fh:
@@ -109,4 +119,4 @@ def main():
 
 if __name__ == "__main__":
     assert sum(quotas({"a": 10, "b": 7}).values()) == N_TOTAL - 17
-    main()
+    main(replay="--replay" in sys.argv)

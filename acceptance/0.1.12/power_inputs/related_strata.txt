@@ -1,0 +1,7 @@
+| Common ancestor of the related pair | pre assessed | pre warns | post assessed | post flags |
+|---|---|---|---|---|
+| class | 2 | 1 (50%) | 2 | 1 (50%) |
+| genus/family | 104 | 81 (78%) | 103 | 26 (25%) |
+| order | 7 | 6 (86%) | 7 | 4 (57%) |
+| phylum or above | 12 | 9 (75%) | 12 | 12 (100%) |
+| unresolved | 41 | 23 (56%) | 41 | 27 (66%) |

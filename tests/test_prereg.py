@@ -221,6 +221,10 @@ def test_scenarios_follow_the_adjudication(tmp_path):
     got = _run_scenarios(tmp_path, tmp_path / "adj.tsv")
     assert got[("PXD1", "correct")]["databases"] == "Mus musculus"
     assert got[("PXD2", "excluded")]["note"] == "class top-down (adjudication)"
+    # review 4, A2: adjudicated.tsv must cover every wrong-database run
+    _tsv(tmp_path / "adj1.tsv", ["accession", "file", "organisms", "class"], [("PXD1", "a.raw", "Mus musculus", "bottom-up")])
+    with pytest.raises(SystemExit, match="1 wrong-database runs have no row"):
+        _run_scenarios(tmp_path, tmp_path / "adj1.tsv")
 
 
 def test_extract_tree(tmp_path):
@@ -239,7 +243,7 @@ def test_extract_tree(tmp_path):
     ev = {"psm": {"accepted": 1200, "combined": 0.8}, "peptide": {"accepted": 700, "combined": 0.9},
           "protein": {"groups": 210}}
     a = out / "runs" / "PXD1" / "a.raw"
-    for arm, files in (("auto", {"r.auto.json": rep, "eval.json": ev, "check.json": {"verdict": "ok"}}),
+    for arm, files in (("auto", {"r.auto.json": rep, "eval.json": ev, "r.check.json": {"verdict": "ok"}}),
                        ("reference", {"eval.json": ev, "settings.json": {"protease": "Trypsin"}}),
                        ("defaults", {})):
         (a / arm).mkdir(parents=True)
@@ -251,7 +255,7 @@ def test_extract_tree(tmp_path):
     sc = out / "scenarios" / "PXD1" / "a.raw" / "unrelated"
     sc.mkdir(parents=True)
     (sc / "r.auto.json").write_text(json.dumps({"database_check": {"status": "warning"}}))
-    (sc / "check.json").write_text(json.dumps({"verdict": "database likely wrong or incomplete"}))
+    (sc / "r.check.json").write_text(json.dumps({"verdict": "database likely wrong or incomplete"}))
     EX.main(str(out), str(tmp_path / "in"))
     rows = lambda n: [l.split("\t") for l in (tmp_path / "in" / f"{n}.tsv").read_text().splitlines()[1:]]
     res = {(r[0], r[1]): r[2:] for r in rows("results")}
@@ -259,7 +263,8 @@ def test_extract_tree(tmp_path):
     assert res[("PXD1/a.raw", "defaults")][0] == "missing" and res[("PXD2/b.raw", "auto")][0] == "stopped"
     dec = {(r[0], r[1], r[2]): r[3:] for r in rows("decisions")}
     assert dec[("PXD1/a.raw", "auto", "frag_window")] == ["0.02", "Da", "default"]
-    assert dec[("PXD1/a.raw", "auto", "ms2_analyzer_qc")][0] == "ORBITRAP"
+    # FASTag QC counts without FASTag's own call (its 90 % rule): "no call", never the larger count (review 4, A5)
+    assert dec[("PXD1/a.raw", "auto", "ms2_analyzer_qc")][0] == "no call"
     assert dec[("PXD1/a.raw", "reference", "protease")] == ["Trypsin", "", "given"]
     assert sorted(tuple(r[:6]) for r in rows("checks")) == [
         ("PXD1/a.raw", "auto", "", "correct", "post", "ok"), ("PXD1/a.raw", "auto", "", "correct", "pre", "warning"),
@@ -372,16 +377,18 @@ def test_extract_then_score(tmp_path):
         acc, f = r.split("/")
         put(out / "runs" / acc / f / "auto", {"r.auto.json": rep("IT" if i == 0 else "ORBITRAP"),
                                               "eval.json": ev(1100, 1.5000001 if i == 1 else 1.0),
-                                              "check.json": {"verdict": "ok"}})
+                                              "r.check.json": {"verdict": "ok"}})
         put(out / "runs" / acc / f / "reference", {"eval.json": ev(1000, 1.0), "settings.json": {"protease": "Trypsin"}})
-        put(out / "runs" / acc / f / "defaults", {"eval.json": ev(500, 1.0)})
-    for arm in ("sdrf", "defaults"):
-        put(out / "natural" / "PXD000005" / "r5.raw" / arm, {"check.json": {"verdict": "settings likely wrong"}})
+        put(out / "runs" / acc / f / "defaults", {"eval.json": ev(400 if i == 5 else 500, 1.0)})
+    put(out / "runs" / "PXD000005" / "r5.raw" / "sdrf", {"eval.json": ev(300, 1.0)})
+    put(out / "runs" / "PXD000007" / "r7.raw" / "sdrf", {"eval.json": ev(100, 1.0)})   # cohort, its check missing
+    for acc_f, arm in (("PXD000005/r5.raw", "sdrf"), ("PXD000005/r5.raw", "defaults"), ("PXD000006/r6.raw", "defaults")):
+        put(out / "natural" / acc_f / arm, {"r.check.json": {"verdict": "settings likely wrong"}})
     for kind, verdict, psm in (("correct", "ok", 800), ("unrelated", "database likely wrong or incomplete", 80)):
         put(out / "scenarios" / "PXD9" / "mix.raw" / kind,
             {"r.auto.json": {"database_check": {"status": "ok" if kind == "correct" else "warning"},
                              "timings_s": {"dbcheck": 2.5}},
-             "check.json": {"verdict": verdict}, "eval.json": ev(psm, 1.0), "check_seconds": "6.5"})
+             "r.check.json": {"verdict": verdict}, "eval.json": ev(psm, 1.0), "check_seconds": "6.5"})
     EX.main(str(out), str(tmp_path / "in"))
     _tsv(tmp_path / "in" / "heldout.tsv", ["accession", "file"], [r.split("/") for r in runs])
     _tsv(tmp_path / "in" / "reference.tsv", REF, [(r, "bottom-up", "yes", "none", "Trypsin", "Carbamidomethyl (C)",
@@ -393,11 +400,16 @@ def test_extract_then_score(tmp_path):
     assert s["S6"]["pre:correct"]["hit"] == 121 and s["S6"]["post:correct"]["hit"] == 121
     assert s["S6"]["post:unrelated"]["hit"] == 1 and s["S6"]["post:unrelated"]["psm_ratio_to_correct_median"] == 0.1
     assert s["S6"]["post:unrelated"]["seconds_median"] == 6.5 and s["S6"]["pre:unrelated"]["seconds_median"] == 2.5
-    assert s["S6"]["scenario correct (controls)"] == {"checks": 2, "ok": 2}
-    assert s["S6"]["post:natural"]["scenarios"] == 2 and s["S6"]["post:natural"]["hit"] == 2
+    assert s["S6"]["scenario correct (controls) post"] == {"scenarios": 1, "checks": 1, "ok": 1, "not_assessed": 0}
+    # the natural cohort comes from the counts (strictly below half the reference): r5 sdrf and defaults, r7 sdrf
+    # (its check missing); r6 defaults at exactly half is outside, its check counted and ignored (review 4, A4)
+    n = s["S6"]["post:natural"]
+    assert (n["scenarios"], n["hit"], n["missing"]) == (3, 2, 1)
+    assert s["S6"]["natural checks outside the cohort"] == {"checks": 1}
     assert s["P3"]["auto_share"] == pytest.approx(120 / 121)       # 1.5000001 % is not compliant
     q = s["rules"]["FASTag QC: analyser class agrees with the header in >= 98 %"]
     assert q["n"] == 121 and q["agree"] == 120                       # the header evidence, not the reconciled value
+    assert q["called"] == 121 and q["no_call"] == 0
     assert s["S1-S5"]["label"]["correct"] == 121                     # reference "none" = auto "label free"
 
 
@@ -415,6 +427,16 @@ def test_refdb_manifest(tmp_path):
     rows = {l.split("\t")[0]: l.split("\t") for l in buf.getvalue().splitlines()[1:]}
     assert rows["PXD1"][2:6] == ["bottom-up", "Homo sapiens", "9606", "UP5640"]
     assert rows["PXD2"][5] == "UP5640; UP0589"
+    # review 4, A2: a species named twice is listed once; every drawn run needs a row
+    _tsv(tmp_path / "dup.tsv", ["accession", "file", "organisms"], [("PXD5", "e.raw", "Homo sapiens; Homo sapiens (human)")])
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        RD.main(str(tmp_path / "dup.tsv"), str(tmp_path / "tax"), str(tmp_path / "cand.tsv"))
+    assert buf.getvalue().splitlines()[1].split("\t")[4:6] == ["9606", "UP5640"]
+    _tsv(tmp_path / "draw.tsv", ["accession", "file"], [("PXD1", "a.raw"), ("PXD9", "z.raw")])
+    with pytest.raises(SystemExit, match="1 drawn runs have no row"):
+        with redirect_stdout(io.StringIO()):
+            RD.main(str(tmp_path / "runs.tsv"), str(tmp_path / "tax"), str(tmp_path / "cand.tsv"), str(tmp_path / "draw.tsv"))
     assert rows["PXD3"][2] == "no-proteome" and rows["PXD3"][5] == ""
     assert rows["PXD4"][2] == "no-proteome"
 
@@ -428,3 +450,106 @@ def test_topup_quotas():
     q = TU.quotas(have)
     assert sum(q.values()) == 113 and min(q.values()) >= 0
     assert q["protease:Asp-N"] == 6 and q["baseline:Orbitrap DDA label-free human"] == 8
+
+
+def test_failed_runs_never_reach_the_minimum(tmp_path):
+    """review 4, A1: 120 verified annotations, 109 runs whose searches all failed: missing, no verdict"""
+    runs = [f"PXD{i:06d}/r{i}.raw" for i in range(120)]
+    res = []
+    for i, r in enumerate(runs):
+        if i < 11:
+            res += [(r, "auto", "ok", 1100, 500, 100, 1.0, 1.0), (r, "reference", "ok", 1000, 500, 100, 1.0, 1.0),
+                    (r, "defaults", "ok", 800, 400, 80, 1.0, 1.0)]
+        else:
+            res += [(r, "auto", "missing") + (None,) * 5, (r, "reference", "missing") + (None,) * 5]
+    _tsv(tmp_path / "heldout.tsv", ["accession", "file"], [r.split("/") for r in runs])
+    _tsv(tmp_path / "reference.tsv", REF, [(r, "bottom-up", "yes", "none", "Trypsin", "Carbamidomethyl (C)", "no",
+                                            10, "ppm", 0.02, "Da") for r in runs])
+    _tsv(tmp_path / "results.tsv", ["run", "arm", "status", "psm", "pep", "pg", "psm_fdp", "pep_fdp"], res)
+    for n, h in (("decisions", ["run", "arm", "setting", "value", "unit", "status"]),
+                 ("checks", ["run", "source", "arm", "kind", "check", "verdict", "seconds"]),
+                 ("scenarios", ["accession", "file", "kind", "databases"])):
+        _tsv(tmp_path / f"{n}.tsv", h, [])
+    s = SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
+    assert s["runs"]["bottom-up"] == 11 and s["runs"]["missing"] == 109 and s["runs"]["not executed"] == 109
+    assert s["pass"] is None and s["verdict"].startswith("no verdict")
+
+
+def test_label_aliases_and_family():
+    """review 4, A6: the canonical short names equal prose-auto's report strings; the family line"""
+    for short, report in (("TMT0", "TMT0 / TMT (126 only)"), ("15N", "15N metabolic labelling"),
+                          ("2H2O", "Heavy water (2H2O) labelling"), ("TMT10/11plex", "TMT11plex")):
+        assert SC.canon_label(short) == SC.canon_label(report)
+    assert SC.label_family("TMTpro18plex") == SC.label_family("iTRAQ4plex") == "isobaric"
+    assert SC.label_family("SILAC (Arg6)") == "SILAC" and SC.label_family("label free") == "none"
+    assert SC.label_family("15N") == "15N"
+
+
+def test_score_json_is_strict(tmp_path):
+    """review 4, A7: +inf is written as "inf" and the file parses as strict JSON"""
+    import json
+    s = {"P1": {"median": math.inf, "ci95": [1.0, math.inf], "pass": None}, "runs": {"drawn": 3}}
+    txt = json.dumps(SC.jsonable(s), allow_nan=False)
+    back = json.loads(txt, parse_constant=lambda c: (_ for _ in ()).throw(ValueError(c)))
+    assert back["P1"]["median"] == "inf" and back["P1"]["ci95"] == [1.0, "inf"] and back["P1"]["pass"] is None
+
+
+def test_scenario_loss_without_a_check(tmp_path):
+    """review 4, A3: the loss ratio comes from the scenario search counts even when the post-search check is missing,
+    and the CLI's <stem>.check.json is read"""
+    import json
+    EX = _load("extract")
+    out = tmp_path / "out"
+    for kind, psm, check in (("correct", 1000, True), ("unrelated", 500, False)):
+        d = out / "scenarios" / "PXD9" / "mix.raw" / kind
+        d.mkdir(parents=True)
+        (d / "eval.json").write_text(json.dumps({"psm": {"accepted": psm, "combined": 1.0},
+                                                 "peptide": {"accepted": 1, "combined": 1.0}, "protein": {"groups": 1}}))
+        if check:
+            (d / "mix.check.json").write_text(json.dumps({"verdict": "ok"}))
+    EX.main(str(out), str(tmp_path / "in"))
+    cnt = (tmp_path / "in" / "scenario_counts.tsv").read_text().splitlines()
+    assert cnt[1:] == ["PXD9/mix.raw\tcorrect\tok\t1000", "PXD9/mix.raw\tunrelated\tok\t500"]
+    scn = [{"accession": "PXD9", "file": "mix.raw", "kind": k, "databases": "x"} for k in ("correct", "unrelated")]
+    chk = [{"run": "PXD9/mix.raw", "source": "scenario", "arm": None, "kind": "correct", "check": "post",
+            "verdict": "ok", "seconds": None}]
+    cnt_rows = SC.read(str(tmp_path / "in" / "scenario_counts.tsv"), ["run", "kind", "status", "psm"])
+    e = SC.checks(chk, scn, set(), {}, cnt_rows)["post:unrelated"]
+    assert e["missing"] == 1 and e["psm_ratio_to_correct_median"] == 0.5 and e["psm_ratio_n"] == 1
+
+
+def test_qc_rule_counts_no_call():
+    """review 4, A5: a run with header evidence and no FASTag QC call is in the denominator (7 of 8, not 7 of 7)"""
+    runs = [f"R{i}" for i in range(8)]
+    dec = [{"run": r, "arm": "auto", "setting": "ms2_analyzer_header", "value": "ORBITRAP", "unit": None,
+            "status": "auto"} for r in runs]
+    dec += [{"run": r, "arm": "auto", "setting": "ms2_analyzer_qc", "value": "ORBITRAP" if i < 7 else "no call",
+             "unit": None, "status": "auto"} for i, r in enumerate(runs)]
+    ref = [{"run": r, "label": None, "protease": None, "reporter_ions": None} for r in runs]
+    acc = {"label": {"correct": 0}}
+    q = SC.rules({}, ref, dec, set(runs), acc)["FASTag QC: analyser class agrees with the header in >= 98 %"]
+    assert (q["agree"], q["n"], q["no_call"], q["pass"]) == (7, 8, 1, False)
+
+
+def test_power_uses_the_scorer_and_the_manifest():
+    """review 4, B1/B3/B4/C8: power.py simulates through score.accounting and score.primary (the 120-run minimum, the
+    scorer's bootstrap), fixes the manifest's top-down and no-proteome runs, and never overwrites a frozen output"""
+    import subprocess
+    import sys
+    PW = _load("power")
+    ok = lambda psm, fdp=1.0: {"status": "ok", "psm": psm, "pep": psm / 2, "pg": psm / 10, "psm_fdp": fdp,
+                               "pep_fdp": fdp}
+    good = ("r", "bottom-up", {"auto": ok(1100), "reference": ok(1000), "defaults": ok(800)})
+    rng = np.random.default_rng(1)
+    assert PW.simulate([good], 130, rng)[1:] == (False, True, True, True, True)
+    assert PW.simulate([good], 119, rng)[1] is True                         # no verdict below 120 eligible
+    failed = ("f", "bottom-up", {"auto": {"status": "missing", **{k: None for k in ("psm", "pep", "pg", "psm_fdp",
+                                                                                     "pep_fdp")}},
+                                 "reference": ok(1000)})
+    n, nv = PW.simulate([failed], 200, rng)[:2]
+    assert n == 0 and nv                                                   # a run that did not execute never counts
+    assert PW.design(300) == (275, 8, 17) and PW.design(187) == (173, 5, 9)
+    loss, lo, k, n = PW.attrition_loss({"drawn": 19, "bottom-up": 12, "top-down": 0, "no-proteome": 0})
+    assert abs(lo - 0.3836) < 1e-3 and abs(12 / 19 * (1 - loss) - lo) < 1e-12
+    r = subprocess.run([sys.executable, os.path.join(D, "power.py"), "x", "y"], capture_output=True, text=True)
+    assert r.returncode != 0 and "pass --overwrite" in r.stderr

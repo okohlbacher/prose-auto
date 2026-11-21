@@ -43,6 +43,15 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
 - Held-out set topped up to 300 drawn runs (`draw_topup.py`, seed 20261122; adopted by the author), P3 gates kept
   (X 0.75, margin -0.05): joint power 0.98 at the pilot effect. Pre-search specificity bound 0.70 -> 0.75 at 300;
   `refdb_draw.tsv` for all 300 runs; execution plan on BinAC2 (PREREG §10.1).
+- Fourth review (amendment 2026-11-22):
+  - Scorer: failed runs are missing before the 120 minimum; the natural cohort comes from the counts; S6 losses come
+    from `scenario_counts.tsv`; the QC rule counts no-calls; S1 short names and the family line; strict
+    `score.json`; one shared P1–P3 routine.
+  - Manifests: `adjudicated.tsv` covers every run; `refdb.py` checks coverage and dedupes taxa.
+  - Power: whole pilot runs resampled. Joint power 0.97 conditional, 0.64 predictive, P(no verdict) up to 0.97 at
+    high attrition.
+  - Check bounds: specificity 0.65; related_distant pre 0.50 and post 0.25.
+  - Execution plan: hand-off, hashes and reruns on both sites.
 
 ## 0.1.11 (2026-11-20)
 

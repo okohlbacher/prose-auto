@@ -121,6 +121,10 @@ def main(wrongdb, taxdir, candfile, adjudicated=None, frozen=None):
     if adjudicated:
         organisms_of({"accession": "", "file": "", "organisms": ""}, adjudicated)
         adj = _ADJ[adjudicated]
+        miss = [f"{r['accession']}/{r['file']}" for r in csv.DictReader(open(wrongdb), delimiter="\t")
+                if (r["accession"], r["file"]) not in adj]
+        if miss:   # adjudicated.tsv covers every run of the draw and of wrongdb.tsv (§3)
+            raise SystemExit(f"{len(miss)} wrong-database runs have no row in {adjudicated}: {', '.join(miss[:5])}")
     w = csv.writer(sys.stdout, delimiter="\t", lineterminator="\n")
     w.writerow(["accession", "file", "kind", "databases", "taxids", "proteomes", "common_rank", "note"])
 

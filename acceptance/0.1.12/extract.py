@@ -9,14 +9,19 @@ OUT is the frozen output tree of the benchmark (§10):
       run.auto.json     the prose-auto report of an arm that runs prose-auto (auto, auto_never, auto_always, ablations)
       settings.json     the settings of an arm that does not (reference, sdrf, defaults, best_psm): label, protease,
                         cys, prec_window, prec_unit, frag_window, frag_unit
-      check.json        prose-auto check on this arm's result (auto: the post-search check on the correct database)
+      <stem>.check.json prose-auto check on this arm's result, as the CLI names it (auto: the post-search check on the
+                        correct database); exactly one per folder, else the check is missing
       status            optional, one word: missing (download, conversion or search failed)
-  OUT/scenarios/<accession>/<file>/<kind>/  run.auto.json (the pre-search check), check.json (post), eval.json (the
-                        scenario search's counts) and check_seconds (the post-search check's wall time) per scenario
-  OUT/natural/<accession>/<file>/<arm>/check.json   the natural-failure checks (§6 S6), arm sdrf or defaults
+  OUT/scenarios/<accession>/<file>/<kind>/  run.auto.json (the pre-search check), <stem>.check.json (post), eval.json
+                        (the scenario search's counts), status (optional: missing) and check_seconds (the post-search
+                        check's wall time) per scenario
+  OUT/natural/<accession>/<file>/<arm>/<stem>.check.json   the natural-failure checks (§6 S6), arm sdrf or defaults
+DIR/scenario_counts.tsv gets every scenario folder's search counts (ok or missing), independent of its checks.
 Counts and FDP are copied at full precision; nothing is rounded before score.py applies a threshold.
 The header comparator of the QC rule is the header evidence itself (source metadata, not FASTag QC), read from the
-report's evidence before reconciliation, never the reconciled decision; without it the setting is absent.
+report's evidence before reconciliation, never the reconciled decision; without it the setting is absent. The QC value
+is FASTag QC's own call (its "FASTag QC" ms2_analyzer evidence, made at >= 90 % of the MS2 spectra); when the report
+has FASTag QC counts but no call, or no FASTag QC at all, the value is "no call".
 An arm is stopped when its report has no_digest (the top-down stop) or, for a search, when status says stopped; it is
 missing when it has neither counts nor a stop. Standard library only."""
 import csv
@@ -27,7 +32,6 @@ import sys
 
 VERDICT = {"ok": "ok", "warning": "warning", "not assessed": "not assessed", "settings likely wrong": "settings",
            "database likely wrong or incomplete": "database"}
-QC_ANALYZER = {"FTMS": "ORBITRAP", "ITMS": "IT", "TOF": "TOF", "ASTMS": "ASTRAL"}
 STATUS = {"auto": "auto", "review": "review", "default": "default", "given": "given", "unknown": "unknown"}
 SETTING = {"label": "label", "protease": "enzyme", "cys": "cys_alkylation"}
 
@@ -71,10 +75,8 @@ def decisions(d):
                 if e.get("source") == "metadata" and not str(e.get("method", "")).startswith("FASTag")]
         if head:
             out.append(("ms2_analyzer_header", max(head, key=lambda e: e["confidence"])["value"], "", "auto"))
-        cls = (rep.get("fastag_qc") or {}).get("ms2_analyzer_class") or {}
-        if cls:
-            top = max(cls, key=cls.get)
-            out.append(("ms2_analyzer_qc", QC_ANALYZER.get(top, top), "", "auto"))
+        call = [e for e in (dec.get("ms2_analyzer") or {}).get("evidence", []) if e.get("method") == "FASTag QC"]
+        out.append(("ms2_analyzer_qc", call[0]["value"] if call else "no call", "", "auto"))
         return out
     st = _json(os.path.join(d, "settings.json"))
     for s in ("label", "protease", "cys"):
@@ -93,7 +95,9 @@ def pre(d):
 
 
 def post(d):
-    c = _json(os.path.join(d, "check.json"))
+    """the post-search verdict of a folder's one <stem>.check.json (the CLI's name); none or several: missing"""
+    js = glob.glob(os.path.join(d, "*.check.json"))
+    c = _json(js[0]) if len(js) == 1 else None
     return VERDICT.get(c["verdict"]) if c else None
 
 
@@ -107,7 +111,7 @@ def input_type(rep):
 
 def main(out, d):
     os.makedirs(d, exist_ok=True)
-    res, dec, chk, tim = [], [], [], []
+    res, dec, chk, tim, cnt = [], [], [], [], []
     for a in sorted(glob.glob(os.path.join(out, "runs", "*", "*", "*"))):
         acc, f, arm = a.split(os.sep)[-3:]
         run = f"{acc}/{f}"
@@ -117,34 +121,36 @@ def main(out, d):
         if arm == "auto":
             for k, v in (("pre", pre(a)), ("post", post(a))):
                 if v:
-                    chk.append((run, "auto", "", "correct", k, v, "", ""))
+                    chk.append((run, "auto", "", "correct", k, v, ""))
         if rep and "timings_s" in rep and arm in ("auto", "fast_0110") and "decisions" in rep:
             ver = "0.1.12" if arm == "auto" else "0.1.10"
             tim += [(run, ver, input_type(rep), s, x) for s, x in rep["timings_s"].items()]
     for s in sorted(glob.glob(os.path.join(out, "scenarios", "*", "*", "*"))):
         acc, f, kind = s.split(os.sep)[-3:]
         e, rep = _json(os.path.join(s, "eval.json")), _report(s)
-        psm = e["psm"]["accepted"] if e else ""
+        st = open(os.path.join(s, "status")).read().strip() if os.path.exists(os.path.join(s, "status")) else ""
+        cnt.append((f"{acc}/{f}", kind) + (("ok", e["psm"]["accepted"]) if e and st != "missing" else ("missing", "")))
         sec = {"pre": ((rep or {}).get("timings_s") or {}).get("dbcheck", ""),
                "post": open(os.path.join(s, "check_seconds")).read().strip()
                if os.path.exists(os.path.join(s, "check_seconds")) else ""}
         for k, v in (("pre", pre(s)), ("post", post(s))):
             if v and not (k == "pre" and kind in ("wrong_label", "wrong_protease")):
-                chk.append((f"{acc}/{f}", "scenario", "", kind, k, v, psm if k == "post" else "", sec[k]))
+                chk.append((f"{acc}/{f}", "scenario", "", kind, k, v, sec[k]))
     for s in sorted(glob.glob(os.path.join(out, "natural", "*", "*", "*"))):
         acc, f, arm = s.split(os.sep)[-3:]
         v = post(s)
         if v:
-            chk.append((f"{acc}/{f}", "natural", arm, "natural", "post", v, "", ""))
+            chk.append((f"{acc}/{f}", "natural", arm, "natural", "post", v, ""))
     for name, head, rows in (("results", ["run", "arm", "status", "psm", "pep", "pg", "psm_fdp", "pep_fdp"], res),
                              ("decisions", ["run", "arm", "setting", "value", "unit", "status"], dec),
-                             ("checks", ["run", "source", "arm", "kind", "check", "verdict", "psm", "seconds"], chk),
+                             ("checks", ["run", "source", "arm", "kind", "check", "verdict", "seconds"], chk),
+                             ("scenario_counts", ["run", "kind", "status", "psm"], cnt),
                              ("timing", ["run", "version", "input_type", "step", "seconds"], tim)):
         with open(os.path.join(d, f"{name}.tsv"), "w", newline="") as fh:
             w = csv.writer(fh, delimiter="\t", lineterminator="\n")
             w.writerow(head)
             w.writerows(rows)
-    print(f"results {len(res)}, decisions {len(dec)}, checks {len(chk)}, timing {len(tim)}")
+    print(f"results {len(res)}, decisions {len(dec)}, checks {len(chk)}, scenario counts {len(cnt)}, timing {len(tim)}")
 
 
 if __name__ == "__main__":

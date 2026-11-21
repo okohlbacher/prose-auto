@@ -1,22 +1,30 @@
-primary pools: astral 1, iontrap 1, nontryptic 2, orbitrap DDA 6, orbitrap DIA 1, tof DDA 1; no runs in tof DIA: drawn from all runs
-lost before the endpoints: 0.368 of the drawn runs ({'drawn': 19, 'bottom-up': 12, 'top-down': 0, 'no-proteome': 0, 'organism not verified': 5, 'missing': 2})
-held-out draw: 300 runs, 292 not tagged top-down, by pool: astral 13, iontrap 12, nontryptic 61, orbitrap DDA 158, orbitrap DIA 16, tof DDA 20, tof DIA 12
-primary data: 12 runs; median PSM ratio auto/reference 1.098 (n=12), auto/defaults 1.250 (n=12); FDP-compliant auto 11/12 = 0.917, reference 10/12 = 0.833; one-sided 95 % lower bounds auto 0.661, reference 0.562
-auto PSMs x1.0, 0% of compliant auto runs made noncompliant: eligible 184, P1 pairs 184, P3 pairs 184; power P1 1.00, P2 1.00, P3 both gates 0.98, joint 0.98
-auto PSMs x0.98, 0% of compliant auto runs made noncompliant: eligible 184, P1 pairs 184, P3 pairs 184; power P1 1.00, P2 1.00, P3 both gates 0.97, joint 0.97
-auto PSMs x0.97, 0% of compliant auto runs made noncompliant: eligible 185, P1 pairs 185, P3 pairs 185; power P1 1.00, P2 1.00, P3 both gates 0.97, joint 0.97
-auto PSMs x1.0, 2% of compliant auto runs made noncompliant: eligible 185, P1 pairs 185, P3 pairs 185; power P1 1.00, P2 1.00, P3 both gates 0.92, joint 0.92
-auto PSMs x1.0, 5% of compliant auto runs made noncompliant: eligible 184, P1 pairs 184, P3 pairs 184; power P1 1.00, P2 1.00, P3 both gates 0.77, joint 0.77
-post:correct: development 0.869 (159/183), held-out n=160; largest bound with exact power >= 0.80 at alpha/9: 0.75; frozen: 0.75, exact power at it 0.899
-post:incomplete: development 0.125 (2/16), held-out n=7; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
-post:related_close: development 0.252 (26/103), held-out n=31; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
-post:related_distant: development 0.556 (5/9), held-out n=30; largest bound with exact power >= 0.80 at alpha/9: 0.2; frozen: 0.2, exact power at it 0.937
-post:unrelated: development 0.988 (163/165), held-out n=32; largest bound with exact power >= 0.80 at alpha/9: 0.75; frozen: 0.75, exact power at it 0.943
-post:wrong_label: development 0.960 (24/25), held-out n=25; largest bound with exact power >= 0.80 at alpha/9: 0.65; frozen: 0.65, exact power at it 0.924
-post:wrong_protease: development 1.000 (25/25), held-out n=25; largest bound with exact power >= 0.80 at alpha/9: 0.8; frozen: 0.65, exact power at it 1.000
-pre:correct: development 0.863 (158/183), held-out n=158; largest bound with exact power >= 0.80 at alpha/9: 0.75; frozen: 0.75, exact power at it 0.819
-pre:incomplete: development 0.750 (12/16), held-out n=7; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
-pre:related_close: development 0.779 (81/104), held-out n=31; largest bound with exact power >= 0.80 at alpha/9: 0.45; frozen: 0.45, exact power at it 0.872
-pre:related_distant: development 0.778 (7/9), held-out n=30; largest bound with exact power >= 0.80 at alpha/9: 0.45; frozen: 0.45, exact power at it 0.890
-pre:unrelated: development 0.838 (140/167), held-out n=32; largest bound with exact power >= 0.80 at alpha/9: 0.5; frozen: 0.5, exact power at it 0.938
-joint power under Holm at the frozen bounds (1000 simulations, standard error <= 0.006): post:correct 0.98, post:related_distant 0.98, post:unrelated 1.00, post:wrong_label 1.00, post:wrong_protease 1.00, pre:correct 0.96, pre:related_close 0.96, pre:related_distant 0.97, pre:unrelated 0.98
+command: python power.py pilot/score power_inputs 1000 --workers=8
+pilot: {'drawn': 19, 'bottom-up': 12, 'top-down': 0, 'no-proteome': 0, 'organism not verified': 5, 'missing': 2, 'not executed': 0}; eligible share 12/19, two-sided 95 % lower bound 0.384 (extra loss 0.393)
+held-out design: 300 drawn, 8 tagged top-down and 17 no-proteome fixed, 275 drawn from the 19 pilot runs
+conditional (pilot as truth): eligible 174 (5-95 % 160-187), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.97, joint 0.97 (1000 simulations)
+predictive (pilot resampled): eligible 175 (5-95 % 123-224), P(no verdict) 0.04; power P1 0.96, P2 0.94, P3 0.65, joint 0.64 (1000 simulations)
+attrition at the lower bound, conditional: eligible 105 (5-95 % 93-117), P(no verdict) 0.97; power P1 0.03, P2 0.03, P3 0.03, joint 0.03 (1000 simulations)
+attrition at the lower bound, predictive: eligible 106 (5-95 % 73-138), P(no verdict) 0.74; power P1 0.26, P2 0.26, P3 0.18, joint 0.17 (1000 simulations)
+auto PSMs x0.98: eligible 173 (5-95 % 160-186), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.98, joint 0.98 (1000 simulations)
+auto PSMs x0.97: eligible 174 (5-95 % 160-186), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.98, joint 0.98 (1000 simulations)
+2 % of compliant auto runs noncompliant: eligible 174 (5-95 % 160-186), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.90, joint 0.90 (1000 simulations)
+5 % of compliant auto runs noncompliant: eligible 174 (5-95 % 162-186), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.71, joint 0.71 (1000 simulations)
+leave one pilot project out (conditional, 200 simulations each): joint power 0.46-1.00; lowest without PXD024383, highest without PXD012418
+  without PXD024383: eligible 169 (5-95 % 157-183), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.46, joint 0.46 (200 simulations)
+  without PXD065759: eligible 169 (5-95 % 156-182), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.47, joint 0.47 (200 simulations)
+  without PXD069089: eligible 168 (5-95 % 155-180), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.95, joint 0.95 (200 simulations)
+pilot FDPs within 0.05 points of 1.5 % moved across it (conditional):
+  PXD024383 reference psm_fdp 1.5091 -> 1.5000: eligible 174 (5-95 % 161-187), P(no verdict) 0.00; power P1 1.00, P2 1.00, P3 0.50, joint 0.50 (1000 simulations)
+checks: the expected specificity count is 73 eligible runs (the 5th percentile of the predictive attrition scenario); development specificity from source scenario (the correct-database scenario checks of the 0.1.11 calibration); related_distant rank mix of the manifest: class 2, order 35
+post:correct: development 0.869 (159/183 pooled), held-out n=63; largest bound with exact power >= 0.80 at alpha/9: 0.65; frozen: 0.65, exact power at it 0.937 (a lower bound under Holm)
+post:incomplete: development 0.125 (2/16 pooled), held-out n=7; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
+post:related_close: development 0.252 (26/103 pooled), held-out n=31; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
+post:related_distant: development 0.568 (5/9 pooled; by rank class 1/2, order 4/7, rank-weighted 0.568, worst rank 0.500), held-out n=30; largest bound with exact power >= 0.80 at alpha/9: 0.25; frozen: 0.25, exact power at it 0.824 (a lower bound under Holm), 0.572 at the worst rank
+post:unrelated: development 0.988 (163/165 pooled), held-out n=32; largest bound with exact power >= 0.80 at alpha/9: 0.75; frozen: 0.75, exact power at it 0.943 (a lower bound under Holm)
+post:wrong_label: development 0.960 (24/25 pooled), held-out n=25; largest bound with exact power >= 0.80 at alpha/9: 0.65; frozen: 0.65, exact power at it 0.924 (a lower bound under Holm)
+post:wrong_protease: development 1.000 (25/25 pooled), held-out n=25; largest bound with exact power >= 0.80 at alpha/9: 0.8; frozen: 0.65, exact power at it 1.000 (a lower bound under Holm)
+pre:correct: development 0.863 (158/183 pooled), held-out n=63; largest bound with exact power >= 0.80 at alpha/9: 0.65; frozen: 0.65, exact power at it 0.918 (a lower bound under Holm)
+pre:incomplete: development 0.750 (12/16 pooled), held-out n=7; largest bound with exact power >= 0.80 at alpha/9: None; frozen: experimental
+pre:related_close: development 0.779 (81/104 pooled), held-out n=31; largest bound with exact power >= 0.80 at alpha/9: 0.45; frozen: 0.45, exact power at it 0.872 (a lower bound under Holm)
+pre:related_distant: development 0.838 (7/9 pooled; by rank class 1/2, order 6/7, rank-weighted 0.838, worst rank 0.500), held-out n=30; largest bound with exact power >= 0.80 at alpha/9: 0.5; frozen: 0.5, exact power at it 0.899 (a lower bound under Holm), 0.003 at the worst rank
+pre:unrelated: development 0.838 (140/167 pooled), held-out n=32; largest bound with exact power >= 0.80 at alpha/9: 0.5; frozen: 0.5, exact power at it 0.938 (a lower bound under Holm)
