@@ -56,6 +56,12 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
   than 120 eligible runs, batches of 50 (seeds 20261201–20261204) up to 500 drawn, else no verdict; implemented in
   `score.eligible_before_arms` and `draw_topup.py --batch`. Stated assurance: predictive joint power 0.64
   (`power_decision.txt`).
+- Amendment 2026-11-22c: two blind agent annotators (A Claude, B Codex, Kimi as fallback), one reconciliation
+  round, no human adjudicator; a still-disputed field is not annotated (a disputed organism or class: not verified).
+  The held-out harness `acceptance/0.1.12/heldout/` (arm templates, IBMI stages, BinAC2 arrays A, B, B2 and C,
+  `FREEZE.md` writer, annotation driver, transfer) with `tests/test_heldout.py`. Conversion check: total and MS2
+  counts of the vendor file (FASTag) against the mzML. best_psm in its own array (B2); `fast_0110` gets auto's
+  `--organism`. Dry run on two development runs (IBMI and BinAC2) passed end to end, best_psm aside.
 
 ## 0.1.11 (2026-11-20)
 

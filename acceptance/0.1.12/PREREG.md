@@ -236,9 +236,10 @@ These rules apply within the eligible runs:
 - **A run whose download or conversion fails:** missing. `score.py` reads `heldout.tsv` and counts every drawn run
   without a reference row as missing; it is out of every endpoint and not replaced.
 - **A partial conversion is a failed conversion.** At step 3 (§10) the mzML must carry every spectrum of the vendor
-  file: its MS2 count must equal the count of the vendor file's own index, read with the frozen tools (Thermo
-  `.raw`: the MS2 scans of RawFileReader's scan index; Bruker `.d`: the MS/MS frames of `analysis.tdf`; SCIEX
-  `.wiff`: the MS2 experiments of the vendor reader). Otherwise the run is missing. A format no frozen reader opens
+  file: its spectrum count at every MS level and its MS2 count must equal the vendor file's own counts, read
+  directly from the vendor file by the frozen FASTag (RawFileReader for Thermo). Bruker `.d` runs are read natively
+  and need MS2 spectra. SCIEX `.wiff` has no independent reader: the converter's validated index decides
+  (amendment 2026-11-22c). Otherwise the run is missing. A format no frozen reader opens
   (as the pilot's TDF compression 1 and the duplicate DIA window key) is missing.
 - **A run that did not execute:** a verified bottom-up run whose auto or reference arm has no result, or a missing
   one, after the reruns of §10.1 is missing, before the minimum below (`score.accounting`, "not executed"). Failed
@@ -325,22 +326,40 @@ mirror.
 
 ## 3. Reference annotation (before any arm runs)
 
-**Who annotates.** Two annotators work independently. Neither sees any prose-auto, FASTag-arm or ProSE-arm output of
-these runs. Each fills `reference_A.tsv` and `reference_B.tsv` from the raw data checks below and the authors' methods.
+**Who annotates** (amendment 2026-11-22c; `heldout/annotate.py`):
+- **The annotators:** A and B are two independent agent sessions on different model families: A is Claude, B is
+  Codex, with Kimi as B's fallback when Codex gives no answer twice. No human annotates, adjudicates or reviews.
+- **What each one sees:** one run's annotation sheet at a time, inside its prompt (`harness.py sheet`): the PRIDE
+  project texts, the SDRF rows of that file and the raw-data indicators. It runs from an empty folder, with every tool
+  disabled (Claude) or in a read-only sandbox (Codex, Kimi). It never sees prose-auto's output, an arm, or the other
+  annotator's answer before the reconciliation round.
+- **The output:** each fills `reference_A.tsv` or `reference_B.tsv` in a fixed vocabulary (`annotate.VOCAB`).
+- **The raw-data check of §3.2:** this is the measured indicators (reporter-ion shares in 200 MS2/MS3 spectra, MS
+  levels, analyser prefixes, Bruker frame types). No annotator inspects spectra by eye.
 
-**Adjudication.** A third person settles every disagreement and records the decision and the reason in the
-adjudication log. The result is `reference.tsv`, whose columns `score.py` defines:
-- run, class, organism_verified;
-- label, protease, cys;
-- reporter_ions (yes/no);
-- the windows with their units.
+**Disagreements** (`annotate.py`). The rule uses no arm value:
+- **Reconciliation:** for each run with a disputed field, A and B each see the other's answer and evidence, still
+  blind to prose-auto, and may revise. There is one round.
+- **A field still disputed after that round is "not annotated":**
+  - organisms or class disputed: the run is "organism not verified", out of P1–P3 and counted;
+  - any other field disputed: it is blank in `reference.tsv`, so the run leaves that S-endpoint only. A disputed SDRF
+    field is unstated (the ProSE default, §4). A disputed instrument class gives no reference windows, so the
+    reference arm takes ProSE's default windows.
+- **Agreement:** raw agreement and Cohen's κ are reported per field, for the first round and after reconciliation
+  (`agreement.tsv`).
+- **The files:** the result is `adjudicated.tsv`, whose consensus row comes from the two reconciled answers.
+  `harness.py reference` then writes `reference.tsv`, the columns `score.py` defines:
+  - run, class, organism_verified;
+  - label, protease, cys;
+  - reporter_ions (yes/no);
+  - the windows with their units.
 
 The adjudicated organisms and class of **every** drawn run and every run of `wrongdb.tsv` go into `adjudicated.tsv`
 (accession, file, organisms, class): a row for each, also when nothing changed. `refdb.py` (with `heldout.tsv`) and
 `scenarios.py` stop when a run has no row. Agreement per setting (Cohen's κ) is reported.
 
-**Freezing (§10, step 4).** Both annotations and the adjudication log are frozen first, then `reference.tsv` and
-`adjudicated.tsv`, all before the first arm runs.
+**Freezing (§10, step 4).** Both first-round annotations, both reconciled ones and the agents' raw replies are frozen
+first, then `adjudicated.tsv`, `agreement.tsv` and `reference.tsv`, all before the first arm runs.
 
 1. **Organism and database: verified from the spectra.**
    - **The search:** a ProSE search of a seeded 5,000-MS2 subset with the stated settings, against a labelled
@@ -631,7 +650,7 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
 3. **Download and convert:** the SHA-256 of every mzML is appended to `FREEZE.md`, with each run's MS2 count
    against its vendor index (§2.2: a partial conversion is missing).
 4. **Annotation** (§3), then the conditional top-up (§2.1), whose batches are annotated the same way:
-   - `reference_A.tsv`, `reference_B.tsv` and the adjudication log (each disagreement, the decision, the reason) are
+   - `reference_A.tsv`, `reference_B.tsv`, `reconciled_A.tsv`, `reconciled_B.tsv` and every raw agent reply are
      frozen;
    - then `reference.tsv` and `adjudicated.tsv` are frozen;
    - then both manifests are rebuilt from `adjudicated.tsv`, which has a row for every drawn and every
@@ -671,9 +690,11 @@ On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to e
 | Step (§10) | Where | Load |
 |---|---|---|
 | 3. Download and conversion | IBMI: `pxd get` and `pxd convert` into the shared PRIDE mirror `/ceph/ibmi/abi/data/PXD` (the mirror's recipe), on a claimed IBMI node | 300 vendor files, 399 GB, and their mzML |
-| 4. Annotation subset searches (§3.2, §3.3) | BinAC2, array A | 300 tasks, a few subset searches each |
+| 4. Annotation sheets (`harness.py sheet`) | IBMI | one sheet per run, from PRIDE and the converted input |
+| 4. Annotators A and B, reconciliation (`annotate.py`) | the author's laptop, where the agent CLIs (Claude, Codex, Kimi) run; the sheets are copied there and the answers back | two agent calls per run, a third and fourth for each disputed run |
+| 4. Verification and window searches (`harness.py verify`, `windows`) | BinAC2, array A | 300 tasks, one subset search and one mini-search each |
 | 5a. Every prose-auto `analyze`: the auto arm, the ablations of §7, the S6 pre-search analyses | IBMI, on a claimed node, 8 at a time with 8 threads | about 2,000 analyses at a median 145 s (pilot): about 10 h. They call Jev, whose key reaches only IBMI and only over ssh stdin, so they do not run on BinAC2 |
-| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per run and 213 scenario searches |
+| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2, 6 h), B2 (its best_psm, 3 days) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per run and 213 scenario searches |
 | 5c. Post-search checks (`prose-auto check`, which runs FASTag) | BinAC2, in the task of their search | — |
 | 6. `extract.py`, `score.py` | IBMI | minutes |
 
@@ -943,4 +964,40 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    - the predictive power and its decision table (`power_decision.txt`, `power_decision.py`), now in this folder and
      in `SHA256SUMS`;
    - the limit is the pilot's uncertainty about the P3 effect, not the size.
+
+### 2026-11-22c, 0.1.12 (before sign-off of the freeze; the annotators and the harness)
+
+1. **The annotators** (§3; the author's decision: "Two agents has to be enough"):
+   - A is Claude and B is Codex, with Kimi as B's fallback; both are blind; one reconciliation round; no human
+     adjudicator or review;
+   - a field still disputed is not annotated: a disputed organism or class makes the run not verified, and any other
+     disputed field leaves only its S-endpoint;
+   - raw agreement and κ are reported per field;
+   - the raw-data check is the measured indicators.
+2. **The harness** (`heldout/`: `arms.py` templates, `harness.py` stages, `annotate.py`, `freeze.py`,
+   `heldout.slurm`, `transfer.py`; `tests/test_heldout.py`), frozen at step 2. The facts it fixes:
+   - **Bruker runs** are unpacked (zip CRCs checked) and read natively by prose-auto, ProSE and FASTag, as in the
+     pilot; the mirror's mzpeak-convert recipe writes mzPeak, not mzML (§1 corrected);
+   - **SCIEX `.wiff` runs** are fetched with their `.wiff.scan` companion, which the draw did not list, and converted
+     to mzML by mzpeak-convert (§1 named FileConverter, which reads Thermo only);
+   - **the conversion check** (§2.2) compares two counts of the mzML with the same two counts of the vendor file
+     itself: the spectra at every MS level and the MS2 spectra. Both must agree, as §2.2 asked for MS2. The vendor
+     counts come from the frozen FASTag reading the `.raw` (Thermo RawFileReader) or `.d` directly, in one full pass
+     (`-census` input_spectra, `-qc_out` count_ms2), never from the converted file. A partial conversion loses spectra
+     and fails;
+     No frozen tool reads `.wiff` independently, so a `.wiff` run rests on the converter's validated index (8 drawn
+     runs, 1 wrong-database run);
+   - **verification of DIA runs** (§3.1) searches the subset of DIAspeXtract's pseudo-spectra. The reference windows
+     of DIA and timsTOF runs are the instrument standard (the pilot's rule; §3.3 named no exception);
+   - **the five non-tryptic proteases** of best_psm are Lys-C, Arg-C, Chymotrypsin, Glu-C and Asp-N; a candidate
+     whose entrapment FDP exceeds 1 % scores 0;
+   - **Jev:** `JEV_MODEL` must name a pinned model, never `jev-latest`, and it is recorded in `FREEZE.md`. The harness
+     refuses Jev otherwise;
+   - **`FREEZE.md`** also holds the corpus protocol (`corpus.py`, `entrap.py`), the 0.1.10 code and FASTag 1.10.0
+     of `fast_0110`, both FileConverter builds, the pxd converter registry and the BinAC2 container image. The
+     analyses (step 5a), the plans and the search databases are appended before the BinAC2 release;
+   - **best_psm runs in its own array (B2, 3 days per task).** When unspecific cleavage wins the protease step, every
+     later subset search and the full search are unspecific: in the dry run (PXD000561, 5,000 MS2, 8 threads) one
+     such subset search took 3 to 5 h. The rule is unchanged;
+   - **`fast_0110`** gets the same `--organism` as auto: 0.1.10 fast mode refuses to run without it.
 
