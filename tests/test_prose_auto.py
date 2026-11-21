@@ -550,7 +550,7 @@ def test_fast_mode_takes_the_given_organisms(tmp_path):
     assert rep["mode"] == "given" and org["status"] == "given"
     assert [e["method"] for e in org["evidence"]] == ["given"]       # the description's yeast is dropped
     assert rep["organisms"] == ["Bos_taurus", "Homo_sapiens"] and rep["organism_mix"] is None
-    assert re.search(r"/Bos_taurus\+Homo_sapiens\.[0-9a-f]{16}\.fasta$", rep["search_database"]["union"])
+    assert re.search(r"[/\\]Bos_taurus\+Homo_sapiens\.[0-9a-f]{16}\.fasta$", rep["search_database"]["union"])
     assert rep["sdrf"]["characteristics[organism]"] == "Bos taurus;Homo sapiens"
     assert "organism" not in rep["agreement"]["parameters"]
     assert rep["decisions"]["cys_alkylation"]["value"] == "Carbamidomethyl (C)"   # the mini-search ran on the union

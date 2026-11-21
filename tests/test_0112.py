@@ -24,7 +24,7 @@ def _fastag_bundle(d):
     for n in ("human", "mouse", "yeast", "ecoli"):
         with gzip.open(share / f"{n}.fasta.gz", "wt") as fh:
             fh.write(f">sp|{n}1|X\nPEPTIDEK\n")
-    exe = d / "FASTag"
+    exe = d / ("FASTag.exe" if os.name == "nt" else "FASTag")   # shutil.which needs a PATHEXT suffix on Windows
     exe.write_text("#!/bin/sh\n")
     exe.chmod(0o755)
     return exe
