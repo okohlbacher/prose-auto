@@ -35,6 +35,8 @@ REF = ["run", "class", "organism_verified", "label", "protease", "cys", "reporte
        "frag_window", "frag_unit"]
 RES = ["run", "arm", "status", "psm", "pep", "pg", "psm_fdp", "pep_fdp"]
 DEC = ["run", "arm", "setting", "value", "unit", "status"]
+CHK = ["run", "source", "arm", "kind", "check", "verdict", "psm", "seconds"]
+own = lambda r, check, verdict: (r, "auto", "", "correct", check, verdict, "", "")
 
 
 def _study(tmp, n, gain=1.1, fdp=(1.0, 1.0), stopped=0, missing=0, checks=(), extra_dec=()):
@@ -51,7 +53,7 @@ def _study(tmp, n, gain=1.1, fdp=(1.0, 1.0), stopped=0, missing=0, checks=(), ex
     _tsv(tmp / "results.tsv", RES, rows)
     _tsv(tmp / "decisions.tsv", DEC, [(r, "auto", "protease", "Trypsin", "", "auto") for r in runs[missing:]]
          + list(extra_dec))
-    _tsv(tmp / "checks.tsv", ["run", "kind", "check", "verdict"], list(checks))
+    _tsv(tmp / "checks.tsv", CHK, list(checks))
     _tsv(tmp / "scenarios.tsv", ["accession", "file", "kind", "databases"], [])
     return runs
 
@@ -114,10 +116,10 @@ def test_strict_inputs(tmp_path):
     (tmp_path / "results.tsv").write_text("\n".join(rows[:1] + [rows[1].rsplit("\t", 2)[0] + "\t\t"] + rows[2:]) + "\n")
     with pytest.raises(SC.InputError, match="psm_fdp"):        # a blank FDP is never a result
         SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
-    _study(tmp_path, 130, checks=[(runs[0], "correct", "pre", "")])
+    _study(tmp_path, 130, checks=[own(runs[0], "pre", "")])
     with pytest.raises(SC.InputError, match="verdict"):        # a blank verdict is never a detection
         SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
-    _study(tmp_path, 130, checks=[(runs[0], "correct", "pre", "ok"), (runs[0], "correct", "pre", "ok")])
+    _study(tmp_path, 130, checks=[own(runs[0], "pre", "ok"), own(runs[0], "pre", "ok")])
     with pytest.raises(SC.InputError, match="duplicate"):
         SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
     _study(tmp_path, 130, extra_dec=[("PXD999999/x.raw", "auto", "label", "TMT", "", "auto")])
@@ -136,12 +138,16 @@ def test_units_and_absent_decisions(tmp_path):
 
 def test_checks_holm_and_missing(tmp_path):
     runs = [f"PXD{i:06d}/r{i}.raw" for i in range(130)]
-    chk = [(r, "correct", "pre", "ok") for r in runs[:120]] + [(r, "correct", "pre", "not assessed") for r in runs[120:]]
+    chk = [own(r, "pre", "ok") for r in runs[:120]] + [own(r, "pre", "not assessed") for r in runs[120:]]
     _study(tmp_path, 130, checks=chk)
     s = SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
     e = s["S6"]["pre:correct"]
-    assert e["assessed"] == 120 and e["not_assessed"] == 10 and e["hit"] == 120 and e["pass"] is True
+    assert e["assessed"] == 120 and e["not_assessed"] == 10 and e["hit"] == 120
     assert s["S6"]["post:correct"]["missing"] == 130 and s["S6"]["post:correct"]["pass"] is False
+    # Holm always runs over all nine gates: the seven without scenarios keep p = 1 and do not pass
+    gates = [k for k, v in s["S6"].items() if v.get("status") == "gate"]
+    assert len(gates) == 9 and all(s["S6"][k]["pass"] is False for k in gates if k != "pre:correct")
+    assert e["pass"] is True and e["p_value"] <= 0.05 / 9
 
 
 def test_label_rule(tmp_path):
@@ -255,7 +261,159 @@ def test_extract_tree(tmp_path):
     assert dec[("PXD1/a.raw", "auto", "frag_window")] == ["0.02", "Da", "default"]
     assert dec[("PXD1/a.raw", "auto", "ms2_analyzer_qc")][0] == "ORBITRAP"
     assert dec[("PXD1/a.raw", "reference", "protease")] == ["Trypsin", "", "given"]
-    assert sorted(map(tuple, rows("checks"))) == [("PXD1/a.raw", "correct", "post", "ok"),
-                                                  ("PXD1/a.raw", "correct", "pre", "warning"),
-                                                  ("PXD1/a.raw", "unrelated", "post", "database"),
-                                                  ("PXD1/a.raw", "unrelated", "pre", "warning")]
+    assert sorted(tuple(r[:6]) for r in rows("checks")) == [
+        ("PXD1/a.raw", "auto", "", "correct", "post", "ok"), ("PXD1/a.raw", "auto", "", "correct", "pre", "warning"),
+        ("PXD1/a.raw", "scenario", "", "unrelated", "post", "database"),
+        ("PXD1/a.raw", "scenario", "", "unrelated", "pre", "warning")]
+
+
+def test_p3_exact_boundary(tmp_path, monkeypatch):
+    # 120 runs, reference compliant everywhere, auto noncompliant on 6: the difference is exactly -0.05. The
+    # bootstrap is pinned to the observed signed count, so the lower bound sits exactly on the boundary.
+    pairs = [(True, True)] * 114 + [(False, True)] * 6
+    assert SC.p3_relative_lower(pairs, np.random.default_rng(1), 500) <= -6
+    assert -6 >= SC.P3_MARGIN_FRAC * 120                         # exact: the boundary itself passes
+    monkeypatch.setattr(SC, "p3_relative_lower", lambda pr, rng=None, b=None: sum(int(a) - int(c) for a, c in pr))
+    _study(tmp_path, 120, fdp=(1.0, 1.0))
+    rows = (tmp_path / "results.tsv").read_text().splitlines()
+    out = [rows[0]]
+    for i, l in enumerate(rows[1:]):
+        f = l.split("\t")
+        if f[1] == "auto" and i // 3 < 6:
+            f[6] = f[7] = "1.5000000001"                         # not rounded into compliance
+        out.append("\t".join(f))
+    (tmp_path / "results.tsv").write_text("\n".join(out) + "\n")
+    s = SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))
+    assert s["P3"]["auto_share"] == pytest.approx(114 / 120) and s["P3"]["difference"] == pytest.approx(-0.05)
+    assert s["P3"]["relative_pass"] is True
+
+
+def test_cys_rule_uninformative(tmp_path):
+    runs = [f"PXD{i:06d}/r{i}.raw" for i in range(130)]
+    dec = [(r, a, "cys", v, "", "auto") for r in runs[:6] for a, v in (("auto_never", "none (free Cys)"),
+                                                                     ("auto_always", "Carbamidomethyl (C)"))]
+    _study(tmp_path, 130, extra_dec=dec)
+    rows = (tmp_path / "results.tsv").read_text()
+    rows += "".join(f"{r}\t{a}\tstopped\t\t\t\t\t\n" for r in runs[:6] for a in ("auto_never", "auto_always"))
+    (tmp_path / "results.tsv").write_text(rows)
+    r = SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))["rules"][
+        "cys: -alkylation_out (auto_never) vs competition (auto_always)"]
+    assert r["uninformative"] == 6 and r["runs"] == 0 and r["pass"] is None      # 0/0 is never evidence
+
+
+def test_protease_rule_same_runs(tmp_path):
+    runs = [f"PXD{i:06d}/r{i}.raw" for i in range(130)]
+    dec = [(r, "auto", "protease", "Glu-C", "", "auto") for r in runs[:1]]
+    _study(tmp_path, 130)
+    lines = [l for l in (tmp_path / "decisions.tsv").read_text().splitlines() if not l.startswith(runs[0] + "\t")]
+    (tmp_path / "decisions.tsv").write_text("\n".join(lines + ["\t".join(map(str, d)) for d in dec]) + "\n")
+    r = SC.score(str(tmp_path), str(tmp_path / "heldout.tsv"))["rules"][
+        "protease: S2 >= stated-protease (SDRF arm) baseline"]
+    assert r["n"] == 0 and r["without_sdrf_protease"] == 130 and r["pass"] is None   # no SDRF protease: no verdict
+
+
+def test_label_vocabulary():
+    for a, b in (("none", "label free"), ("no isobaric label", "none"), ("TMT10plex", "TMT10/11plex"),
+                 ("TMT11plex", "TMT10/11plex"), ("TMTpro16plex", "TMTpro (16/18plex)"),
+                 ("TMTpro18plex", "TMTpro (16/18plex)"), ("iTRAQ4plex", "itraq4plex"),
+                 ("SILAC (Lys8/Arg10)", "silac (lys8/arg10)")):
+        assert SC.canon_label(a) == SC.canon_label(b)
+    for a, b in (("TMT6plex", "TMT10/11plex"), ("iTRAQ4plex", "iTRAQ8plex"), ("none", "TMT6plex"),
+                 ("SILAC (Arg6)", "SILAC (Lys8/Arg10)"), ("TMT10/11plex", "TMTpro (16/18plex)")):
+        assert SC.canon_label(a) != SC.canon_label(b)
+
+
+def test_scenarios_keep_frozen_rows(tmp_path):
+    _taxonomy(tmp_path)
+    _tsv(tmp_path / "wrongdb.tsv", ["stratum", "accession", "file", "organisms", "experiment"],
+         [("x", "PXD1", "a.raw", "Homo sapiens", ""), ("x", "PXD2", "b.raw", "Homo sapiens", "")])
+    frozen = tmp_path / "frozen.tsv"
+    frozen.write_text("accession\tfile\tkind\tdatabases\ttaxids\tproteomes\tcommon_rank\tnote\n"
+                      "PXD1\ta.raw\tcorrect\tHomo sapiens\t9606\tUP5640\t\t\n"
+                      "PXD1\ta.raw\trelated_close\tGorilla gorilla\t9595\tUPgor\tfamily\t\n")
+    _tsv(tmp_path / "adj.tsv", ["accession", "file", "organisms", "class"],
+         [("PXD1", "a.raw", "Homo sapiens (human)", "bottom-up"), ("PXD2", "b.raw", "Mus musculus", "bottom-up")])
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        SN.main(str(tmp_path / "wrongdb.tsv"), str(tmp_path / "tax"), str(tmp_path / "cand.tsv"),
+                str(tmp_path / "adj.tsv"), str(frozen))
+    rows = [l.split("\t") for l in buf.getvalue().splitlines()[1:]]
+    assert [r for r in rows if r[0] == "PXD1"] == [l.split("\t") for l in frozen.read_text().splitlines()[1:]]
+    assert any(r[0] == "PXD2" and r[2] == "correct" and r[3] == "Mus musculus" for r in rows)   # changed: rebuilt
+
+
+def test_extract_then_score(tmp_path):
+    """the arm-output tree of a small study through extract.py into score.py: auto-arm specificity, a scenario run
+    outside the draw (a multi-species wrong-database run), its correct control, natural failures of both arms,
+    the header comparator and the full-precision FDP"""
+    import json
+    EX = _load("extract")
+    out, runs = tmp_path / "out", [f"PXD{i:06d}/r{i}.raw" for i in range(121)]
+    rep = lambda header: {"decisions": {
+        "label": {"value": "label free", "status": "auto"}, "enzyme": {"value": "Trypsin", "status": "auto"},
+        "cys_alkylation": {"value": "Carbamidomethyl (C)", "status": "auto"},
+        "precursor_tolerance": {"value": {"value": 10, "unit": "ppm"}, "status": "auto"},
+        "fragment_tolerance": {"value": {"value": 0.02, "unit": "Da"}, "status": "auto"},
+        "ms2_analyzer": {"value": "ORBITRAP", "status": "auto",
+                         "evidence": [{"source": "metadata", "method": "filter string", "value": header,
+                                       "confidence": 0.4},
+                                      {"source": "metadata", "method": "FASTag QC", "value": "ORBITRAP",
+                                       "confidence": 0.5}]}},
+        "fastag_qc": {"ms2_analyzer_class": {"FTMS": 900}}, "database_check": {"status": "ok"},
+        "timings_s": {"total": 10.0, "dbcheck": 2.0}}
+    ev = lambda psm, fdp: {"psm": {"accepted": psm, "combined": fdp}, "peptide": {"accepted": psm // 2, "combined": fdp},
+                           "protein": {"groups": psm // 10}}
+
+    def put(d, files):
+        d.mkdir(parents=True, exist_ok=True)
+        for n, x in files.items():
+            (d / n).write_text(x if isinstance(x, str) else json.dumps(x))
+    for i, r in enumerate(runs):
+        acc, f = r.split("/")
+        put(out / "runs" / acc / f / "auto", {"r.auto.json": rep("IT" if i == 0 else "ORBITRAP"),
+                                              "eval.json": ev(1100, 1.5000001 if i == 1 else 1.0),
+                                              "check.json": {"verdict": "ok"}})
+        put(out / "runs" / acc / f / "reference", {"eval.json": ev(1000, 1.0), "settings.json": {"protease": "Trypsin"}})
+        put(out / "runs" / acc / f / "defaults", {"eval.json": ev(500, 1.0)})
+    for arm in ("sdrf", "defaults"):
+        put(out / "natural" / "PXD000005" / "r5.raw" / arm, {"check.json": {"verdict": "settings likely wrong"}})
+    for kind, verdict, psm in (("correct", "ok", 800), ("unrelated", "database likely wrong or incomplete", 80)):
+        put(out / "scenarios" / "PXD9" / "mix.raw" / kind,
+            {"r.auto.json": {"database_check": {"status": "ok" if kind == "correct" else "warning"},
+                             "timings_s": {"dbcheck": 2.5}},
+             "check.json": {"verdict": verdict}, "eval.json": ev(psm, 1.0), "check_seconds": "6.5"})
+    EX.main(str(out), str(tmp_path / "in"))
+    _tsv(tmp_path / "in" / "heldout.tsv", ["accession", "file"], [r.split("/") for r in runs])
+    _tsv(tmp_path / "in" / "reference.tsv", REF, [(r, "bottom-up", "yes", "none", "Trypsin", "Carbamidomethyl (C)",
+                                                   "no", 10, "ppm", 0.02, "Da") for r in runs])
+    (tmp_path / "in" / "scenarios.tsv").write_text(
+        "accession\tfile\tkind\tdatabases\nPXD9\tmix.raw\tcorrect\tHomo sapiens; Escherichia coli\n"
+        "PXD9\tmix.raw\tunrelated\tArabidopsis thaliana\n")
+    s = SC.score(str(tmp_path / "in"), str(tmp_path / "in" / "heldout.tsv"))
+    assert s["S6"]["pre:correct"]["hit"] == 121 and s["S6"]["post:correct"]["hit"] == 121
+    assert s["S6"]["post:unrelated"]["hit"] == 1 and s["S6"]["post:unrelated"]["psm_ratio_to_correct_median"] == 0.1
+    assert s["S6"]["post:unrelated"]["seconds_median"] == 6.5 and s["S6"]["pre:unrelated"]["seconds_median"] == 2.5
+    assert s["S6"]["scenario correct (controls)"] == {"checks": 2, "ok": 2}
+    assert s["S6"]["post:natural"]["scenarios"] == 2 and s["S6"]["post:natural"]["hit"] == 2
+    assert s["P3"]["auto_share"] == pytest.approx(120 / 121)       # 1.5000001 % is not compliant
+    q = s["rules"]["FASTag QC: analyser class agrees with the header in >= 98 %"]
+    assert q["n"] == 121 and q["agree"] == 120                       # the header evidence, not the reconciled value
+    assert s["S1-S5"]["label"]["correct"] == 121                     # reference "none" = auto "label free"
+
+
+def test_refdb_manifest(tmp_path):
+    import sys
+    sys.path.insert(0, D)
+    RD = _load("refdb")
+    _taxonomy(tmp_path)
+    _tsv(tmp_path / "runs.tsv", ["accession", "file", "organisms"],
+         [("PXD1", "a.raw", "Homo sapiens (human)"), ("PXD2", "b.raw", "Homo sapiens; Mus musculus"),
+          ("PXD3", "c.raw", "Dendrobaena veneta"), ("PXD4", "d.raw", "Human gut metagenome")])
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        RD.main(str(tmp_path / "runs.tsv"), str(tmp_path / "tax"), str(tmp_path / "cand.tsv"))
+    rows = {l.split("\t")[0]: l.split("\t") for l in buf.getvalue().splitlines()[1:]}
+    assert rows["PXD1"][2:6] == ["bottom-up", "Homo sapiens", "9606", "UP5640"]
+    assert rows["PXD2"][5] == "UP5640; UP0589"
+    assert rows["PXD3"][2] == "no-proteome" and rows["PXD3"][5] == ""
+    assert rows["PXD4"][2] == "no-proteome"

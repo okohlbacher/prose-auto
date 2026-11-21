@@ -1,0 +1,642 @@
+{
+ "runs": {
+  "drawn": 19,
+  "bottom-up": 12,
+  "top-down": 0,
+  "no-proteome": 0,
+  "organism not verified": 5,
+  "missing": 2
+ },
+ "class": {
+  "PXD012418/G-1-5.raw": "bottom-up",
+  "PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw": "organism not verified",
+  "PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw": "bottom-up",
+  "PXD050310/Lumos_221109_27.raw": "bottom-up",
+  "PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw": "bottom-up",
+  "PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip": "bottom-up",
+  "PXD058145/jg200721_04.raw": "organism not verified",
+  "PXD069089/Phospho_Nucleus_Si_TAOK2.raw": "bottom-up",
+  "PXD048861/P4327_6_1_1_11085.d.zip": "bottom-up",
+  "PXD074553/FleR_1DE04_lect-B_1_Slot1-19_01_2811.d.zip": "missing",
+  "PXD058482/1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d.zip": "missing",
+  "PXD085074/3_slot1-1_1_12214.d.zip": "bottom-up",
+  "PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw": "bottom-up",
+  "PXD056911/TgSNF2L-bands_1.raw": "organism not verified",
+  "PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip": "bottom-up",
+  "PXD017077/atg12-2-CRep3_T3.raw": "bottom-up",
+  "PXD076268/20210514_Z-1.raw": "organism not verified",
+  "PXD017303/150930_RK_isoformes_9_01.raw": "bottom-up",
+  "PXD084665/Tissue_D28_R1.raw": "organism not verified"
+ },
+ "P1": {
+  "pairs": 12,
+  "missing": 0,
+  "both below": 0,
+  "denominator below": 0,
+  "both zero": 0,
+  "median": 1.0980344244112523,
+  "ci95": [
+   1.051410946622585,
+   1.2816270495650572
+  ],
+  "gain": 10,
+  "loss": 2,
+  "equal": 0,
+  "pass": null
+ },
+ "P2": {
+  "pairs": 12,
+  "missing": 0,
+  "both below": 0,
+  "denominator below": 2,
+  "both zero": 0,
+  "median": 1.250467624679622,
+  "ci95": [
+   1.1366342089912906,
+   28.239684186877493
+  ],
+  "gain": 10,
+  "loss": 2,
+  "equal": 0,
+  "pass": null
+ },
+ "P3": {
+  "runs": 12,
+  "missing": 0,
+  "auto_share": 0.9166666666666666,
+  "reference_share": 0.8333333333333334,
+  "difference": 0.08333333333333333,
+  "difference_lower95": -0.16666666666666666,
+  "relative_pass_exact": false,
+  "auto_share_lower95": 0.6613193315659674,
+  "reference_share_lower95": 0.5618945648846886,
+  "relative_pass": null,
+  "absolute_pass": null,
+  "pass": null
+ },
+ "pass": null,
+ "verdict": "pilot: no verdict",
+ "reported": {
+  "pep auto/defaults": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 2,
+   "both zero": 0,
+   "median": 1.0706767859281225,
+   "ci95": [
+    0.9838121664780378,
+    185.5837351333976
+   ],
+   "gain": 8,
+   "loss": 4,
+   "equal": 0
+  },
+  "pg auto/defaults": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 2,
+   "both zero": 0,
+   "median": 1.0103246912900241,
+   "ci95": [
+    0.9915687787590386,
+    7.820405172413793
+   ],
+   "gain": 7,
+   "loss": 4,
+   "equal": 1
+  },
+  "pep auto/reference": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 0,
+   "both zero": 0,
+   "median": 1.0308465930065531,
+   "ci95": [
+    0.9594129383076662,
+    1.1049476766847617
+   ],
+   "gain": 7,
+   "loss": 5,
+   "equal": 0
+  },
+  "pg auto/reference": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 0,
+   "both zero": 0,
+   "median": 1.002671372173705,
+   "ci95": [
+    0.980940623853318,
+    1.0770166720293637
+   ],
+   "gain": 6,
+   "loss": 6,
+   "equal": 0
+  },
+  "psm auto/sdrf": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 0,
+   "both zero": 0,
+   "median": 1.1853057768653206,
+   "ci95": [
+    1.0658968279921517,
+    1.2596064903891722
+   ],
+   "gain": 11,
+   "loss": 1,
+   "equal": 0
+  },
+  "pep auto/sdrf": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 0,
+   "both zero": 0,
+   "median": 1.037142794049327,
+   "ci95": [
+    0.9726852805516994,
+    1.1508479972013292
+   ],
+   "gain": 8,
+   "loss": 4,
+   "equal": 0
+  },
+  "pg auto/sdrf": {
+   "pairs": 12,
+   "missing": 0,
+   "both below": 0,
+   "denominator below": 0,
+   "both zero": 0,
+   "median": 1.0058632765724542,
+   "ci95": [
+    0.9812961523513408,
+    1.0746926999493276
+   ],
+   "gain": 6,
+   "loss": 6,
+   "equal": 0
+  }
+ },
+ "S1-S5": {
+  "label": {
+   "correct": 12,
+   "n": 12,
+   "share": 1.0,
+   "wilson95": [
+    0.8160103399281405,
+    1.0
+   ],
+   "absent": 0,
+   "abstained": 6
+  },
+  "protease": {
+   "correct": 11,
+   "n": 12,
+   "share": 0.9166666666666666,
+   "wilson95": [
+    0.6988239878272262,
+    0.9811846287795578
+   ],
+   "absent": 0,
+   "abstained": 3
+  },
+  "cys": {
+   "correct": 10,
+   "n": 11,
+   "share": 0.9090909090909091,
+   "wilson95": [
+    0.6772100783523824,
+    0.9794512100224206
+   ],
+   "absent": 0,
+   "abstained": 4
+  },
+  "prec_window": {
+   "correct": 9,
+   "n": 12,
+   "share": 0.75,
+   "wilson95": [
+    0.5126551955255585,
+    0.8953499744385118
+   ],
+   "absent": 0,
+   "abstained": 5
+  },
+  "frag_window": {
+   "correct": 9,
+   "n": 12,
+   "share": 0.75,
+   "wilson95": [
+    0.5126551955255585,
+    0.8953499744385118
+   ],
+   "absent": 0,
+   "abstained": 5
+  }
+ },
+ "S6": {
+  "post:correct": {
+   "scenarios": 12,
+   "missing": 12,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": null,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.75,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "post:related_distant": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": 0,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.2,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "post:unrelated": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": 0,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.75,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "post:wrong_label": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": 0,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.65,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "post:wrong_protease": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": 0,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.65,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "pre:correct": {
+   "scenarios": 12,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 12,
+   "hit": 9,
+   "share": 0.75,
+   "wilson95": [
+    0.5126551955255585,
+    0.8953499744385118
+   ],
+   "exact_verdict": null,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.7,
+   "status": "gate",
+   "p_value": 0.49251577343499986,
+   "pass": false
+  },
+  "pre:related_close": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": null,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.45,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "pre:related_distant": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": null,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.45,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "pre:unrelated": {
+   "scenarios": 0,
+   "missing": 0,
+   "not_assessed": 0,
+   "assessed": 0,
+   "hit": 0,
+   "share": null,
+   "wilson95": [
+    null,
+    null
+   ],
+   "exact_verdict": null,
+   "psm_ratio_to_correct_median": null,
+   "seconds_median": null,
+   "bound": 0.5,
+   "status": "gate",
+   "p_value": 1.0,
+   "pass": false
+  },
+  "scenario correct (controls)": {
+   "checks": 0,
+   "ok": 0
+  }
+ },
+ "S7": {
+  "DIA | 0.1.12 | chemistry": {
+   "runs": 1,
+   "median_s": 1.7
+  },
+  "DIA | 0.1.12 | dbcheck": {
+   "runs": 1,
+   "median_s": 2.7
+  },
+  "DIA | 0.1.12 | fastag": {
+   "runs": 1,
+   "median_s": 6.3
+  },
+  "DIA | 0.1.12 | jev": {
+   "runs": 1,
+   "median_s": 0.7
+  },
+  "DIA | 0.1.12 | proteome": {
+   "runs": 1,
+   "median_s": 0.0
+  },
+  "DIA | 0.1.12 | read": {
+   "runs": 1,
+   "median_s": 12.3
+  },
+  "DIA | 0.1.12 | termini": {
+   "runs": 1,
+   "median_s": 2.2
+  },
+  "DIA | 0.1.12 | text": {
+   "runs": 1,
+   "median_s": 11.0
+  },
+  "DIA | 0.1.12 | tolerance": {
+   "runs": 1,
+   "median_s": 0.3
+  },
+  "DIA | 0.1.12 | topdown_check": {
+   "runs": 1,
+   "median_s": 0.4
+  },
+  "DIA | 0.1.12 | total": {
+   "runs": 1,
+   "median_s": 105.7
+  },
+  "Orbitrap DDA | 0.1.12 | chemistry": {
+   "runs": 8,
+   "median_s": 1.4
+  },
+  "Orbitrap DDA | 0.1.12 | dbcheck": {
+   "runs": 8,
+   "median_s": 1.95
+  },
+  "Orbitrap DDA | 0.1.12 | fastag": {
+   "runs": 8,
+   "median_s": 3.8499999999999996
+  },
+  "Orbitrap DDA | 0.1.12 | jev": {
+   "runs": 8,
+   "median_s": 0.6499999999999999
+  },
+  "Orbitrap DDA | 0.1.12 | mini_search": {
+   "runs": 2,
+   "median_s": 6.7
+  },
+  "Orbitrap DDA | 0.1.12 | proteome": {
+   "runs": 8,
+   "median_s": 0.0
+  },
+  "Orbitrap DDA | 0.1.12 | read": {
+   "runs": 8,
+   "median_s": 4.65
+  },
+  "Orbitrap DDA | 0.1.12 | termini": {
+   "runs": 8,
+   "median_s": 0.45
+  },
+  "Orbitrap DDA | 0.1.12 | text": {
+   "runs": 8,
+   "median_s": 26.65
+  },
+  "Orbitrap DDA | 0.1.12 | tolerance": {
+   "runs": 8,
+   "median_s": 0.7
+  },
+  "Orbitrap DDA | 0.1.12 | topdown_check": {
+   "runs": 8,
+   "median_s": 0.0
+  },
+  "Orbitrap DDA | 0.1.12 | total": {
+   "runs": 8,
+   "median_s": 44.95
+  },
+  "ion trap | 0.1.12 | chemistry": {
+   "runs": 4,
+   "median_s": 1.25
+  },
+  "ion trap | 0.1.12 | dbcheck": {
+   "runs": 4,
+   "median_s": 11.8
+  },
+  "ion trap | 0.1.12 | fastag": {
+   "runs": 4,
+   "median_s": 16.7
+  },
+  "ion trap | 0.1.12 | jev": {
+   "runs": 4,
+   "median_s": 0.7
+  },
+  "ion trap | 0.1.12 | proteome": {
+   "runs": 4,
+   "median_s": 0.05
+  },
+  "ion trap | 0.1.12 | read": {
+   "runs": 4,
+   "median_s": 8.45
+  },
+  "ion trap | 0.1.12 | text": {
+   "runs": 4,
+   "median_s": 3.25
+  },
+  "ion trap | 0.1.12 | tolerance": {
+   "runs": 4,
+   "median_s": 0.45
+  },
+  "ion trap | 0.1.12 | topdown_check": {
+   "runs": 4,
+   "median_s": 0.0
+  },
+  "ion trap | 0.1.12 | total": {
+   "runs": 4,
+   "median_s": 53.7
+  },
+  "timsTOF | 0.1.12 | chemistry": {
+   "runs": 4,
+   "median_s": 0.5
+  },
+  "timsTOF | 0.1.12 | dbcheck": {
+   "runs": 4,
+   "median_s": 2.3
+  },
+  "timsTOF | 0.1.12 | fastag": {
+   "runs": 4,
+   "median_s": 4.699999999999999
+  },
+  "timsTOF | 0.1.12 | jev": {
+   "runs": 4,
+   "median_s": 0.8
+  },
+  "timsTOF | 0.1.12 | mini_search": {
+   "runs": 2,
+   "median_s": 27.549999999999997
+  },
+  "timsTOF | 0.1.12 | proteome": {
+   "runs": 4,
+   "median_s": 0.0
+  },
+  "timsTOF | 0.1.12 | read": {
+   "runs": 4,
+   "median_s": 125.19999999999999
+  },
+  "timsTOF | 0.1.12 | termini": {
+   "runs": 4,
+   "median_s": 2.05
+  },
+  "timsTOF | 0.1.12 | text": {
+   "runs": 4,
+   "median_s": 14.6
+  },
+  "timsTOF | 0.1.12 | tolerance": {
+   "runs": 4,
+   "median_s": 0.5
+  },
+  "timsTOF | 0.1.12 | topdown_check": {
+   "runs": 4,
+   "median_s": 0.0
+  },
+  "timsTOF | 0.1.12 | total": {
+   "runs": 4,
+   "median_s": 220.10000000000002
+  }
+ },
+ "S8 top-down": {
+  "top-down runs": 0,
+  "stopped": 0,
+  "bottom-up stopped": 0
+ },
+ "rules": {
+  "cys: -alkylation_out (auto_never) vs competition (auto_always)": {
+   "runs": 0,
+   "differing": 0,
+   "missing": 0,
+   "uninformative": 0,
+   "pass": null
+  },
+  "mini-search fallback (auto) vs always (auto_always)": {
+   "runs": 0,
+   "differing": 0,
+   "missing": 0,
+   "uninformative": 0,
+   "pass": null
+  },
+  "label: S1 >= always-label-free baseline, no isobaric call without reporter ions": {
+   "auto": 12,
+   "baseline": 9,
+   "n": 12,
+   "isobaric_without_reporters": 0,
+   "pass": true
+  },
+  "protease: S2 >= stated-protease (SDRF arm) baseline": {
+   "auto": 11,
+   "baseline": 12,
+   "n": 12,
+   "without_sdrf_protease": 0,
+   "pass": false
+  },
+  "FASTag QC: analyser class agrees with the header in >= 98 %": {
+   "agree": 7,
+   "n": 7,
+   "pass": true
+  }
+ }
+}

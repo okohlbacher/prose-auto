@@ -1,11 +1,13 @@
 """The wrong-database scenarios of PREREG 0.1.12 §2.2, by a taxonomy rule (replaces the hand-made map of
 v0111/dbcal.py). Frozen with its SHA-256 and its output in FREEZE.md before any held-out raw file is downloaded.
 
-    python scenarios.py wrongdb.tsv TAXDIR candidates.tsv [adjudicated.tsv] > scenarios.tsv
+    python scenarios.py wrongdb.tsv TAXDIR candidates.tsv [adjudicated.tsv FROZEN_MANIFEST] > scenarios.tsv
 
 After the reference annotation, adjudicated.tsv (accession, file, organisms, class) replaces the organisms of its runs
-and excludes a run whose class is not bottom-up; the frozen scripts then rebuild the manifest (resolve_uniprot.py with
-the same file first), and the rebuilt manifest is hashed before any arm runs.
+and excludes a run whose class is not bottom-up. The frozen scripts then rebuild the manifest: resolve_uniprot.py with
+the same file and --snapshot (only new names are queried; the frozen candidates stay), then this script with the
+frozen manifest, whose rows are kept verbatim for every run whose organisms and class did not change. The rebuilt
+manifest is hashed before any arm runs.
 
 TAXDIR holds names.dmp and nodes.dmp (NCBI format; resolve_uniprot.py writes the subset from UniProt); candidates.tsv
 (resolve_uniprot.py) lists per species (target) its own reference proteome (level self) and the reference proteomes of
@@ -96,7 +98,20 @@ def organisms_of(r, adjudicated=None):
     return a["organisms"] if a else r["organisms"]
 
 
-def main(wrongdb, taxdir, candfile, adjudicated=None):
+def frozen_rows(path):
+    """{(accession, file): [rows]} of a frozen manifest"""
+    out = {}
+    if path:
+        rows = list(csv.reader(open(path), delimiter="\t"))
+        for r in rows[1:]:
+            out.setdefault((r[0], r[1]), []).append(r)
+    return out
+
+
+def main(wrongdb, taxdir, candfile, adjudicated=None, frozen=None):
+    """frozen: the manifest frozen before adjudication; a run whose adjudicated organisms equal its PRIDE organisms
+    (same species list) and whose class stays bottom-up keeps its frozen rows verbatim"""
+    keep = frozen_rows(frozen)
     names, rank, parent = load_tax(taxdir)
     cands = [{"target": int(r["target"]), "level": r["level"], "species": r["species"], "taxid": int(r["taxid"]),
               "proteins": int(r["proteins"]), "proteome": r["proteome"]}
@@ -120,6 +135,12 @@ def main(wrongdb, taxdir, candfile, adjudicated=None):
 
     for r in csv.DictReader(open(wrongdb), delimiter="\t"):
         acc, f = r["accession"], r["file"]
+        a_ = adj.get((acc, f))
+        same = species_names(organisms_of(r, adjudicated)) == species_names(r["organisms"]) and \
+            not (a_ and a_.get("class") not in (None, "", "bottom-up"))
+        if (acc, f) in keep and same:
+            w.writerows(keep[(acc, f)])
+            continue
         sp, unres = [], []
         for n in species_names(organisms_of(r, adjudicated)):
             t = names.get(n.lower())
@@ -160,4 +181,4 @@ def main(wrongdb, taxdir, candfile, adjudicated=None):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:5])
+    main(*sys.argv[1:6])

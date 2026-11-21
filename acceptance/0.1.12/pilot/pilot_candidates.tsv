@@ -1,0 +1,27 @@
+stratum	accession	file
+protease:Glu-C	PXD034083	-
+protease:Glu-C	PXD050363	-
+protease:Glu-C	PXD012418	G-1-5.raw
+protease:chymotrypsin	PXD052359	20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw
+protease:Lys-C	PXD024383	20190220_QEP2_FBU_MO_Spombe_rep4C09.raw
+label:TMTpro	PXD050310	Lumos_221109_27.raw
+label:TMT	PXD065759	20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw
+label:iTRAQ	PXD064410	YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip
+label:SILAC	PXD058145	jg200721_04.raw
+enrichment:phospho	PXD069089	Phospho_Nucleus_Si_TAOK2.raw
+instrument:Astral	PXD048861	P4327_6_1_1_11085.d.zip
+instrument:timsTOF DDA	PXD074553	FleR_1DE04_lect-B_1_Slot1-19_01_2811.d.zip
+instrument:timsTOF DIA	PXD058482	1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d.zip
+instrument:TOF	PXD050656	-
+instrument:TOF	PXD057747	-
+instrument:TOF	PXD037763	-
+instrument:TOF	PXD073005	-
+instrument:TOF	PXD085074	3_slot1-1_1_12214.d.zip
+instrument:ion trap MS2	PXD062808	230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw
+instrument:ion trap MS2	PXD056911	TgSNF2L-bands_1.raw
+acquisition:Orbitrap DIA	PXD084488	20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip
+organism:plant	PXD010104	-
+organism:plant	PXD017077	atg12-2-CRep3_T3.raw
+organism:bacterium	PXD076268	20210514_Z-1.raw
+organism:mouse or rat	PXD017303	150930_RK_isoformes_9_01.raw
+baseline:Orbitrap DDA label-free human	PXD084665	Tissue_D28_R1.raw

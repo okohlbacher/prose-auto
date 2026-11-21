@@ -1,0 +1,135 @@
+{
+ "PXD012418/G-1-5.raw": {
+  "prec_window": 10.0,
+  "prec_unit": "ppm",
+  "frag_window": 20.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (17 PSMs in the wide search)"
+ },
+ "PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw": {
+  "prec_window": 10.0,
+  "prec_unit": "ppm",
+  "frag_window": 20.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (0 PSMs in the wide search)"
+ },
+ "PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw": {
+  "prec_window": 6.456,
+  "prec_unit": "ppm",
+  "frag_window": 6.6544,
+  "frag_unit": "ppm",
+  "source": "wide search, 527 PSMs"
+ },
+ "PXD050310/Lumos_221109_27.raw": {
+  "prec_window": 4.088,
+  "prec_unit": "ppm",
+  "frag_window": 76.9188,
+  "frag_unit": "ppm",
+  "source": "wide search, 239 PSMs"
+ },
+ "PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw": {
+  "prec_window": 6.28,
+  "prec_unit": "ppm",
+  "frag_window": 4.9282,
+  "frag_unit": "ppm",
+  "source": "wide search, 45 PSMs"
+ },
+ "PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD058145/jg200721_04.raw": {
+  "prec_window": 5.488,
+  "prec_unit": "ppm",
+  "frag_window": 0.2992,
+  "frag_unit": "Da",
+  "source": "wide search, 171 PSMs"
+ },
+ "PXD069089/Phospho_Nucleus_Si_TAOK2.raw": {
+  "prec_window": 15.787,
+  "prec_unit": "ppm",
+  "frag_window": 18.3508,
+  "frag_unit": "ppm",
+  "source": "wide search, 63 PSMs"
+ },
+ "PXD048861/P4327_6_1_1_11085.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD074553/FleR_1DE04_lect-B_1_Slot1-19_01_2811.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD058482/1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD085074/3_slot1-1_1_12214.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw": {
+  "prec_window": 10.0,
+  "prec_unit": "ppm",
+  "frag_window": 20.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD056911/TgSNF2L-bands_1.raw": {
+  "prec_window": 3.624,
+  "prec_unit": "ppm",
+  "frag_window": 0.3838,
+  "frag_unit": "Da",
+  "source": "wide search, 105 PSMs"
+ },
+ "PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip": {
+  "prec_window": 20.0,
+  "prec_unit": "ppm",
+  "frag_window": 40.0,
+  "frag_unit": "ppm",
+  "source": "instrument standard (DIA / timsTOF)"
+ },
+ "PXD017077/atg12-2-CRep3_T3.raw": {
+  "prec_window": 10.196,
+  "prec_unit": "ppm",
+  "frag_window": 16.4654,
+  "frag_unit": "ppm",
+  "source": "wide search, 1025 PSMs"
+ },
+ "PXD076268/20210514_Z-1.raw": {
+  "prec_window": 8.968,
+  "prec_unit": "ppm",
+  "frag_window": 13.4354,
+  "frag_unit": "ppm",
+  "source": "wide search, 77 PSMs"
+ },
+ "PXD017303/150930_RK_isoformes_9_01.raw": {
+  "prec_window": 4.47,
+  "prec_unit": "ppm",
+  "frag_window": 15.4912,
+  "frag_unit": "ppm",
+  "source": "wide search, 1461 PSMs"
+ },
+ "PXD084665/Tissue_D28_R1.raw": {
+  "prec_window": 10.0,
+  "prec_unit": "ppm",
+  "frag_window": 0.5,
+  "frag_unit": "Da",
+  "source": "instrument standard (1 PSMs in the wide search)"
+ }
+}

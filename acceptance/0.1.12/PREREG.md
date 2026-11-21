@@ -6,6 +6,89 @@ project. The run lists were drawn by `draw_sets.py` from PRIDE project-level fie
 benchmark is scored once (§10). A later change is a dated amendment at the end of this file. The changes from the
 0.1.11 draft are listed under "Amendments".
 
+## 0. Pilot (2026-11-21; independent of the held-out sets; no verdict)
+
+The pilot is a small separate study that estimates the real power before sign-off. It sets the sample size and the
+P3 gates (§5). It is not evidence for the benchmark.
+
+**The draw.** `pilot/draw_pilot.py` drew 19 runs, one per PRIDE project, on 2026-11-21. It used seed 20261121 and the
+held-out predicates and queries, one or two runs per stratum.
+- **Exclusions:** every PXD in `exclude.txt`, `heldout.tsv`, `wrongdb.tsv` and `candidates.tsv`.
+- **Asp-N:** no project was left, so the pilot has no Asp-N run.
+- **Later draws:** `pilot/pilot.tsv` is added to the exclusions of every future draw.
+
+**The procedure** (`pilot/pilot.py`):
+1. **Download:** pxd, with PRIDE MD5 checks, into a private pxd root on node-local scratch. The group mirror's Ceph
+   quota was full.
+2. **Conversion:** the mirror's default recipes.
+3. **Annotation:** one annotator worked from the methods, the 4 SDRFs and the raw-data indicators (MS levels,
+   analysers, reporter-ion shares, `analysis.tdf` acquisition). The annotation (`pilot/reference.tsv`) was written before
+   any prose-auto output existed.
+4. **Organism check:**
+   - FASTag's database-free genus ranking; a stated genus must be in the top 5;
+   - where FASTag cannot assess the run (DIA or Bruker input, an empty ranking, an isobaric label), the reference arm
+     must reach ≥ 100 PSMs instead.
+5. **Arms:** auto (prose-auto 0.1.12 release), reference (the annotation with wide-window measured windows, or the
+   instrument standard for DIA and timsTOF), SDRF (the SDRF, else the methods), and defaults.
+6. **Searches:** the corpus ProSE protocol with seed-0 entrapment.
+7. **Scoring:** `extract.py` and `score.py --pilot`.
+
+**Results** (`pilot/score/score.md`). Of 19 drawn runs, 12 were eligible:
+- **Missing (2), no tool reads the input:**
+  - PXD058482: diaPASEF; DIAspeXtract rejects two windows with the same key;
+  - PXD074553: ddaPASEF; OpenTIMS does not read TDF compression 1.
+- **Organism not verified (5):**
+  - two runs have 0 PSMs in every arm (a targeted run with 1,217 MS2; an ion-trap run);
+  - one IP is too small;
+  - one E. coli expression run: FASTag ranks plant genera first;
+  - one mouse run with SILAC E. coli: E. coli is not in FASTag's top 5.
+- **The metadata strata were often wrong:**
+  - four runs drawn as Astral, TOF, Orbitrap DIA or iTRAQ are timsTOF;
+  - one drawn as ion trap is an Orbitrap DIA.
+- **Annotation error:** on PXD012418 auto found 4,688 PSMs against the reference's 474. The annotation had Glu-C for a
+  Lys-C + Glu-C digest.
+
+| Endpoint | Pilot (12 runs) |
+|---|---|
+| P1 median PSM ratio auto / reference | 1.098 (95 % interval 1.051–1.282); 10 gain, 2 lose |
+| P2 median PSM ratio auto / defaults | 1.250 (lower 1.137) |
+| P3 share at FDP ≤ 1.5 % | auto 11/12, reference 10/12; difference +0.083 (lower −0.167); auto's lower bound 0.661 |
+| peptides / protein groups auto / reference | 1.031 / 1.003 |
+| S1–S5 | label 12/12, protease 11/12, Cys 10/11, precursor window 9/12, fragment window 9/12 |
+
+**Power from the pilot** (`power.txt`, `power_grid.txt`):
+- **Method:** the pilot's 12 eligible runs are resampled by quota pool; pools without a pilot run draw from all 12.
+  37 % of the drawn runs are lost (7 of 19).
+- **Joint power of P1, P2 and P3 (both gates):**
+
+| Drawn runs | X | Margin | Pilot effect | auto PSMs ×0.98 and 2 % fewer compliant | ×0.97 and 5 % fewer |
+|---|---|---|---|---|---|
+| 187 (current draw) | 0.75 | −0.05 | 0.43 | 0.32 | 0.15 |
+| 250 | 0.75 | −0.05 | 0.80 | 0.62 | 0.29 |
+| 300 | 0.75 | −0.05 | 0.93 | 0.90 | 0.56 |
+| 300 | 0.75 | −0.10 | 0.99 | 0.96 | 0.74 |
+| 300 | 0.70 | −0.10 | 1.00 | 0.99 | 0.93 |
+| 400 | 0.75 | −0.05 | 0.96 | 0.93 | 0.66 |
+
+- **The binding constraint** is the number of eligible runs: 187 drawn give about 115, under the 120-run minimum, in
+  most simulations.
+- **What the margins need:** P1 and P2 have power 1.00 from 250 drawn runs at every effect shown. P3 sets the margin.
+
+**Proposal for sign-off** (the author decides; nothing has been changed):
+1. **Draw 300 runs:** a top-up of 113 runs by the same quotas, scaled (`draw_sets.py`, new seed). It excludes the
+   187 held-out runs, the wrong-database runs, every candidate project and the pilot. The top-up has not been drawn.
+2. **Keep X = 0.75 and the margin at −0.05:** joint power 0.93 at the pilot effect and 0.90 at a mildly worse one.
+   The alternative, the margin at −0.10, gives 0.99 and 0.96.
+3. **Recompute the check bounds at the final size** with `power.py`, by the frozen rule. At 187 drawn, post-search
+   specificity would drop from 0.75 to 0.70, because only about 100 runs would be assessed.
+
+**Caveats:**
+- The pilot is small: 12 runs, one annotator, and a simplified organism check.
+- Its loss rate (37 %) carries a wide interval, and some losses are pilot-specific:
+  - the organism check is cruder than §3.1;
+  - two runs fail in the format readers.
+- So the power above is a rough guide, not a guarantee.
+
 ## 1. Frozen code and tools
 
 - **prose-auto:** the commit that adds this file (`git log -n1 --format=%H -- acceptance/0.1.12/PREREG.md`),
@@ -152,11 +235,17 @@ for the held-out set, and its *C. elegans* → *Drosophila* pair was not "same f
   the freeze (§10), and their SHA-256 is frozen.
 
 **When the annotation changes the organism.** The manifest is built from the PRIDE organisms. After adjudication (§3),
-`adjudicated.tsv` lists every wrong-database run with its adjudicated organisms and class. `resolve_uniprot.py` and
-`scenarios.py` run again with it, unchanged; a run whose organisms changed gets the scenarios of its adjudicated
-organisms by the same rule, a run whose class is not bottom-up is excluded. The rebuilt `scenarios.tsv` and its
-proteomes are hashed in `FREEZE.md` before any arm runs; `score.py` reads that file. Runs whose organisms did not
-change keep their rows.
+`adjudicated.tsv` lists every wrong-database run with its adjudicated organisms and class. The frozen scripts then run
+again, in this order:
+1. `resolve_uniprot.py ... adjudicated.tsv --snapshot=uniprot/` queries UniProt only for names the snapshot never
+   resolved, and keeps every snapshot row;
+2. `scenarios.py ... adjudicated.tsv scenarios.tsv` copies verbatim the frozen rows of every run whose adjudicated
+   organisms equal its PRIDE organisms (same species list) and whose class stays bottom-up;
+3. a run whose organisms changed gets the scenarios of its adjudicated organisms by the same rule, against the
+   snapshot plus the new names; a run whose class is not bottom-up is excluded.
+
+The rebuilt `scenarios.tsv` and its proteomes are hashed in `FREEZE.md` before any arm runs; `score.py` reads that
+file (tested: `test_scenarios_keep_frozen_rows`, `test_scenarios_follow_the_adjudication`).
 
 **Wrong settings.** These scenarios apply to the single-organism runs that are not excluded, on the correct database.
 The rules are those of `v0111/postcal.py`:
@@ -195,7 +284,11 @@ The adjudicated organisms and class of the wrong-database runs go into `adjudica
      adjudication.
    - **Mixtures:** each stated component must have at least 5 % of those PSMs uniquely.
    - **Otherwise** the run is "organism not verified" (§2.2).
-   - **The database:** the frozen UniProt reference proteome of each species, plus cRAP.
+   - **The database:** the UniProt reference proteome of each species, plus cRAP. `refdb.py` writes the
+     reference-database manifest `refdb.tsv` for every drawn run (organisms, taxon ids, proteome ids; class
+     no-proteome when a species has none of its own) from the adjudicated organisms. `resolve_uniprot.py --snapshot`
+     runs first on all drawn runs. All primary arms (auto's `--organism`, reference, SDRF, defaults, best_psm) search
+     that run's manifest databases. `refdb.tsv` and its FASTA files are hashed before any arm runs.
 2. **Categorical settings:** label, plex, protease, Cys alkylation and enrichment. Each annotator decides from:
    - the methods;
    - the raw-data indicators:
@@ -259,7 +352,7 @@ groups):
 |---|---|---|
 | P1 | median per-run PSM ratio auto / reference | **non-inferior:** lower end of the two-sided 95 % interval ≥ 0.98 |
 | P2 | median per-run PSM ratio auto / defaults | **superior:** lower end of the two-sided 95 % interval > 1 |
-| P3 | share of runs at entrapment FDP ≤ 1.5 % (combined estimate, Wen et al. 2025) on both PSM and peptide level, over the eligible runs whose reference arm identifies (≥ 100 PSMs); an auto arm stopped or below 100 PSMs is noncompliant | **both gates:** (a) relative: the one-sided 95 % lower bound of auto's share minus the reference's share ≥ −0.05 (paired bootstrap); (b) absolute: the one-sided 95 % Clopper-Pearson lower bound of auto's share ≥ 0.75 |
+| P3 | share of runs at entrapment FDP ≤ 1.5 % (combined estimate, Wen et al. 2025) on both PSM and peptide level, over the eligible runs whose reference arm identifies (≥ 100 PSMs); an auto arm stopped or below 100 PSMs is noncompliant | **both gates:** (a) relative: the one-sided 95 % lower bound of auto's share minus the reference's share ≥ −0.05 (paired bootstrap of the signed per-run counts +1/0/−1, compared in integers: the boundary −0.05 itself passes); (b) absolute: the one-sided 95 % Clopper-Pearson lower bound of auto's share ≥ 0.75 |
 
 **P3, the two claims.** Both are claimed and both must hold:
 - **(a) relative:** auto is not materially worse than the reference settings, within 5 percentage points of the share
@@ -273,27 +366,13 @@ groups):
 corpus only 80–84 % of runs meet the limit, in every arm, so the old rule passed in 0 % of the simulations. That rule is
 replaced and disclosed.
 
-**Power** (`power.txt`, 1,000 simulations):
+**Power.** The power comes from the pilot (§0: 12 eligible runs, prose-auto 0.1.12 against the annotated
+reference), resampled by quota pool through `score.py`'s own functions.
+- **The current draw** (187): joint power 0.43, because only about 115 runs stay eligible.
+- **300 drawn,** X 0.75, margin −0.05: 0.93.
 
-**Method:** each simulation draws the held-out design by quota from matching development pools:
-- protease strata from the non-tryptic sets;
-- Orbitrap DIA, Astral, timsTOF DDA/DIA, TOF and ion trap from their instrument pools;
-- all other strata from Orbitrap DDA.
-
-It then removes the 5 runs tagged top-down and makes each other run missing with probability 0.10 (about 164
-eligible). It applies `score.py` unchanged, with 2,000 resamples.
-
-| Endpoint | Expected pairs | Development effect | Effect shifted |
-|---|---|---|---|
-| P1 | 135 | 1.00 | auto PSMs × 0.98: 1.00; × 0.97: 0.53 |
-| P2 | | unknown: only 16 development data sets have a defaults arm | |
-| P3 (a) | 131 | 0.06 | auto as compliant as the reference: 1.00 |
-| P3 (a) and (b) | 131 | 0.03 | auto as compliant as the reference: 0.77; 2 % / 5 % fewer compliant auto runs: 0.01 / 0.00 |
-
-**Why P3's power is low on development data.** The development auto arm is prose-auto 0.1.3. In 8 of its runs it
-finds fewer than 100 PSMs where the optimal settings identify, and those runs count as noncompliant. The development
-share is therefore auto 0.802 against the reference's 0.836. The study passes only if the held-out auto arm is about as
-compliant as the reference.
+The development corpus (prose-auto 0.1.3 against the optimal settings) gave a P3 power of 0.03. It is replaced by the
+pilot as the power basis and kept only as a disclosure.
 
 **Reported, not gating:** the peptide and protein-group ratios (auto/reference, auto/defaults) and every ratio
 auto/other arm (SDRF, best_psm, the ablations of §7), with the same intervals.
@@ -305,8 +384,16 @@ auto/other arm (SDRF, best_psm, the ablations of §7), with the same intervals.
 
 Against the reference annotation; exact matches unless stated. Shares come with one-sided 95 % Wilson bounds.
 
-- **S1 label:** chemistry and plex exactly (TMT10 ≠ TMT11 ≠ TMTpro16 ≠ TMTpro18; SILAC with its channels). The family
-  level (isobaric / SILAC / none) is a second line.
+- **S1 label:** the category, at the granularity prose-auto reports (`score.LABEL_CANON`, its schema vocabulary):
+  - none: "label free", "none", "no isobaric label" and "no SILAC" are one category;
+  - TMT2plex, TMT6plex, TMT10/11plex (TMT10 and TMT11 together), TMTpro (16/18plex) (TMTpro16 and 18 together) and
+    TMT0;
+  - iTRAQ4plex and iTRAQ8plex;
+  - each SILAC channel set;
+  - 15N and 2H2O.
+
+  The annotators use the same names. TMT10 and TMT11, or TMTpro16 and 18, are not told apart (prose-auto does not
+  report it). The family level (isobaric / SILAC / none) is a second line.
 - **S2 protease:** the exact enzyme (Lys-C ≠ Trypsin).
 - **S3 Cys alkylation.**
 - **S4 mass error:** auto's precursor and fragment windows within 1.5× of the wide-window measurement (§3.3). Each
@@ -323,8 +410,12 @@ Against the reference annotation; exact matches unless stated. Shares come with 
   - **specificity:** the share ok on the correct database, from the auto arm's own checks on every eligible run;
   - **exactness:** the share with the right verdict (database or settings);
   - **also reported:**
-    - the identifications the wrong database loses;
-    - the seconds each check costs;
+    - the identifications the wrong database loses: per kind, the median ratio of the scenario search's PSMs to the
+      correct scenario's (from the scenarios' `eval.json`);
+    - the seconds each check costs: per kind, the median (pre: the report's `dbcheck` step; post: the harness's
+      `check_seconds`);
+    - the correct-scenario controls (checks on the correct database of each wrong-database run), apart from the
+      auto arm's specificity;
     - which check catches what.
   - **natural failures:** runs whose SDRF or defaults arm finds fewer than half the reference PSMs, with the check run
     on that arm's result. Reported separately, never pooled with the constructed scenarios.
@@ -357,31 +448,38 @@ texts or to a conservative default, and the report says so. `score.py` computes 
 
 | Detector | Stays default if | Otherwise |
 |---|---|---|
-| FASTag `-alkylation_out` instead of the competition | arms `auto_never` vs `auto_always` (§7), on the eligible runs whose Cys decision differs: summed PSM ratio ≥ 0.99 and no run below 0.95 | the competition becomes the default again (0.1.10 behaviour) |
+| FASTag `-alkylation_out` instead of the competition | arms `auto_never` vs `auto_always` (§7), on the eligible runs whose Cys decision differs: summed PSM ratio ≥ 0.99 and no run below 0.95. A run with 0 PSMs in both arms is uninformative (left out, counted, never evidence); x/0 with x > 0 is +∞. Fewer than 5 informative runs: no verdict, the default stays and the report says why | the competition becomes the default again (0.1.10 behaviour) |
 | mini-search fallback | arms `auto` (fallback) vs `auto_always`: as above | `always` |
 | label | S1 exact ≥ the always-label-free baseline (the number of eligible runs whose reference label is none, i.e. the score of a constant "label free" decision), and no isobaric call where the reference records no reporter ions (`reporter_ions = no`) | no isobaric label without reporter ions |
-| protease | S2 exact ≥ the stated-protease baseline (the SDRF arm's protease scored against the reference) | the stated protease decides |
-| FASTag QC evidence | the MS2 analyser class of FASTag's QC agrees with the header's in ≥ 98 % of the eligible runs with both | removed from the evidence |
+| protease | on the same runs, those with a reference protease and an SDRF-arm protease: auto's exact hits ≥ the SDRF arm's (the stated-protease baseline); runs without an SDRF protease are counted; none left: no verdict | the stated protease decides |
+| FASTag QC evidence | FASTag QC's MS2 analyser class agrees in ≥ 98 % of the eligible runs with the header's own evidence (the scan header or `analysis.tdf`, read from the report's evidence before reconciliation, never the reconciled decision); a run without header evidence is left out | removed from the evidence |
 | database checks | the gates below | that check's verdicts are marked experimental |
 
 **The check gates.** Each gate is an exact one-sided binomial test of H0 "share ≤ bound", run on the assessed
-scenarios. The p-values of all nine gates are adjusted together by Holm at 0.05.
+scenarios. The p-values of all nine gates are adjusted together by Holm at 0.05. The family is always all nine: a
+gate without an assessed scenario keeps p = 1 and does not pass.
 
 | Check | Kind | Bound | Development share | Held-out n (expected) | Power under Holm |
 |---|---|---|---|---|---|
-| pre | correct (specificity) | 0.70 | 0.863 (158/183) | 141 | 1.00 |
-| pre | unrelated | 0.50 | 0.838 (140/167) | 32 | 0.99 |
-| pre | related_close (same family) | 0.45 | 0.779 (81/104) | 31 | 0.98 |
-| pre | related_distant (same order or class) | 0.45 | 0.778 (7/9) | 30 | 0.97 |
-| post | correct (specificity) | 0.75 | 0.869 (159/183) | 142 | 0.97 |
+| pre | correct (specificity) | 0.70 | 0.863 (158/183) | 99 | 0.99 |
+| pre | unrelated | 0.50 | 0.838 (140/167) | 32 | 0.98 |
+| pre | related_close (same family) | 0.45 | 0.779 (81/104) | 31 | 0.97 |
+| pre | related_distant (same order or class) | 0.45 | 0.778 (7/9) | 30 | 0.98 |
+| post | correct (specificity) | 0.75 | 0.869 (159/183) | 100 | 0.91 |
 | post | unrelated | 0.75 | 0.988 (163/165) | 32 | 1.00 |
-| post | related_distant | 0.20 | 0.556 (5/9) | 30 | 0.99 |
-| post | wrong_label | 0.65 | 0.960 (24/25) | 25 | 0.99 |
+| post | related_distant | 0.20 | 0.556 (5/9) | 30 | 0.98 |
+| post | wrong_label | 0.65 | 0.960 (24/25) | 25 | 1.00 |
 | post | wrong_protease | 0.65 | 1.000 (25/25) | 25 | 1.00 |
+
+Held-out n for specificity assumes the pilot's loss rate (37 %) on the 187 drawn runs. At that size the exact rule
+puts post-search specificity at 0.70 (power 0.670 at 0.75). The bounds are recomputed at the final size (§0) before
+the freeze. Power under Holm: `power.txt`, 1,000 simulations, standard error ≤ 0.009.
 
 **How the bounds were set** (`power.py`):
 - **The bound:** each is the largest bound, in steps of 0.05 from 0.10, with single-gate power ≥ 0.80 at 0.05/9
-  (Bonferroni, which Holm dominates), given at least 10 expected assessed scenarios.
+  (Bonferroni, which Holm dominates), given at least 10 expected assessed scenarios. The power is an exact binomial
+  sum (`power.exact_power`), not a simulation: power.txt lists each gate's exact power at its bound (post
+  related_distant 0.937 at 0.20, 0.788 at 0.25).
 - **The cap:** wrong_protease is capped at wrong_label's bound, because its development 25/25 sits at the ceiling.
 - **The development shares:** the related ones come from the 0.1.11 calibration, split by the rank of the common
   ancestor (`v0112/related_strata.txt`). The 9 related_distant pairs make that bound uncertain.
@@ -410,7 +508,8 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
      - the binaries and environment of §1 (FASTag bundle, ProSE, DIAspeXtract, FileConverter, mzpeak-convert,
        `pip freeze` of the Python environment) and the Jev model, version, parameters and cache;
      - the conversion recipe (the `pxd` recipe id and the hash of its `tools.json`);
-     - the arm command templates and the output layout of `extract.py`;
+     - the arm command templates and the output layout of `extract.py` (its docstring; `checks.tsv` keys each check
+       by run, source (auto, scenario, natural), arm, kind and check; FDP values keep full precision);
    - commit it.
 3. **Download and convert:** the SHA-256 of every mzML is appended to `FREEZE.md`.
 4. **Annotation** (§3):
@@ -523,3 +622,23 @@ On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to e
    - both annotations and the adjudication log;
    - the arm-output hashes;
    - the hashes of the final scoring inputs.
+
+### 2026-11-21b, 0.1.12 (before sign-off; from the third review and the pilot)
+
+1. **Scorer and extractor:**
+   - checks are keyed by source (the auto arm, a scenario, a natural failure) and arm, so correct-scenario controls and
+     both natural-failure arms coexist, and scenario runs outside the draw are validated against the manifest;
+   - FDP keeps full precision;
+   - the QC header comparator is the header's own evidence;
+   - an extract → score integration test was added.
+2. **P3 relative:** compared in signed integer counts, so −0.05 itself passes; `power.py` shares the function.
+3. **Holm** always runs over all nine gates.
+4. **The Cys rules:** 0/0 is uninformative, with at least 5 informative runs. The protease rule uses the runs with both
+   a reference and an SDRF protease.
+5. **`power.py`:** validates with `score.validate_checks`, derives the bounds exactly, resamples eligible runs only, and
+   takes the loss rate from its data.
+6. **Adjudication:** keeps the frozen scenario rows of unchanged organisms (`--snapshot`, frozen manifest).
+   `refdb.py` writes the reference-database manifest of every drawn run.
+7. **S1** uses prose-auto's label vocabulary. **S6** reports identification losses and check times.
+8. **§0 Pilot** was added. It proposes a top-up to 300 drawn runs and keeps the P3 gates (X 0.75, −0.05). Not yet
+   adopted: the author decides.

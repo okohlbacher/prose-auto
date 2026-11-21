@@ -1,6 +1,8 @@
 """The inputs of scenarios.py from UniProt (taxonomy and reference-proteome metadata only, no sequences):
 
-    python3 resolve_uniprot.py wrongdb.tsv OUTDIR [adjudicated.tsv]
+    python3 resolve_uniprot.py RUNS.tsv OUTDIR [adjudicated.tsv] [--snapshot=FROZENDIR]
+
+RUNS.tsv is any table with accession, file and organisms columns (wrongdb.tsv, heldout.tsv, pilot.tsv).
 
 adjudicated.tsv (accession, file, organisms, class), written after the reference annotation, replaces the organisms
 field of wrongdb.tsv for its runs (scenarios.py reads the same file). The unrelated organisms of scenarios.py
@@ -65,9 +67,33 @@ def references(taxid):
     return out
 
 
-def main(wrongdb, out, adjudicated=None):
+def load_snapshot(d):
+    """a frozen resolver output: (nodes, names, candidate rows, request log, the names it queried)"""
+    nodes, names = {}, {}
+    for line in open(f"{d}/nodes.dmp"):
+        f = [x.strip() for x in line.split("|")]
+        nodes[int(f[0])] = (int(f[1]), f[2])
+    for line in open(f"{d}/names.dmp"):
+        f = [x.strip() for x in line.split("|")]
+        names[int(f[0])] = f[1]
+    rows = list(csv.DictReader(open(f"{d}/candidates.tsv"), delimiter="\t"))
+    cands = [(int(r["target"]), r["level"], r["species"], int(r["taxid"]), r["proteome"], int(r["proteins"]))
+             for r in rows]
+    log = [tuple(r[c] for c in ("url", "uniprot_release", "release_date", "sha256"))
+           for r in csv.DictReader(open(f"{d}/queries.tsv"), delimiter="\t")]
+    done = {urllib.parse.unquote(m.group(1)).lower() for u, *_ in log
+            for m in [re.search(r'scientific%3A%22(.+?)%22', u)] if m}
+    return nodes, names, cands, log, done
+
+
+def main(wrongdb, out, adjudicated=None, snapshot=None):
+    """snapshot: a frozen resolver output; its rows are kept unchanged and only names it never queried are resolved
+    (after adjudication, so that unchanged organisms keep the frozen candidates)"""
     os.makedirs(out, exist_ok=True)
     nodes, names, cands, done = {}, {}, [], set()
+    if snapshot:
+        nodes, names, cands, log, done = load_snapshot(snapshot)
+        LOG.extend(log)
     rows = list(csv.DictReader(open(wrongdb), delimiter="\t"))
     wanted = [n for r in rows for n in species_names(organisms_of(r, adjudicated))] + sorted(set(UNRELATED.values()))
     for n in wanted:
@@ -120,4 +146,6 @@ def main(wrongdb, out, adjudicated=None):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    a = [x for x in sys.argv[1:] if not x.startswith("--snapshot=")]
+    snap = next((x.split("=", 1)[1] for x in sys.argv[1:] if x.startswith("--snapshot=")), None)
+    main(a[0], a[1], a[2] if len(a) > 2 else None, snap)

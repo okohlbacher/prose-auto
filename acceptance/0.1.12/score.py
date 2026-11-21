@@ -1,7 +1,7 @@
 """Scores the prose-auto 0.1.12 held-out benchmark once (PREREG.md §5, §6, §9). Frozen with its SHA-256 in FREEZE.md
 before any held-out raw file is downloaded or opened.
 
-    python score.py DIR [HELDOUT]   reads DIR/{reference,results,decisions,checks,scenarios}.tsv (and timing.tsv if
+    python score.py DIR [HELDOUT] [--pilot]   reads DIR/{reference,results,decisions,checks,scenarios}.tsv (and timing.tsv if
                                     present) and HELDOUT (default: heldout.tsv next to this file); writes
                                     DIR/score.json and DIR/score.md
 
@@ -17,7 +17,11 @@ Inputs (tab-separated, one header line; written by extract.py from the arm outpu
   decisions.tsv  run, arm, setting (label | protease | cys | prec_window | frag_window | ms2_analyzer_qc |
                  ms2_analyzer_header), value, unit (ppm | Da, windows only), status (auto | review | default | given |
                  unknown)
-  checks.tsv     run, kind, check (pre | post), verdict (ok | warning | database | settings | not assessed)
+  checks.tsv     run, source (auto | scenario | natural), arm, kind, check (pre | post), verdict (ok | warning |
+                 database | settings | not assessed), psm, seconds. source auto: the auto arm's own checks on a held-out
+                 run (kind correct; specificity); scenario: a built scenario of the manifest (any kind, its run need not
+                 be in the draw); natural: the check on the SDRF or defaults arm's result (arm names it). psm: the
+                 scenario search's PSMs (S6 losses), seconds: the check's run time; both may be blank.
   scenarios.tsv  the frozen manifest after adjudication (scenarios.py): which (run, kind) scenarios were built
   timing.tsv     run, version, input_type, step, seconds (S7, descriptive)
 Only numpy and the standard library; every bootstrap uses numpy.random.default_rng(20261120) and B resamples.
@@ -25,6 +29,7 @@ Only numpy and the standard library; every bootstrap uses numpy.random.default_r
 import csv
 import json
 import math
+from fractions import Fraction
 import os
 import sys
 
@@ -32,6 +37,7 @@ import numpy as np
 
 SEED, B, ALPHA = 20261120, 10000, 0.05
 MIN_PSM = 100            # an arm counts as identifying from 100 PSMs at 1 % FDR
+MIN_INFORMATIVE = 5      # a Cys deployment rule needs this many informative runs, else no verdict
 MIN_ELIGIBLE = 120       # fewer eligible runs: P1-P3 get no verdict (§2.2)
 P1_MARGIN, P3_MARGIN, FDP_MAX = 0.98, -0.05, 1.5
 P3_ABS = 0.75            # P3 absolute gate: one-sided 95 % Clopper-Pearson lower bound of auto's share (power.py)
@@ -56,6 +62,20 @@ CHECKS = {"pre", "post"}
 KINDS = {"correct", "related_close", "related_distant", "unrelated", "incomplete", "wrong_label", "wrong_protease",
          "natural"}
 VERDICTS = {"ok", "warning", "database", "settings", "not assessed"}
+SOURCES = {"auto", "scenario", "natural"}
+GATES = sorted(CHECK_BOUND)
+# S1: prose-auto's label vocabulary (prose_auto/schema.py), the granularity S1 scores; the reference uses the same
+# names. Every "no label" spelling is one category; TMT10/11 and TMTpro 16/18 are one category each, as prose-auto
+# reports them.
+LABEL_CANON = {"label free": "none", "none": "none", "no label": "none", "no isobaric label": "none",
+               "no silac": "none", "tmt2plex": "TMT2plex", "tmt6plex": "TMT6plex", "tmt10/11plex": "TMT10/11plex",
+               "tmt10plex": "TMT10/11plex", "tmt11plex": "TMT10/11plex", "tmtpro (16/18plex)": "TMTpro (16/18plex)",
+               "tmtpro16plex": "TMTpro (16/18plex)", "tmtpro18plex": "TMTpro (16/18plex)",
+               "tmt0 / tmt (126 only)": "TMT0", "itraq4plex": "iTRAQ4plex", "itraq8plex": "iTRAQ8plex",
+               "silac (lys8/arg10)": "SILAC (Lys8/Arg10)", "silac (arg6)": "SILAC (Arg6)",
+               "silac lys4 or dimethyl (d4)": "SILAC Lys4 or dimethyl (d4)", "silac (lys4/arg6)": "SILAC (Lys4/Arg6)",
+               "silac triplex (lys4/arg6, lys8/arg10)": "SILAC triplex (Lys4/Arg6, Lys8/Arg10)",
+               "15n metabolic labelling": "15N", "heavy water (2h2o) labelling": "2H2O"}
 ISOBARIC = ("tmt", "itraq")
 
 
@@ -106,6 +126,15 @@ def _number(v, where):
     return x
 
 
+def validate_checks(chk, where):
+    """the check rows' enumerations and keys (shared with power.py): a blank verdict is never a result"""
+    _enum(chk, "source", SOURCES, where)
+    _enum(chk, "check", CHECKS, where)
+    _enum(chk, "kind", KINDS, where)
+    _enum(chk, "verdict", VERDICTS, where)
+    _unique(chk, ["run", "source", "arm", "kind", "check"], where)
+
+
 def load(d, heldout):
     drawn = [f"{r['accession']}/{r['file']}" for r in read(heldout, ["accession", "file"])]
     if len(set(drawn)) != len(drawn):
@@ -115,7 +144,7 @@ def load(d, heldout):
                                       "prec_window", "prec_unit", "frag_window", "frag_unit"])
     res = read(f"{d}/results.tsv", ["run", "arm", "status", "psm", "pep", "pg", "psm_fdp", "pep_fdp"])
     dec = read(f"{d}/decisions.tsv", ["run", "arm", "setting", "value", "unit", "status"])
-    chk = read(f"{d}/checks.tsv", ["run", "kind", "check", "verdict"])
+    chk = read(f"{d}/checks.tsv", ["run", "source", "arm", "kind", "check", "verdict", "psm", "seconds"])
     scn = read(f"{d}/scenarios.tsv", ["accession", "file", "kind", "databases"])
     tim = read(f"{d}/timing.tsv", ["run", "version", "input_type", "step", "seconds"], required=False)
     _enum(ref, "class", CLASSES, "reference.tsv")
@@ -153,13 +182,24 @@ def load(d, heldout):
             if r["unit"] is None:
                 raise InputError(f"decisions.tsv {r['run']} {r['setting']}: unit missing")
             r["value"] = _number(r["value"], f"decisions.tsv {r['run']} {r['setting']}")
-    _enum(chk, "check", CHECKS, "checks.tsv")
-    _enum(chk, "kind", KINDS, "checks.tsv")
-    _enum(chk, "verdict", VERDICTS, "checks.tsv")
-    _unique(chk, ["run", "kind", "check"], "checks.tsv")
-    for rows, where in ((res, "results.tsv"), (dec, "decisions.tsv"), (chk, "checks.tsv"), (tim, "timing.tsv")):
+    validate_checks(chk, "checks.tsv")
+    in_manifest = {f"{r['accession']}/{r['file']}" for r in scn}
+    for r in chk:
+        for c in ("psm", "seconds"):
+            if r[c] is not None:
+                r[c] = _number(r[c], f"checks.tsv {r['run']} {c}")
+        if r["source"] == "scenario":
+            if r["run"] not in in_manifest:
+                raise InputError(f"checks.tsv: scenario run {r['run']} is not in the manifest")
+        elif r["run"] not in known:
+            raise InputError(f"checks.tsv: run {r['run']} is not in the draw")
+        if r["source"] == "auto" and r["kind"] != "correct":
+            raise InputError(f"checks.tsv {r['run']}: the auto arm's own checks are kind correct")
+        if r["source"] == "natural" and r["arm"] is None:
+            raise InputError(f"checks.tsv {r['run']}: a natural-failure check names its arm")
+    for rows, where in ((res, "results.tsv"), (dec, "decisions.tsv"), (tim, "timing.tsv")):
         for r in rows:
-            if r["run"] not in known and not (where == "checks.tsv" and r["kind"] != "correct"):
+            if r["run"] not in known:
                 raise InputError(f"{where}: run {r['run']} is not in the draw")
     return drawn, ref, res, dec, chk, scn, tim
 
@@ -317,13 +357,24 @@ def p3(tab, runs, rng=None):
     pairs, missing = p3_pairs(tab, runs)
     if not pairs:
         return {"runs": 0, "missing": missing}
-    d = np.array(pairs, dtype=float)
-    diffs = boot(lambda s: s[..., 0].mean(axis=-1) - s[..., 1].mean(axis=-1), d, rng)
-    k = int(d[:, 0].sum())
-    return {"runs": len(pairs), "missing": missing, "auto_share": k / len(pairs),
-            "reference_share": float(d[:, 1].mean()), "difference": float(d[:, 0].mean() - d[:, 1].mean()),
-            "difference_lower95": quantile(diffs, 0.05), "auto_share_lower95": clopper_lower(k, len(pairs)),
-            "reference_share_lower95": clopper_lower(int(d[:, 1].sum()), len(pairs))}
+    n = len(pairs)
+    k, kr = sum(a for a, _ in pairs), sum(b for _, b in pairs)
+    lo = p3_relative_lower(pairs, rng)
+    return {"runs": n, "missing": missing, "auto_share": k / n, "reference_share": kr / n, "difference": (k - kr) / n,
+            "difference_lower95": lo / n, "relative_pass_exact": lo >= P3_MARGIN_FRAC * n,
+            "auto_share_lower95": clopper_lower(k, n), "reference_share_lower95": clopper_lower(kr, n)}
+
+
+P3_MARGIN_FRAC = Fraction(-1, 20)   # P3_MARGIN as an exact fraction: the boundary -0.05 itself passes
+
+
+def p3_relative_lower(pairs, rng=None, b=None):
+    """the one-sided 95 % lower bound of the paired difference in compliant runs, as a signed count: per run +1 (auto
+    compliant, reference not), -1 (the reverse) or 0; the 5th percentile (order statistic) of the bootstrap sums.
+    Integers throughout, so the -0.05 boundary is exact (score.py and power.py)"""
+    sgn = np.array([int(a) - int(c) for a, c in pairs], dtype=np.int64)
+    sums = boot(lambda s: s.sum(axis=-1), sgn, rng, b)
+    return int(np.quantile(sums, 0.05, method="inverted_cdf"))
 
 
 # ---- secondary endpoints and §9 rules --------------------------------------------------------------------------------
@@ -334,6 +385,11 @@ def _ppm(v, unit):
 
 def _norm(v):
     return str(v).strip().lower()
+
+
+def canon_label(v):
+    """the S1 category of a label name (LABEL_CANON); an unknown name stays itself"""
+    return LABEL_CANON.get(_norm(v), _norm(v))
 
 
 def accuracy(ref, dec, runs, arm="auto"):
@@ -358,6 +414,8 @@ def accuracy(ref, dec, runs, arm="auto"):
             if unit:
                 w, v = _ppm(t, truth[run][unit]), _ppm(x["value"], x["unit"])
                 k += w / 1.5 <= v <= w * 1.5
+            elif s == "label":
+                k += canon_label(x["value"]) == canon_label(t)
             else:
                 k += _norm(x["value"]) == _norm(t)
         out[s] = {"correct": k, "n": n, "share": k / n if n else None, "wilson95": list(wilson(k, n)),
@@ -371,41 +429,55 @@ def built_scenarios(scn):
 
 
 def checks(chk, scn, runs):
-    """S6 and the §9 check gates. Specificity (kind correct): the auto arm's own checks on the eligible runs.
-    Sensitivity: the built scenarios of the frozen manifest (wrong_label and wrong_protease: the built correct
-    scenarios). A scenario without a check row is missing; not assessed is left out; both are counted. Each gate:
-    exact one-sided binomial test of H0 share <= bound, Holm over all gates at ALPHA."""
+    """S6 and the §9 check gates. Specificity (kind correct): the auto arm's own checks (source auto) on the eligible
+    runs. Sensitivity: the scenario checks (source scenario) of the built scenarios of the frozen manifest
+    (wrong_label and wrong_protease: the single-organism runs with a built correct scenario); the correct-scenario
+    controls are reported. A scenario without a check result is missing; not assessed is left out; both are counted.
+    Each of the nine gates: exact one-sided binomial test of H0 share <= bound, Holm over all nine at ALPHA; a gate
+    without an assessed scenario keeps p = 1 and does not pass. Also per kind: the median PSM ratio scenario / correct
+    scenario (the loss) and the median seconds of each check."""
     built = built_scenarios(scn)
-    rows = {(r["run"], r["kind"], r["check"]): r["verdict"] for r in chk}
-    out, pv = {}, {}
+    multi = {r for r, k in built if k == "incomplete"}
+    rows = {(r["run"], r["source"], r["arm"], r["kind"], r["check"]): r for r in chk}
+    correct_psm = {r["run"]: r["psm"] for r in chk if r["source"] == "scenario" and r["kind"] == "correct"
+                   and r["check"] == "post" and r["psm"] is not None}
+    out, pv = {}, {f"{c}:{k}": 1.0 for c, k in GATES}
     for chk_ in sorted(CHECKS):
         for kind in sorted(KINDS):
             if kind == "natural":
-                want = sorted({r for r, k, c in rows if k == "natural" and c == chk_})
+                keys = sorted((r, s_, a, k, c) for r, s_, a, k, c in rows if s_ == "natural" and c == chk_)
             elif kind == "correct":
-                want = sorted(runs)
-            elif kind in ("wrong_label", "wrong_protease"):   # the single-organism runs with a built correct scenario
-                multi = {r for r, k in built if k == "incomplete"}
-                want = sorted(r for r, k in built if k == "correct" and r not in multi) if chk_ == "post" else []
+                keys = [(r, "auto", None, "correct", chk_) for r in sorted(runs)]
+            elif kind in ("wrong_label", "wrong_protease"):
+                keys = [(r, "scenario", None, kind, chk_) for r in sorted(r for r, k in built if k == "correct"
+                                                                             and r not in multi)] if chk_ == "post" else []
             else:
-                want = sorted(r for r, k in built if k == kind)
-            if not want:
+                keys = [(r, "scenario", None, kind, chk_) for r in sorted(r for r, k in built if k == kind)]
+            gated = (chk_, kind) in CHECK_BOUND
+            if not keys and not gated:
                 continue
-            v = [rows.get((r, kind, chk_)) for r in want]
+            got = [rows.get(k_) for k_ in keys]
+            v = [g["verdict"] if g else None for g in got]
             ass = [x for x in v if x not in (None, "not assessed")]
             hit = sum((x == "ok") if kind == "correct" else (x != "ok") for x in ass)
             exact = sum(x == "settings" for x in ass) if kind in ("wrong_label", "wrong_protease") else \
-                sum(x == "database" for x in ass) if chk_ == "post" and kind != "correct" else None
-            e = {"scenarios": len(want), "missing": v.count(None), "not_assessed": v.count("not assessed"),
+                sum(x == "database" for x in ass) if chk_ == "post" and kind not in ("correct", "natural") else None
+            loss = [g["psm"] / correct_psm[g["run"]] for g in got if g and g["psm"] is not None
+                    and correct_psm.get(g["run"])] if kind not in ("correct", "natural") else []
+            secs = [g["seconds"] for g in got if g and g["seconds"] is not None]
+            e = {"scenarios": len(keys), "missing": v.count(None), "not_assessed": v.count("not assessed"),
                  "assessed": len(ass), "hit": hit, "share": hit / len(ass) if ass else None,
                  "wilson95": list(wilson(hit, len(ass))), "exact_verdict": exact,
+                 "psm_ratio_to_correct_median": float(median(loss)) if loss else None,
+                 "seconds_median": float(np.median(secs)) if secs else None,
                  "bound": CHECK_BOUND.get((chk_, kind)),
-                 "status": "gate" if (chk_, kind) in CHECK_BOUND else
-                 "experimental" if (chk_, kind) in EXPERIMENTAL else "reported"}
-            if e["bound"] is not None:
+                 "status": "gate" if gated else "experimental" if (chk_, kind) in EXPERIMENTAL else "reported"}
+            if gated:
                 e["p_value"] = binom_sf(hit, len(ass), e["bound"]) if ass else 1.0
                 pv[f"{chk_}:{kind}"] = e["p_value"]
             out[f"{chk_}:{kind}"] = e
+    ctl = [r for r in chk if r["source"] == "scenario" and r["kind"] == "correct"]
+    out["scenario correct (controls)"] = {"checks": len(ctl), "ok": sum(r["verdict"] == "ok" for r in ctl)}
     for k, rej in holm(pv).items():
         out[k]["pass"] = rej
     return out
@@ -413,22 +485,29 @@ def checks(chk, scn, runs):
 
 def _cys_rule(tab, dec, a1, a2, runs):
     """on the eligible runs whose Cys decision differs between arms a1 and a2: summed PSM ratio a1/a2 >= 0.99 and no
-    run below 0.95. A run with either arm missing is left out and counted; a stopped arm has 0 PSMs."""
+    run below 0.95. A run with either arm missing is left out and counted; a stopped arm has 0 PSMs; a run with 0 in
+    both arms is uninformative, left out and counted (it is never evidence); x/0 with x > 0 is +inf. Fewer than
+    MIN_INFORMATIVE informative runs: no verdict."""
     v = {(d["run"], d["arm"]): d["value"] for d in dec if d["setting"] == "cys"}
     diff = sorted(r for r in runs if (r, a1) in v and (r, a2) in v and v[(r, a1)] != v[(r, a2)])
-    pairs, missing = [], 0
+    pairs, missing, zero = [], 0, 0
     for r in diff:
         x, y = tab.get((r, a1)), tab.get((r, a2))
         if not x or not y or "missing" in (x["status"], y["status"]):
             missing += 1
             continue
-        pairs.append((_count(x, "psm"), _count(y, "psm")))
-    if not pairs:
-        return {"runs": 0, "missing": missing, "pass": None}
-    s = sum(a for a, _ in pairs) / sum(b for _, b in pairs) if sum(b for _, b in pairs) else math.inf
-    worst = min((a / b for a, b in pairs if b), default=math.inf)
-    return {"runs": len(pairs), "missing": missing, "summed_ratio": s, "worst": worst,
-            "pass": s >= 0.99 and worst >= 0.95}
+        a, b = _count(x, "psm"), _count(y, "psm")
+        if a == 0 and b == 0:
+            zero += 1
+            continue
+        pairs.append((a, b))
+    out = {"runs": len(pairs), "differing": len(diff), "missing": missing, "uninformative": zero}
+    if len(pairs) < MIN_INFORMATIVE:
+        return {**out, "pass": None}
+    sa, sb = sum(a for a, _ in pairs), sum(b for _, b in pairs)
+    s = sa / sb if sb else math.inf
+    worst = min(a / b if b else math.inf for a, b in pairs)
+    return {**out, "summed_ratio": s, "worst": worst, "pass": s >= 0.99 and worst >= 0.95}
 
 
 def rules(tab, ref, dec, runs, acc):
@@ -438,19 +517,21 @@ def rules(tab, ref, dec, runs, acc):
            _cys_rule(tab, dec, "auto_never", "auto_always", runs),
            "mini-search fallback (auto) vs always (auto_always)": _cys_rule(tab, dec, "auto", "auto_always", runs)}
     lab = [r for r in runs if truth[r].get("label") is not None]
-    base = sum(_norm(truth[r]["label"]) in ("none", "label free") for r in lab)
+    base = sum(canon_label(truth[r]["label"]) == "none" for r in lab)
     d = {(x["run"], x["setting"], x["arm"]): x for x in dec}
     bad = [r for r in runs if truth[r].get("reporter_ions") == "no" and (r, "label", "auto") in d
            and d[(r, "label", "auto")]["value"] and _norm(d[(r, "label", "auto")]["value"]).startswith(ISOBARIC)]
     out["label: S1 >= always-label-free baseline, no isobaric call without reporter ions"] = {
         "auto": acc["label"]["correct"], "baseline": base, "n": len(lab), "isobaric_without_reporters": len(bad),
         "pass": (acc["label"]["correct"] >= base and not bad) if lab else None}
-    prot = [r for r in runs if truth[r].get("protease") is not None]
-    stated = sum((r, "protease", "sdrf") in d and d[(r, "protease", "sdrf")]["value"] is not None
-                 and _norm(d[(r, "protease", "sdrf")]["value"]) == _norm(truth[r]["protease"]) for r in prot)
+    ok = lambda r, arm: (r, "protease", arm) in d and d[(r, "protease", arm)]["value"] is not None
+    with_ref = [r for r in runs if truth[r].get("protease") is not None]
+    prot = [r for r in with_ref if ok(r, "sdrf")]   # the same runs for both: a reference and an SDRF protease
+    hit = lambda r, arm: ok(r, arm) and _norm(d[(r, "protease", arm)]["value"]) == _norm(truth[r]["protease"])
+    a_, s_ = sum(hit(r, "auto") for r in prot), sum(hit(r, "sdrf") for r in prot)
     out["protease: S2 >= stated-protease (SDRF arm) baseline"] = {
-        "auto": acc["protease"]["correct"], "baseline": stated, "n": len(prot),
-        "pass": acc["protease"]["correct"] >= stated if prot else None}
+        "auto": a_, "baseline": s_, "n": len(prot), "without_sdrf_protease": len(with_ref) - len(prot),
+        "pass": a_ >= s_ if prot else None}
     qc = [(d[(r, "ms2_analyzer_qc", "auto")]["value"], d[(r, "ms2_analyzer_header", "auto")]["value"]) for r in runs
           if (r, "ms2_analyzer_qc", "auto") in d and (r, "ms2_analyzer_header", "auto") in d
           and d[(r, "ms2_analyzer_qc", "auto")]["value"] and d[(r, "ms2_analyzer_header", "auto")]["value"]]
@@ -469,23 +550,25 @@ def timing(tim):
         if g else "timing.tsv not provided"
 
 
-def score(d, heldout=None):
+def score(d, heldout=None, pilot=False):
     heldout = heldout or os.path.join(os.path.dirname(os.path.abspath(__file__)), "heldout.tsv")
     drawn, ref, res, dec, chk, scn, tim = load(d, heldout)
     runs, counts, cls = accounting(drawn, ref)
     tab = {(r["run"], r["arm"]): r for r in res}
     out = {"runs": counts, "class": cls, "P1": ratio_endpoint(tab, runs, "auto", "reference"),
            "P2": ratio_endpoint(tab, runs, "auto", "defaults"), "P3": p3(tab, runs)}
-    enough = len(runs) >= MIN_ELIGIBLE
+    enough = len(runs) >= MIN_ELIGIBLE and not pilot   # the pilot (PREREG §0) never gets a verdict
     out["P1"]["pass"] = (out["P1"]["ci95"][0] is not None and out["P1"]["ci95"][0] >= P1_MARGIN) if enough else None
     out["P2"]["pass"] = (out["P2"]["ci95"][0] is not None and out["P2"]["ci95"][0] > 1) if enough else None
     e = out["P3"]
-    e["relative_pass"] = e.get("difference_lower95") is not None and e["difference_lower95"] >= P3_MARGIN
+    e["relative_pass"] = bool(e.get("relative_pass_exact"))
     e["absolute_pass"] = e.get("auto_share_lower95") is not None and e["auto_share_lower95"] >= P3_ABS
     e["pass"] = (e["relative_pass"] and e["absolute_pass"]) if enough else None
     out["pass"] = (out["P1"]["pass"] and out["P2"]["pass"] and out["P3"]["pass"]) if enough else None
     out["verdict"] = ("pass" if out["pass"] else "fail") if enough else \
-        f"no verdict: {len(runs)} eligible runs, {MIN_ELIGIBLE} needed"
+        "pilot: no verdict" if pilot else f"no verdict: {len(runs)} eligible runs, {MIN_ELIGIBLE} needed"
+    if not enough:
+        e["relative_pass"] = e["absolute_pass"] = None
     arms = sorted({a for _, a in tab} - {"auto"})
     out["reported"] = {f"{f} auto/{m}": ratio_endpoint(tab, runs, "auto", m, f)
                        for m in arms for f in ("psm", "pep", "pg") if not (f == "psm" and m in ("reference", "defaults"))}
@@ -516,6 +599,8 @@ def markdown(s):
     lines += ["", "| Check:kind | status | assessed | share | Wilson lower | bound | Holm pass |",
               "|---|---|---|---|---|---|---|"]
     for k, e in s["S6"].items():
+        if "status" not in e:
+            continue
         lines.append(f"| {k} | {e['status']} | {e['assessed']} | {f(e['share'])} | {f(e['wilson95'][0])} | "
                      f"{f(e['bound'])} | {e.get('pass')} |")
     lines += ["", "| §9 rule | pass |", "|---|---|"] + [f"| {k} | {v.get('pass')} |" for k, v in s["rules"].items()]
@@ -523,8 +608,9 @@ def markdown(s):
 
 
 if __name__ == "__main__":
-    d = sys.argv[1]
-    s = score(d, sys.argv[2] if len(sys.argv) > 2 else None)
+    args = [x for x in sys.argv[1:] if x != "--pilot"]
+    d = args[0]
+    s = score(d, args[1] if len(args) > 1 else None, pilot="--pilot" in sys.argv)
     json.dump(s, open(os.path.join(d, "score.json"), "w"), indent=1, default=str)
     open(os.path.join(d, "score.md"), "w").write(markdown(s))
     print(markdown(s))

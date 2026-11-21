@@ -1,0 +1,1723 @@
+[
+ {
+  "run": "PXD012418/G-1-5.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD012418/G-1-5.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Saccharomyces_cerevisiae_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "24.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "24.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "28.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "4",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "GG (K)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "Acetyl (Protein N-term)",
+    "Phospho (S)",
+    "-Search:enzyme",
+    "Lys-C",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "glutamyl endopeptidase",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "GG (K)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "glutamyl endopeptidase",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "GG (K)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Glu-C",
+    "cys": "",
+    "prec_window": 10.0,
+    "prec_unit": "ppm",
+    "frag_window": 20.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Glu-C",
+    "cys": null,
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Mus_musculus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "12.16",
+    "-Search:precursor:mass_tolerance_upper",
+    "12.16",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "42.72",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "3",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "-Search:enzyme",
+    "Chymotrypsin",
+    "-Search:peptdeep:instrument",
+    "Lumos",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Chymotrypsin",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Chymotrypsin",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Chymotrypsin",
+    "cys": "",
+    "prec_window": 10.0,
+    "prec_unit": "ppm",
+    "frag_window": 20.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Chymotrypsin",
+    "cys": null,
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Schizosaccharomyces_pombe_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "24.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "24.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "Met-loss+Acetyl (Protein N-term M)",
+    "-Search:enzyme",
+    "Lys-C",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "6.456",
+    "-Search:precursor:mass_tolerance_upper",
+    "6.456",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "6.6544",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Lys-C",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Lys-C",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "TMT10/11plex",
+    "protease": "Lys-C",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 6.456,
+    "prec_unit": "ppm",
+    "frag_window": 6.6544,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": "TMT10/11plex",
+    "protease": "Lys-C",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD050310/Lumos_221109_27.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD050310/Lumos_221109_27.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Rattus_norvegicus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.35",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Methylthio (C)",
+    "TMTpro (K)",
+    "TMTpro (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Label:13C(6)15N(2) (K)",
+    "Label:2H(4) (K)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "4.088",
+    "-Search:precursor:mass_tolerance_upper",
+    "4.088",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "76.9188",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Methylthio (C)",
+    "TMTpro (K)",
+    "TMTpro (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "5",
+    "-Search:precursor:mass_tolerance_upper",
+    "5",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.6",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Methylthio (C)",
+    "TMTpro (K)",
+    "TMTpro (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "TMTpro (16/18plex)",
+    "protease": "Trypsin",
+    "cys": "Methylthio (C)",
+    "prec_window": 4.088,
+    "prec_unit": "ppm",
+    "frag_window": 76.9188,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": "TMTpro (16/18plex)",
+    "protease": "Trypsin",
+    "cys": "Methylthio (C)",
+    "prec_window": 5,
+    "prec_unit": "ppm",
+    "frag_window": 0.6,
+    "frag_unit": "Da"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Mus_musculus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "24.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "24.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "6",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "GG (K)",
+    "Carbamyl (N-term)",
+    "Succinyl (K)",
+    "Phospho (S)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "6.28",
+    "-Search:precursor:mass_tolerance_upper",
+    "6.28",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "4.9282",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "Phospho (T)",
+    "Phospho (Y)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "5",
+    "-Search:precursor:mass_tolerance_upper",
+    "5",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "15",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "TMT6plex (K)",
+    "TMT6plex (N-term)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "Phospho (T)",
+    "Phospho (Y)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "TMT10/11plex",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 6.28,
+    "prec_unit": "ppm",
+    "frag_window": 4.9282,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": "TMT10/11plex",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 5,
+    "prec_unit": "ppm",
+    "frag_window": 15,
+    "frag_unit": "ppm"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d",
+  "db": "/scratch/kohlbach/pilot0112/db/Mus_musculus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "12.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "12.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "33.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "1",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "40.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20.0,
+    "prec_unit": "ppm",
+    "frag_window": 40.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD058145/jg200721_04.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD058145/jg200721_04.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Escherichia_coli_fasta_Mus_musculus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "12.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "12.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.35",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Propionamide (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "5.488",
+    "-Search:precursor:mass_tolerance_upper",
+    "5.488",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.2992",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Label:13C(6)15N(2) (K)",
+    "Label:13C(6)15N(4) (R)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20",
+    "-Search:precursor:mass_tolerance_upper",
+    "20",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "SILAC (Lys8/Arg10)",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 5.488,
+    "prec_unit": "ppm",
+    "frag_window": 0.2992,
+    "frag_unit": "Da"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20,
+    "prec_unit": "ppm",
+    "frag_window": 20,
+    "frag_unit": "ppm"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD069089/Phospho_Nucleus_Si_TAOK2.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD069089/Phospho_Nucleus_Si_TAOK2.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "64.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "64.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "30.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "6",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "Phospho (T)",
+    "Phospho (Y)",
+    "GG (K)",
+    "Carbamyl (N-term)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "15.787",
+    "-Search:precursor:mass_tolerance_upper",
+    "15.787",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "18.3508",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "Phospho (T)",
+    "Phospho (Y)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10",
+    "-Search:precursor:mass_tolerance_upper",
+    "10",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.02",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "Phospho (T)",
+    "Phospho (Y)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 15.787,
+    "prec_unit": "ppm",
+    "frag_window": 18.3508,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10,
+    "prec_unit": "ppm",
+    "frag_window": 0.02,
+    "frag_unit": "Da"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD048861/P4327_6_1_1_11085.d.zip",
+  "input": "/ceph/ibmi/abi/oliver/prose-auto-20261029/v0112/acc/pilot/out/PXD048861/P4327_6_1_1_11085/auto/P4327_6_1_1_11085.pseudo.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_Plasmodium_falciparum_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "21.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "21.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "26.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "GG (K)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "Glu->pyro-Glu (N-term E)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "40.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20",
+    "-Search:precursor:mass_tolerance_upper",
+    "20",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20.0,
+    "prec_unit": "ppm",
+    "frag_window": 40.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20,
+    "prec_unit": "ppm",
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD085074/3_slot1-1_1_12214.d.zip",
+  "input": "/ceph/ibmi/abi/oliver/prose-auto-20261029/v0112/acc/pilot/out/PXD085074/3_slot1-1_1_12214/auto/3_slot1-1_1_12214.pseudo.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "22.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "22.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "32.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "1",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "Glu->pyro-Glu (N-term E)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "40.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20.0,
+    "prec_unit": "ppm",
+    "frag_window": 40.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw",
+  "input": "/ceph/ibmi/abi/oliver/prose-auto-20261029/v0112/acc/pilot/out/PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623/auto/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.pseudo.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "36.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "36.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "34.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "1",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10.0,
+    "prec_unit": "ppm",
+    "frag_window": 20.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": null,
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD056911/TgSNF2L-bands_1.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD056911/TgSNF2L-bands_1.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_Toxoplasma_gondii_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.35",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "3.624",
+    "-Search:precursor:mass_tolerance_upper",
+    "3.624",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.3838",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10",
+    "-Search:precursor:mass_tolerance_upper",
+    "10",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "20",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 3.624,
+    "prec_unit": "ppm",
+    "frag_window": 0.3838,
+    "frag_unit": "Da"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10,
+    "prec_unit": "ppm",
+    "frag_window": 20,
+    "frag_unit": "ppm"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip",
+  "input": "/ceph/ibmi/abi/oliver/prose-auto-20261029/v0112/acc/pilot/out/PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780/auto/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.pseudo.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Drosophila_melanogaster_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "32.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "32.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "26.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "1",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "40.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 20.0,
+    "prec_unit": "ppm",
+    "frag_window": 40.0,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD017077/atg12-2-CRep3_T3.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD017077/atg12-2-CRep3_T3.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Zea_mays_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "40.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "40.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "32.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "6",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Carbamyl (N-term)",
+    "Trimethyl (K)",
+    "Gln->pyro-Glu (N-term Q)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.196",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.196",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "16.4654",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10",
+    "-Search:precursor:mass_tolerance_upper",
+    "10",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.02",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10.196,
+    "prec_unit": "ppm",
+    "frag_window": 16.4654,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10,
+    "prec_unit": "ppm",
+    "frag_window": 0.02,
+    "frag_unit": "Da"
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD076268/20210514_Z-1.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD076268/20210514_Z-1.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Escherichia_coli_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "32.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "32.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "28.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "6",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Phospho (S)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "8.968",
+    "-Search:precursor:mass_tolerance_upper",
+    "8.968",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "13.4354",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "",
+    "prec_window": 8.968,
+    "prec_unit": "ppm",
+    "frag_window": 13.4354,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": null,
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD017303/150930_RK_isoformes_9_01.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD017303/150930_RK_isoformes_9_01.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Mus_musculus_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "30.0",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:precursor:min_charge",
+    "2",
+    "-Search:precursor:max_charge",
+    "5",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Deamidated (N)",
+    "Deamidated (Q)",
+    "Cation:Na (D)",
+    "Cation:Na (E)",
+    "Cation:K (D)",
+    "Cation:K (E)",
+    "Dioxidation (M)",
+    "Acetyl (Protein N-term)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:instrument",
+    "QE",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "false"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "4.47",
+    "-Search:precursor:mass_tolerance_upper",
+    "4.47",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "15.4912",
+    "-Search:fragment:mass_tolerance_unit",
+    "ppm",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 4.47,
+    "prec_unit": "ppm",
+    "frag_window": 15.4912,
+    "frag_unit": "ppm"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ },
+ {
+  "run": "PXD084665/Tissue_D28_R1.raw",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD084665/Tissue_D28_R1.mzML",
+  "db": "/scratch/kohlbach/pilot0112/db/Homo_sapiens_fasta_entrap_s0.fasta",
+  "arms": {
+   "auto": [
+    "-Search:precursor:mass_tolerance_lower",
+    "20.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "20.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.35",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:precursor:min_charge",
+    "1",
+    "-Search:precursor:max_charge",
+    "1",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)",
+    "Met-loss+Acetyl (Protein N-term M)",
+    "Glu->pyro-Glu (N-term E)",
+    "Carbamyl (N-term)",
+    "Dimethyl (K)",
+    "Dimethyl (R)",
+    "Methyl (K)",
+    "Methyl (R)",
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:peptdeep:nce",
+    "-1.0",
+    "-Search:calibration:enabled",
+    "true"
+   ],
+   "reference": [
+    "-Search:precursor:mass_tolerance_lower",
+    "10.0",
+    "-Search:precursor:mass_tolerance_upper",
+    "10.0",
+    "-Search:precursor:mass_tolerance_unit",
+    "ppm",
+    "-Search:fragment:mass_tolerance",
+    "0.5",
+    "-Search:fragment:mass_tolerance_unit",
+    "Da",
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "sdrf": [
+    "-Search:enzyme",
+    "Trypsin",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ],
+   "defaults": [
+    "-Search:enzyme",
+    "Trypsin/P",
+    "-Search:modifications:fixed",
+    "Carbamidomethyl (C)",
+    "-Search:modifications:variable",
+    "Oxidation (M)"
+   ]
+  },
+  "settings": {
+   "reference": {
+    "label": "label free",
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": 10.0,
+    "prec_unit": "ppm",
+    "frag_window": 0.5,
+    "frag_unit": "Da"
+   },
+   "sdrf": {
+    "label": null,
+    "protease": "Trypsin",
+    "cys": "Carbamidomethyl (C)",
+    "prec_window": null,
+    "prec_unit": null,
+    "frag_window": null,
+    "frag_unit": null
+   },
+   "defaults": {
+    "protease": "Trypsin/P",
+    "cys": "Carbamidomethyl (C)",
+    "label": "label free"
+   }
+  }
+ }
+]

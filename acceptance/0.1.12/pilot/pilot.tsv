@@ -1,0 +1,20 @@
+stratum	accession	file	mb	instruments	organisms	experiment	quantification
+protease:Glu-C	PXD012418	G-1-5.raw	486	Q Exactive	Saccharomyces cerevisiae (baker's yeast)	Affinity purification coupled with mass spectrometry proteomics	Label free
+protease:chymotrypsin	PXD052359	20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	1753	Q Exactive	Mus musculus (mouse)	Gel-based experiment	
+protease:Lys-C	PXD024383	20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	2580	Q Exactive	Schizosaccharomyces pombe 927	Shotgun proteomics	TMT
+label:TMTpro	PXD050310	Lumos_221109_27.raw	365	Orbitrap Eclipse; Orbitrap Fusion Lumos	Rattus norvegicus (rat)	Data-dependent acquisition; Bottom-up proteomics	TMT
+label:TMT	PXD065759	20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	1900	Q Exactive HF-X	Mus musculus (mouse)	Data-dependent acquisition; Bottom-up proteomics	
+label:iTRAQ	PXD064410	YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	1846	LTQ	Mus musculus (mouse)	Gel-based experiment	iTRAQ
+label:SILAC	PXD058145	jg200721_04.raw	2882	Orbitrap Fusion Lumos	Mus musculus (mouse); Escherichia coli	Data-dependent acquisition; Bottom-up proteomics	MS1 intensity based label-free quantification method
+enrichment:phospho	PXD069089	Phospho_Nucleus_Si_TAOK2.raw	1021	Q Exactive HF	Homo sapiens (human)	Bottom-up proteomics	
+instrument:Astral	PXD048861	P4327_6_1_1_11085.d.zip	2132	Orbitrap Eclipse; timsTOF Pro; Orbitrap Astral	Plasmodium falciparum (isolate 3d7)	Data-dependent acquisition; Data-independent acquisition; Bottom-up proteomics	Relative quantification
+instrument:timsTOF DDA	PXD074553	FleR_1DE04_lect-B_1_Slot1-19_01_2811.d.zip	2957	timsTOF Pro	Homo sapiens (human)	Data-dependent acquisition; Affinity purification coupled with mass spectrometry proteomics; Bottom-up proteomics	Spectrum counting
+instrument:timsTOF DIA	PXD058482	1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d.zip	2857	timsTOF Pro	Mus musculus (mouse)	mass spectrometry imaging	Label free
+instrument:TOF	PXD085074	3_slot1-1_1_12214.d.zip	2348	TripleTOF 5600	Homo sapiens (human)	Data-independent acquisition	
+instrument:ion trap MS2	PXD062808	230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	2073	LTQ Orbitrap Elite	Homo sapiens (human)	Data-independent acquisition	Data-independent acquisition
+instrument:ion trap MS2	PXD056911	TgSNF2L-bands_1.raw	89	LTQ Orbitrap Velos; Orbitrap Ascend; Q Exactive HF; Q Exactive	Homo sapiens (human); Toxoplasma gondii rh	Bottom-up proteomics	
+acquisition:Orbitrap DIA	PXD084488	20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	1168	timsTOF HT; Orbitrap Exploris 480	Drosophila melanogaster (fruit fly)	Top-down proteomics; Bottom-up proteomics	
+organism:plant	PXD017077	atg12-2-CRep3_T3.raw	1755	Q Exactive	Zea mays (maize)	Shotgun proteomics	MS1 intensity based label-free quantification method
+organism:bacterium	PXD076268	20210514_Z-1.raw	1132	Q Exactive HF	Escherichia coli	Data-dependent acquisition	
+organism:mouse or rat	PXD017303	150930_RK_isoformes_9_01.raw	615	Q Exactive	Mus musculus (mouse)	Gel-based experiment	
+baseline:Orbitrap DDA label-free human	PXD084665	Tissue_D28_R1.raw	1216	Orbitrap Eclipse	Homo sapiens (human)	Bottom-up proteomics	

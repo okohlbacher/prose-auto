@@ -1,0 +1,293 @@
+run	arm	setting	value	unit	status
+PXD012418/G-1-5.raw	auto	label	label free		auto
+PXD012418/G-1-5.raw	auto	protease	Lys-C		auto
+PXD012418/G-1-5.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD012418/G-1-5.raw	auto	prec_window	6	ppm	auto
+PXD012418/G-1-5.raw	auto	frag_window	14.0	ppm	auto
+PXD012418/G-1-5.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD012418/G-1-5.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD012418/G-1-5.raw	defaults	label	label free		given
+PXD012418/G-1-5.raw	defaults	protease	Trypsin/P		given
+PXD012418/G-1-5.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD012418/G-1-5.raw	reference	label	label free		given
+PXD012418/G-1-5.raw	reference	protease	Glu-C		given
+PXD012418/G-1-5.raw	reference	cys			given
+PXD012418/G-1-5.raw	reference	prec_window	10.0	ppm	given
+PXD012418/G-1-5.raw	reference	frag_window	20.0	ppm	given
+PXD012418/G-1-5.raw	sdrf	protease	Glu-C		given
+PXD017077/atg12-2-CRep3_T3.raw	auto	label	label free		review
+PXD017077/atg12-2-CRep3_T3.raw	auto	protease	Trypsin		auto
+PXD017077/atg12-2-CRep3_T3.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD017077/atg12-2-CRep3_T3.raw	auto	prec_window	10	ppm	review
+PXD017077/atg12-2-CRep3_T3.raw	auto	frag_window	16.0	ppm	review
+PXD017077/atg12-2-CRep3_T3.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD017077/atg12-2-CRep3_T3.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD017077/atg12-2-CRep3_T3.raw	defaults	label	label free		given
+PXD017077/atg12-2-CRep3_T3.raw	defaults	protease	Trypsin/P		given
+PXD017077/atg12-2-CRep3_T3.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD017077/atg12-2-CRep3_T3.raw	reference	label	label free		given
+PXD017077/atg12-2-CRep3_T3.raw	reference	protease	Trypsin		given
+PXD017077/atg12-2-CRep3_T3.raw	reference	cys	Carbamidomethyl (C)		given
+PXD017077/atg12-2-CRep3_T3.raw	reference	prec_window	10.196	ppm	given
+PXD017077/atg12-2-CRep3_T3.raw	reference	frag_window	16.4654	ppm	given
+PXD017077/atg12-2-CRep3_T3.raw	sdrf	protease	Trypsin		given
+PXD017077/atg12-2-CRep3_T3.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD017077/atg12-2-CRep3_T3.raw	sdrf	prec_window	10	ppm	given
+PXD017077/atg12-2-CRep3_T3.raw	sdrf	frag_window	0.02	Da	given
+PXD017303/150930_RK_isoformes_9_01.raw	auto	label	label free		auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	protease	Trypsin		auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	prec_window	5	ppm	auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	frag_window	15.0	ppm	auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD017303/150930_RK_isoformes_9_01.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD017303/150930_RK_isoformes_9_01.raw	defaults	label	label free		given
+PXD017303/150930_RK_isoformes_9_01.raw	defaults	protease	Trypsin/P		given
+PXD017303/150930_RK_isoformes_9_01.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD017303/150930_RK_isoformes_9_01.raw	reference	label	label free		given
+PXD017303/150930_RK_isoformes_9_01.raw	reference	protease	Trypsin		given
+PXD017303/150930_RK_isoformes_9_01.raw	reference	cys	Carbamidomethyl (C)		given
+PXD017303/150930_RK_isoformes_9_01.raw	reference	prec_window	4.47	ppm	given
+PXD017303/150930_RK_isoformes_9_01.raw	reference	frag_window	15.4912	ppm	given
+PXD017303/150930_RK_isoformes_9_01.raw	sdrf	protease	Trypsin		given
+PXD017303/150930_RK_isoformes_9_01.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	label	TMT10/11plex		auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	protease	Lys-C		auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	prec_window	6	ppm	auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	frag_window	7.0	ppm	auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	defaults	label	label free		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	defaults	protease	Trypsin/P		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	reference	label	TMT10/11plex		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	reference	protease	Lys-C		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	reference	cys	Carbamidomethyl (C)		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	reference	prec_window	6.456	ppm	given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	reference	frag_window	6.6544	ppm	given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	sdrf	label	TMT10/11plex		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	sdrf	protease	Lys-C		given
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD048861/P4327_6_1_1_11085.d.zip	auto	label	no isobaric label		review
+PXD048861/P4327_6_1_1_11085.d.zip	auto	protease	Trypsin		review
+PXD048861/P4327_6_1_1_11085.d.zip	auto	cys	none (free Cys)		review
+PXD048861/P4327_6_1_1_11085.d.zip	auto	prec_window	21	ppm	auto
+PXD048861/P4327_6_1_1_11085.d.zip	auto	frag_window	26.0	ppm	review
+PXD048861/P4327_6_1_1_11085.d.zip	defaults	label	label free		given
+PXD048861/P4327_6_1_1_11085.d.zip	defaults	protease	Trypsin/P		given
+PXD048861/P4327_6_1_1_11085.d.zip	defaults	cys	Carbamidomethyl (C)		given
+PXD048861/P4327_6_1_1_11085.d.zip	reference	label	label free		given
+PXD048861/P4327_6_1_1_11085.d.zip	reference	protease	Trypsin		given
+PXD048861/P4327_6_1_1_11085.d.zip	reference	cys	Carbamidomethyl (C)		given
+PXD048861/P4327_6_1_1_11085.d.zip	reference	prec_window	20.0	ppm	given
+PXD048861/P4327_6_1_1_11085.d.zip	reference	frag_window	40.0	ppm	given
+PXD048861/P4327_6_1_1_11085.d.zip	sdrf	protease	Trypsin		given
+PXD048861/P4327_6_1_1_11085.d.zip	sdrf	cys	Carbamidomethyl (C)		given
+PXD048861/P4327_6_1_1_11085.d.zip	sdrf	prec_window	20	ppm	given
+PXD050310/Lumos_221109_27.raw	auto	label	TMTpro (16/18plex)		auto
+PXD050310/Lumos_221109_27.raw	auto	protease	Trypsin		auto
+PXD050310/Lumos_221109_27.raw	auto	cys	Methylthio (C)		review
+PXD050310/Lumos_221109_27.raw	auto	prec_window	4	ppm	auto
+PXD050310/Lumos_221109_27.raw	auto	frag_window	0.2	Da	auto
+PXD050310/Lumos_221109_27.raw	auto	ms2_analyzer_header	IT		auto
+PXD050310/Lumos_221109_27.raw	auto	ms2_analyzer_qc	IT		auto
+PXD050310/Lumos_221109_27.raw	defaults	label	label free		given
+PXD050310/Lumos_221109_27.raw	defaults	protease	Trypsin/P		given
+PXD050310/Lumos_221109_27.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD050310/Lumos_221109_27.raw	reference	label	TMTpro (16/18plex)		given
+PXD050310/Lumos_221109_27.raw	reference	protease	Trypsin		given
+PXD050310/Lumos_221109_27.raw	reference	cys	Methylthio (C)		given
+PXD050310/Lumos_221109_27.raw	reference	prec_window	4.088	ppm	given
+PXD050310/Lumos_221109_27.raw	reference	frag_window	76.9188	ppm	given
+PXD050310/Lumos_221109_27.raw	sdrf	label	TMTpro (16/18plex)		given
+PXD050310/Lumos_221109_27.raw	sdrf	protease	Trypsin		given
+PXD050310/Lumos_221109_27.raw	sdrf	cys	Methylthio (C)		given
+PXD050310/Lumos_221109_27.raw	sdrf	prec_window	5	ppm	given
+PXD050310/Lumos_221109_27.raw	sdrf	frag_window	0.6	Da	given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	label	label free		auto
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	protease	Chymotrypsin		auto
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	cys	Carbamidomethyl (C)		review
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	prec_window	3.04	ppm	review
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	frag_window	21.36	ppm	auto
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	defaults	label	label free		given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	defaults	protease	Trypsin/P		given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	reference	label	label free		given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	reference	protease	Chymotrypsin		given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	reference	cys			given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	reference	prec_window	10.0	ppm	given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	reference	frag_window	20.0	ppm	given
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	sdrf	protease	Chymotrypsin		given
+PXD056911/TgSNF2L-bands_1.raw	auto	label	label free		auto
+PXD056911/TgSNF2L-bands_1.raw	auto	protease	Trypsin		review
+PXD056911/TgSNF2L-bands_1.raw	auto	cys	Carbamidomethyl (C)		review
+PXD056911/TgSNF2L-bands_1.raw	auto	prec_window	4	ppm	review
+PXD056911/TgSNF2L-bands_1.raw	auto	frag_window	0.35	Da	review
+PXD056911/TgSNF2L-bands_1.raw	auto	ms2_analyzer_header	IT		auto
+PXD056911/TgSNF2L-bands_1.raw	auto	ms2_analyzer_qc	IT		auto
+PXD056911/TgSNF2L-bands_1.raw	defaults	label	label free		given
+PXD056911/TgSNF2L-bands_1.raw	defaults	protease	Trypsin/P		given
+PXD056911/TgSNF2L-bands_1.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD056911/TgSNF2L-bands_1.raw	reference	label	label free		given
+PXD056911/TgSNF2L-bands_1.raw	reference	protease	Trypsin/P		given
+PXD056911/TgSNF2L-bands_1.raw	reference	cys	Carbamidomethyl (C)		given
+PXD056911/TgSNF2L-bands_1.raw	reference	prec_window	3.624	ppm	given
+PXD056911/TgSNF2L-bands_1.raw	reference	frag_window	0.3838	Da	given
+PXD056911/TgSNF2L-bands_1.raw	sdrf	protease	Trypsin/P		given
+PXD056911/TgSNF2L-bands_1.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD056911/TgSNF2L-bands_1.raw	sdrf	prec_window	10	ppm	given
+PXD056911/TgSNF2L-bands_1.raw	sdrf	frag_window	20	ppm	given
+PXD058145/jg200721_04.raw	auto	label	label free		review
+PXD058145/jg200721_04.raw	auto	protease	Trypsin		auto
+PXD058145/jg200721_04.raw	auto	cys	Propionamide (C)		review
+PXD058145/jg200721_04.raw	auto	prec_window	6	ppm	review
+PXD058145/jg200721_04.raw	auto	frag_window	0.25	Da	review
+PXD058145/jg200721_04.raw	auto	ms2_analyzer_header	IT		auto
+PXD058145/jg200721_04.raw	auto	ms2_analyzer_qc	IT		auto
+PXD058145/jg200721_04.raw	defaults	label	label free		given
+PXD058145/jg200721_04.raw	defaults	protease	Trypsin/P		given
+PXD058145/jg200721_04.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD058145/jg200721_04.raw	reference	label	SILAC (Lys8/Arg10)		given
+PXD058145/jg200721_04.raw	reference	protease	Trypsin		given
+PXD058145/jg200721_04.raw	reference	cys	Carbamidomethyl (C)		given
+PXD058145/jg200721_04.raw	reference	prec_window	5.488	ppm	given
+PXD058145/jg200721_04.raw	reference	frag_window	0.2992	Da	given
+PXD058145/jg200721_04.raw	sdrf	protease	Trypsin		given
+PXD058145/jg200721_04.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD058145/jg200721_04.raw	sdrf	prec_window	20	ppm	given
+PXD058145/jg200721_04.raw	sdrf	frag_window	20	ppm	given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	label	no SILAC		review
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	protease	Trypsin		auto
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	prec_window	9	ppm	review
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	frag_window	17.0	ppm	review
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	defaults	label	label free		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	defaults	protease	Trypsin/P		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	reference	label	label free		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	reference	protease	Trypsin		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	reference	cys	Carbamidomethyl (C)		given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	reference	prec_window	10.0	ppm	given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	reference	frag_window	20.0	ppm	given
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	sdrf	protease	Trypsin		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto	label	label free		review
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto	protease	Trypsin		review
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto	cys	Carbamidomethyl (C)		auto
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto	prec_window	12	ppm	review
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto	frag_window	33.0	ppm	auto
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	defaults	label	label free		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	defaults	protease	Trypsin/P		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	defaults	cys	Carbamidomethyl (C)		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	reference	label	label free		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	reference	protease	Trypsin		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	reference	cys	Carbamidomethyl (C)		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	reference	prec_window	20.0	ppm	given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	reference	frag_window	40.0	ppm	given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	sdrf	protease	Trypsin		given
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	sdrf	cys	Carbamidomethyl (C)		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	label	TMT10/11plex		auto
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	protease	Trypsin		review
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	cys	Carbamidomethyl (C)		review
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	prec_window	6	ppm	auto
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	frag_window	6.0	ppm	review
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	defaults	label	label free		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	defaults	protease	Trypsin/P		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	reference	label	TMT10/11plex		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	reference	protease	Trypsin		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	reference	cys	Carbamidomethyl (C)		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	reference	prec_window	6.28	ppm	given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	reference	frag_window	4.9282	ppm	given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	sdrf	label	TMT10/11plex		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	sdrf	protease	Trypsin		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	sdrf	prec_window	5	ppm	given
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	sdrf	frag_window	15	ppm	given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	label	label free		auto
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	protease	Trypsin		auto
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	cys	Carbamidomethyl (C)		review
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	prec_window	16	ppm	review
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	frag_window	15.0	ppm	auto
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	defaults	label	label free		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	defaults	protease	Trypsin/P		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	reference	label	label free		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	reference	protease	Trypsin		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	reference	cys	Carbamidomethyl (C)		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	reference	prec_window	15.787	ppm	given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	reference	frag_window	18.3508	ppm	given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	sdrf	protease	Trypsin		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	sdrf	prec_window	10	ppm	given
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	sdrf	frag_window	0.02	Da	given
+PXD076268/20210514_Z-1.raw	auto	label	label free		auto
+PXD076268/20210514_Z-1.raw	auto	protease	Trypsin		review
+PXD076268/20210514_Z-1.raw	auto	cys	Carbamidomethyl (C)		auto
+PXD076268/20210514_Z-1.raw	auto	prec_window	8	ppm	review
+PXD076268/20210514_Z-1.raw	auto	frag_window	14.0	ppm	auto
+PXD076268/20210514_Z-1.raw	auto	ms2_analyzer_header	ORBITRAP		auto
+PXD076268/20210514_Z-1.raw	auto	ms2_analyzer_qc	ORBITRAP		auto
+PXD076268/20210514_Z-1.raw	defaults	label	label free		given
+PXD076268/20210514_Z-1.raw	defaults	protease	Trypsin/P		given
+PXD076268/20210514_Z-1.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD076268/20210514_Z-1.raw	reference	label	label free		given
+PXD076268/20210514_Z-1.raw	reference	protease	Trypsin		given
+PXD076268/20210514_Z-1.raw	reference	cys			given
+PXD076268/20210514_Z-1.raw	reference	prec_window	8.968	ppm	given
+PXD076268/20210514_Z-1.raw	reference	frag_window	13.4354	ppm	given
+PXD076268/20210514_Z-1.raw	sdrf	protease	Trypsin		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto	label	no isobaric label		review
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto	protease	Trypsin		auto
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto	cys	Carbamidomethyl (C)		auto
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto	prec_window	32	ppm	review
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto	frag_window	26.0	ppm	auto
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	defaults	label	label free		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	defaults	protease	Trypsin/P		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	defaults	cys	Carbamidomethyl (C)		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	reference	label	label free		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	reference	protease	Trypsin		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	reference	cys	Carbamidomethyl (C)		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	reference	prec_window	20.0	ppm	given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	reference	frag_window	40.0	ppm	given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	sdrf	protease	Trypsin		given
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	sdrf	cys	Carbamidomethyl (C)		given
+PXD084665/Tissue_D28_R1.raw	auto	label	label free		auto
+PXD084665/Tissue_D28_R1.raw	auto	protease	Trypsin		auto
+PXD084665/Tissue_D28_R1.raw	auto	cys	Carbamidomethyl (C)		review
+PXD084665/Tissue_D28_R1.raw	auto	prec_window	10.0	ppm	review
+PXD084665/Tissue_D28_R1.raw	auto	frag_window	0.5	Da	review
+PXD084665/Tissue_D28_R1.raw	auto	ms2_analyzer_header	IT		auto
+PXD084665/Tissue_D28_R1.raw	auto	ms2_analyzer_qc	IT		auto
+PXD084665/Tissue_D28_R1.raw	defaults	label	label free		given
+PXD084665/Tissue_D28_R1.raw	defaults	protease	Trypsin/P		given
+PXD084665/Tissue_D28_R1.raw	defaults	cys	Carbamidomethyl (C)		given
+PXD084665/Tissue_D28_R1.raw	reference	label	label free		given
+PXD084665/Tissue_D28_R1.raw	reference	protease	Trypsin		given
+PXD084665/Tissue_D28_R1.raw	reference	cys	Carbamidomethyl (C)		given
+PXD084665/Tissue_D28_R1.raw	reference	prec_window	10.0	ppm	given
+PXD084665/Tissue_D28_R1.raw	reference	frag_window	0.5	Da	given
+PXD084665/Tissue_D28_R1.raw	sdrf	protease	Trypsin		given
+PXD084665/Tissue_D28_R1.raw	sdrf	cys	Carbamidomethyl (C)		given
+PXD085074/3_slot1-1_1_12214.d.zip	auto	label	no isobaric label		review
+PXD085074/3_slot1-1_1_12214.d.zip	auto	protease	Trypsin		auto
+PXD085074/3_slot1-1_1_12214.d.zip	auto	cys	Carbamidomethyl (C)		auto
+PXD085074/3_slot1-1_1_12214.d.zip	auto	prec_window	22	ppm	auto
+PXD085074/3_slot1-1_1_12214.d.zip	auto	frag_window	32.0	ppm	review
+PXD085074/3_slot1-1_1_12214.d.zip	defaults	label	label free		given
+PXD085074/3_slot1-1_1_12214.d.zip	defaults	protease	Trypsin/P		given
+PXD085074/3_slot1-1_1_12214.d.zip	defaults	cys	Carbamidomethyl (C)		given
+PXD085074/3_slot1-1_1_12214.d.zip	reference	label	label free		given
+PXD085074/3_slot1-1_1_12214.d.zip	reference	protease	Trypsin		given
+PXD085074/3_slot1-1_1_12214.d.zip	reference	cys	Carbamidomethyl (C)		given
+PXD085074/3_slot1-1_1_12214.d.zip	reference	prec_window	20.0	ppm	given
+PXD085074/3_slot1-1_1_12214.d.zip	reference	frag_window	40.0	ppm	given
+PXD085074/3_slot1-1_1_12214.d.zip	sdrf	protease	Trypsin		given
+PXD085074/3_slot1-1_1_12214.d.zip	sdrf	cys	Carbamidomethyl (C)		given

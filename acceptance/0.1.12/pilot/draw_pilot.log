@@ -1,0 +1,42 @@
+seed 20261121; 2973 excluded accessions (exclude.txt, heldout.tsv, wrongdb.tsv, candidates.tsv)
+query 'Glu-C': 194 projects
+protease:Glu-C: 1 of 1 (pool 13)
+query 'Asp-N': 85 projects
+protease:Asp-N: 0 of 1 (pool 0)
+query 'chymotrypsin': 559 projects
+protease:chymotrypsin: 1 of 1 (pool 65)
+query 'Lys-C': 600 projects
+query 'LysC': 600 projects
+query 'endoproteinase Lys-C': 315 projects
+protease:Lys-C: 1 of 1 (pool 13)
+query 'TMTpro': 600 projects
+label:TMTpro: 1 of 1 (pool 554)
+query 'TMT': 600 projects
+label:TMT: 1 of 1 (pool 354)
+query 'iTRAQ': 600 projects
+label:iTRAQ: 1 of 1 (pool 568)
+query 'SILAC': 600 projects
+label:SILAC: 1 of 1 (pool 552)
+query 'phosphoproteomics': 600 projects
+enrichment:phospho: 1 of 1 (pool 539)
+query 'Astral': 563 projects
+instrument:Astral: 1 of 1 (pool 399)
+query 'timsTOF': 600 projects
+instrument:timsTOF DDA: 1 of 1 (pool 172)
+query 'diaPASEF': 600 projects
+instrument:timsTOF DIA: 1 of 1 (pool 507)
+query 'TripleTOF': 600 projects
+instrument:TOF: 1 of 1 (pool 521)
+query 'LTQ Orbitrap': 600 projects
+instrument:ion trap MS2: 2 of 2 (pool 522)
+query 'data-independent acquisition': 67 projects
+acquisition:Orbitrap DIA: 1 of 1 (pool 15)
+query 'plant proteome': 32 projects
+organism:plant: 1 of 1 (pool 16)
+query 'bacterial': 67 projects
+organism:bacterium: 1 of 1 (pool 6)
+query 'mouse proteome': 415 projects
+organism:mouse or rat: 1 of 1 (pool 313)
+query 'label-free': 74 projects
+baseline:Orbitrap DDA label-free human: 1 of 1 (pool 6)
+pilot 19 runs, 31175 MB

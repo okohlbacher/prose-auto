@@ -1,0 +1,18 @@
+run	source	arm	kind	check	verdict	psm	seconds
+PXD012418/G-1-5.raw	auto		correct	pre	ok		
+PXD017077/atg12-2-CRep3_T3.raw	auto		correct	pre	ok		
+PXD017303/150930_RK_isoformes_9_01.raw	auto		correct	pre	ok		
+PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw	auto		correct	pre	warning		
+PXD048861/P4327_6_1_1_11085.d.zip	auto		correct	pre	ok		
+PXD050310/Lumos_221109_27.raw	auto		correct	pre	ok		
+PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw	auto		correct	pre	not assessed		
+PXD056911/TgSNF2L-bands_1.raw	auto		correct	pre	not assessed		
+PXD058145/jg200721_04.raw	auto		correct	pre	ok		
+PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw	auto		correct	pre	ok		
+PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip	auto		correct	pre	warning		
+PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw	auto		correct	pre	ok		
+PXD069089/Phospho_Nucleus_Si_TAOK2.raw	auto		correct	pre	ok		
+PXD076268/20210514_Z-1.raw	auto		correct	pre	warning		
+PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip	auto		correct	pre	warning		
+PXD084665/Tissue_D28_R1.raw	auto		correct	pre	not assessed		
+PXD085074/3_slot1-1_1_12214.d.zip	auto		correct	pre	ok		

@@ -37,6 +37,10 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets 
   manifests are frozen before any raw file is opened.
 - The organism is verified from the spectra; two blinded annotators with adjudication; the best-PSM settings are a
   comparator arm, not the truth.
+- Third review: checks keyed by source and arm, exact P3 boundary, Holm over all nine gates, uninformative Cys
+  comparisons, label vocabulary, reference-database manifest (`refdb.py`), frozen scenario rows kept on adjudication.
+- A pilot of 19 independent runs (PREREG §0): 12 eligible; P1 1.098, P2 1.250, P3 auto 11/12; power from the pilot
+  calls for about 300 drawn runs (proposed, not drawn).
 
 ## 0.1.11 (2026-11-20)
 

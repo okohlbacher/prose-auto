@@ -11,8 +11,12 @@ OUT is the frozen output tree of the benchmark (§10):
                         cys, prec_window, prec_unit, frag_window, frag_unit
       check.json        prose-auto check on this arm's result (auto: the post-search check on the correct database)
       status            optional, one word: missing (download, conversion or search failed)
-  OUT/scenarios/<accession>/<file>/<kind>/  run.auto.json (the pre-search check), check.json (post) per scenario
-  OUT/natural/<accession>/<file>/<arm>/check.json   the natural-failure checks (§6 S6)
+  OUT/scenarios/<accession>/<file>/<kind>/  run.auto.json (the pre-search check), check.json (post), eval.json (the
+                        scenario search's counts) and check_seconds (the post-search check's wall time) per scenario
+  OUT/natural/<accession>/<file>/<arm>/check.json   the natural-failure checks (§6 S6), arm sdrf or defaults
+Counts and FDP are copied at full precision; nothing is rounded before score.py applies a threshold.
+The header comparator of the QC rule is the header evidence itself (source metadata, not FASTag QC), read from the
+report's evidence before reconciliation, never the reconciled decision; without it the setting is absent.
 An arm is stopped when its report has no_digest (the top-down stop) or, for a search, when status says stopped; it is
 missing when it has neither counts nor a stop. Standard library only."""
 import csv
@@ -47,7 +51,7 @@ def result(d):
     if st == "missing" or not e:
         return ("missing",) + ("",) * 5
     return ("ok", e["psm"]["accepted"], e["peptide"]["accepted"], e["protein"]["groups"],
-            round(e["psm"]["combined"], 4), round(e["peptide"]["combined"], 4))
+            repr(float(e["psm"]["combined"])), repr(float(e["peptide"]["combined"])))
 
 
 def decisions(d):
@@ -63,8 +67,10 @@ def decisions(d):
             v = (dec.get(k) or {}).get("value")
             if isinstance(v, dict) and v.get("value") is not None:
                 out.append((s, v["value"], v["unit"], STATUS.get(dec[k]["status"], "review")))
-        if "ms2_analyzer" in dec:
-            out.append(("ms2_analyzer_header", dec["ms2_analyzer"]["value"], "", "auto"))
+        head = [e for e in (dec.get("ms2_analyzer") or {}).get("evidence", [])
+                if e.get("source") == "metadata" and not str(e.get("method", "")).startswith("FASTag")]
+        if head:
+            out.append(("ms2_analyzer_header", max(head, key=lambda e: e["confidence"])["value"], "", "auto"))
         cls = (rep.get("fastag_qc") or {}).get("ms2_analyzer_class") or {}
         if cls:
             top = max(cls, key=cls.get)
@@ -111,23 +117,28 @@ def main(out, d):
         if arm == "auto":
             for k, v in (("pre", pre(a)), ("post", post(a))):
                 if v:
-                    chk.append((run, "correct", k, v))
+                    chk.append((run, "auto", "", "correct", k, v, "", ""))
         if rep and "timings_s" in rep and arm in ("auto", "fast_0110") and "decisions" in rep:
             ver = "0.1.12" if arm == "auto" else "0.1.10"
             tim += [(run, ver, input_type(rep), s, x) for s, x in rep["timings_s"].items()]
     for s in sorted(glob.glob(os.path.join(out, "scenarios", "*", "*", "*"))):
         acc, f, kind = s.split(os.sep)[-3:]
+        e, rep = _json(os.path.join(s, "eval.json")), _report(s)
+        psm = e["psm"]["accepted"] if e else ""
+        sec = {"pre": ((rep or {}).get("timings_s") or {}).get("dbcheck", ""),
+               "post": open(os.path.join(s, "check_seconds")).read().strip()
+               if os.path.exists(os.path.join(s, "check_seconds")) else ""}
         for k, v in (("pre", pre(s)), ("post", post(s))):
             if v and not (k == "pre" and kind in ("wrong_label", "wrong_protease")):
-                chk.append((f"{acc}/{f}", kind, k, v))
+                chk.append((f"{acc}/{f}", "scenario", "", kind, k, v, psm if k == "post" else "", sec[k]))
     for s in sorted(glob.glob(os.path.join(out, "natural", "*", "*", "*"))):
         acc, f, arm = s.split(os.sep)[-3:]
         v = post(s)
         if v:
-            chk.append((f"{acc}/{f}", "natural", "post", v))
+            chk.append((f"{acc}/{f}", "natural", arm, "natural", "post", v, "", ""))
     for name, head, rows in (("results", ["run", "arm", "status", "psm", "pep", "pg", "psm_fdp", "pep_fdp"], res),
                              ("decisions", ["run", "arm", "setting", "value", "unit", "status"], dec),
-                             ("checks", ["run", "kind", "check", "verdict"], chk),
+                             ("checks", ["run", "source", "arm", "kind", "check", "verdict", "psm", "seconds"], chk),
                              ("timing", ["run", "version", "input_type", "step", "seconds"], tim)):
         with open(os.path.join(d, f"{name}.tsv"), "w", newline="") as fh:
             w = csv.writer(fh, delimiter="\t", lineterminator="\n")

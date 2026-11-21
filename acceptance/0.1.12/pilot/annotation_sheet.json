@@ -1,0 +1,1005 @@
+[
+ {
+  "run": "PXD012418/G-1-5.raw",
+  "stratum": "protease:Glu-C",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD012418/G-1-5.mzML",
+  "pride": {
+   "title": "Meiotic yeast SUMO - Dataset containing the raw files and search results of the meiotic yeast SUMOyalted proteome",
+   "sampleProcessingProtocol": "Cells were collected in a synchronous meiotic time course, subjected to NaOH/TCA lysis, and resuspended in 6M Guanidine buffer. His-tagged SUMO (Smt3-I96K) was purified using HisTrapFF and digested either with LysC alone or LysC and GluC. Digests were desalted, lyophilized, resuspended in UbiScan IAP buffer (Cell Signaling Technologies) and purified with the UbiScan kit. analyzed with a Q Exactive Orbitrap tandem MS system (Thermo Scientific) with an upstream in-line Proxeon Easy-nLCII HPLC system (Thermo Scientific). Peptides were resuspended in 0.2% TFA and loaded on to a 25 mm Magic C18 RPLC column and eluted over a 90-minute acetonitrile gradient at 300 nl/min. MS1 spectra were sampled with a top-20 cutoff and 5s dynamic exclusion and subjected to high-energy collision dissociation to obtain MS2 spectra.",
+   "dataProcessingProtocol": "Samples were run on a QExactive orbitrap. Raw data were searched with MaxQuant 1.6.1. Samples from complementary digests for the same replicate were processed under the same experiment heading. Two digestion (Lys-C only and Lys-C + Glu-C) strategies were processed as separate groups. For all samples, a maximum of five missed cleavages and potential modifications were allowed per peptide. Two searches were run. Protein N-terminal acetylation, methionine oxidation and diglycylyl lysine were set as variable modifications for both searches. In addition, serine, threonine and tyrosine phosphorylations were included in the \"Phospho\" search, while lysine acetylations were included in the \"Acetyl\" search. The search results for the \"Phospho\" search are prefixed \"Phospho\", while those for the \"Acetyl\" search are prefixed \"Acetyl\". \"*parameters.txt\" files are included in \"Search.zip\".",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:4932",
+     "name": "Saccharomyces cerevisiae (baker's yeast)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000312",
+     "name": "Label free"
+    }
+   ],
+   "keywords": [
+    "Yeast",
+    "Saccharomyces cerevisiae",
+    "Sumo",
+    "Meiosis",
+    "Lc-ms/ms"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 6340,
+    "2": 31242
+   },
+   "filter_prefix": {
+    "FTMS": 37582
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.raw",
+  "stratum": "protease:chymotrypsin",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD052359/20240103_EBZ_Gozani_mouse_GAC_rpL40_IP_Chymo.mzML",
+  "pride": {
+   "title": "LC-MS targeting the rpL40-Lys22 spanning peptide in rpL40-immunoprecipitated representative protein lysates from tissue biopsies of normal stomach and gastric adenocarcinoma (GAC) from KPPC GAC model mice",
+   "sampleProcessingProtocol": "For immunoprecipitation of endogenous rpL40, total 1 mg of WCEs of tissue biopsies of normal stomach and GAC KPPC model were incubated with anti-rpL40 at 4oC for overnight and then with protein A/G magnetic beads (Pierce Protein A/G Magnetic Beads) at 4oC for 2 hours. The beads were washed with cell lysis buffer three times, boiled in Laemmli buffer. The protein samples were resolved by SDS-PAGE and processed for proteomic mass spectrometry analysis with chymotrypsin in-gel digestion. For mass spectrometry analysis, the resulting peptides were analyzed on an Orbitrap Q-Exactive mass spectrometer. Methylation states of rpL40K22 were manually inspected.",
+   "dataProcessingProtocol": "Selected ion chromatograms for peptides spanning rpL40K22 were extracted using Xcalibur Qual Browser (Thermo). The settings were as follows: Peptide 19-24, m/z 300.4791 (me0), 305.1509 (me1), 309.8228 (me2) and 314.4947 (me3), 10 p.p.m Peptide 14-24, m/z 387.6701 (me0), 391.1740 (me1), 394.6779 (me2), and 398.1818 (me3), 10 p.p.m",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive",
+     "value": ""
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)",
+     "value": ""
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Rpl40k22me3",
+    "Gac mouse model",
+    "Lc-ms",
+    "Gac",
+    "Gastric adenocarcinoma",
+    "Rpl40 methylation",
+    "Rpl40 ip",
+    "Rpl40"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 13942,
+    "2": 1217
+   },
+   "filter_prefix": {
+    "FTMS": 15159
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.raw",
+  "stratum": "protease:Lys-C",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD024383/20190220_QEP2_FBU_MO_Spombe_rep4C09.mzML",
+  "pride": {
+   "title": "Proteome-wide effects of single gene perturbations",
+   "sampleProcessingProtocol": "20 \u00b5l of the cell lysate was reduced for 30 min with dithiothreitol (f.c. 1 mM) and subsequently alkylated for 20 min with iodoacetamide (f.c. 5 mM) shaking at 300 rpm at room temperature in the dark. Proteins were diluted in seven volumes of 50 mM (NH4)HCO3 pH 8.0 and digested overnight with 50 ng endoproteinase Lys-C (Wako) shaking at 300 rpm at 25 \u00baC. Peptides were desalted using StageTips made from two layers of C18 material (Empore). Shortly, StageTips were activated using 100% methanol and washed with 80% acetonitrile in 0.1% formic acid. Equilibration and wash steps after peptide loading were done with 100 mM triethylammonium bicarbonate (TEAB) pH 8.0. Peptides were eluted from StageTips with 80% acetonitrile in 100 mM TEAB and the organic solvent subsequently evaporated. The labeling reaction was performed with 8 \u00b5g Tandem Mass Tag (TMT10plex\u2122 Isobaric Label Reagent, Thermo Scientific) for 2 hours at room temperature, following 15 min quenching with hydroxylamine (f.c. 0.4%)  and acidifying with five volumes 0.1% formic acid. One batch of wt S. pombe grown in 2 ml deep 96-well plate filled with 1 ml YES media was labeled with Tandem Mass Tag 127C beforehand and frozen in aliquots at -80 \u00baC. An aliquot was combined with every 10plex pool to account for run-to-run and plate-to-plate variability. Each pool of 10 Tandem Mass Tag samples was cleaned by StageTip purification as described above. Peptide elution was done with 80% acetonitrile in 0.1% formic acid/50 mM (NH4)HCO3 pH 8.0. After the organic solvent was evaporated, the complete sample was injected for mass spectrometry measurement. Measurements were done on a Q Exactive Plus mass spectrometer (Thermo Scientific) coupled to a Thermo Scientific EASY-nLC1000 HPLC system (Thermo Scientific). Peptides were separated on a self-packed C18 columns (Dr Maisch GmbH) using the following gradient: 0-157 min, 2-22% solvent B; 157-208 min, 22-40% solvent B; 208-212 min, 40-95% solvent B at a flow rate of 225 nl min-1. Solvent A consisted of 0.1% formic acid and solvent B of 80% acetonitrile in 0.1% formic acid. Peptides were ionized with spray voltages of 2.0 - 2.4 kV.  Data acquisition for TMT samples was performed in positive ion mode with a Top15 data-dependent acquisition method. The full scan was set at a resolution of 70,000 with a scan range of 300 \u2212 1650 m/z, AGC target of 3*106. The MS/MS were triggered with a 1.8 m/z isolation window at a minimum intensity threshold of 8.3*103 with following settings: ion charge 2-7; peptide match preferred; isotope exclusion on and a dynamic exclusion set for 35 s. Fragmentation energy was set to 33, resolution at 35,000 with an AGC target of 1*105 and a maximum injection time of 120 ms .",
+   "dataProcessingProtocol": "All MS raw files were run in a single MaxQuant version v. 1.6.1.0  using the integrated Andromeda search engine and the Schizosaccharomyces_pombe.ASM294v2.29.pep.all.fa database downloaded from ENSEMBL. Carbamidomethyl on cysteine was set as a fixed modification. FDR was adjusted to 0.01 on peptide and protein level. Second peptide search was disabled and only unique peptides were considered for quantitation. The mqpar  file with all settings is available at ProteomeXchange.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:1264690",
+     "name": "Schizosaccharomyces pombe 927"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000314",
+     "name": "TMT"
+    }
+   ],
+   "keywords": [
+    "Lc-ms/ms; knockout strain"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 9361,
+    "2": 72618
+   },
+   "filter_prefix": {
+    "FTMS": 81979
+   },
+   "reporter_share": {
+    "TMT": 0.618,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD050310/Lumos_221109_27.raw",
+  "stratum": "label:TMTpro",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD050310/Lumos_221109_27.mzML",
+  "pride": {
+   "title": "Comparison of the proteomic landscape in experimental ischemia-reperfusion with versus without ischemic preconditioning",
+   "sampleProcessingProtocol": "Protein extraction, precipitation, and fragmentation  Samples were homogenized using a FastPrep\u00ae-24 instrument (MP Biomedicals, OH, USA) through five cycles, each lasting 40 seconds, at a speed of 6.5 m/s in a lysis buffer containing 2% sodium dodecyl sulfate and 50 mM triethylammonium bicarbonate (TEAB). Subsequently, the lysed samples underwent centrifugation at 8000 xg for 20 minutes, and the resulting supernatants were carefully transferred to clean tubes. To determine protein concentrations, the Pierce\u2122 BCA Protein Assay Kit (ThermoFisher Scientific) was used according to the manufacturer\u2019s instructions, and measurements were taken using a Benchmark\u2122 Plus microplate reader (Bio-Rad Laboratories, Hercules, CA, USA), with bovine serum albumin solutions serving as standards. Aliquots containing 30 \u00b5g for proteomics from each sample were subjected to incubation at room temperature for 60 minutes in a lysis buffer containing DL-dithiothreitol (DTT) at a final concentration of 100 mM. After reduction, the samples underwent processing using the modified filter-aided sample preparation (FASP) method, as described by Wisniewski JR et. al. in Nat Methods (2009 May;6(5):359-62). In brief, the samples were transferred to 30 kDa Microcon Centrifugal Filter Units (catalogue no. MRCF0R030, Merck) and subjected to multiple washes with 8 M urea, followed by a single wash with a digestion buffer (comprising 0.5% sodium deoxycholate (SDC) in 50 mM TEAB). Subsequently, alkylation was carried out using 10 mM methyl methanethiosulfonate in digestion buffer for 30 minutes. The digestion process was initiated by adding Pierce MS grade Trypsin (ThermoFisher) at an enzyme to protein ratio of 1:100 overnight at 37\u00b0C. An additional portion of trypsin was introduced and incubated for an additional 4 hours. The resulting peptides were collected by centrifugation.  One replicate of group NIPC at 4 hours served as reference sample across both TMTpro sets. Isobaric labelling was carried out using Tandem Mass Tag (TMTpro 16plex) reagents (ThermoFisher). The labelled samples were pooled per set, concentrated using vacuum centrifugation, and any residual sodium deoxycholate (SDC) was eliminated by acidification with 10% trifluoroacetic acid (TFA) followed by centrifugation. The peptide samples underwent purification using Pierce peptide desalting spin columns (ThermoFisher), following the manufacturer's instructions. The combined TMT sets were pre-fractionated into 70 fractions using basic reversed-phase chromatography (bRP-LC) with a Dionex Ultimate 3000 UPLC system (ThermoFisher). Peptides were separated on a reversed-phase XBridge BEH C18 column (3.5 \u03bcm, 3.0x150 mm, Waters Corporation) using a linear gradient from 3 % to 55 % solvent B over 59 min, followed by an increase to 100 % B over 5 min. Solvent A was 10 mM ammonium formate buffer at pH 10.00 and solvent B was 90 % acetonitrile, 10 % 10 mM ammonium formate at pH 10.00. The initial fractions were concatenated into 23 fractions (1+22+43, 2+23+44, \u202621+42+63, 64-67, 68-70), dried and reconstituted in 3 % acetonitrile, 0.2 % formic acid.  LC\u2013MS3 analysis The LC-MS3 analysis was conducted using an Orbitrap Lumos\u2122 Tribrid\u2122 mass spectrometer coupled with an Easy-nLC1200 liquid chromatography system (ThermoFisher). Peptides were initially trapped on an Acclaim Pepmap 100 C18 trap column (100 \u03bcm x 2 cm, particle size 5 \u03bcm, ThermoFisher) and then separated on a custom-packed analytical column (75 \u03bcm x 35 cm, particle size 3 \u03bcm, Reprosil-Pur C18, Dr. Maisch). a linear gradient was applied, starting from 5% B   to 20% B over 47 minutes, followed by an increase to 35% B over 30 minutes and a rapid increase to 100% B over 3 minutes. The flow rate was maintained at 300 nL/min. Solvent A consisted of 0.2% formic acid, while solvent B was a mixture of 80% acetonitrile and 0.2% formic acid. Mass spectrometry scans were performed at a resolution of 120,000, with an m/z range of 375-1500. MS/MS analysis was carried out in a data-dependent mode, with a top speed cycle of 3 seconds for the most intense doubly or multiply charged precursor ions.  Precursor ions were isolated in the quadrupole with an isolation window of 0.7 m/z. Dynamic exclusion was set at 10 ppm with a duration of 45 seconds to avoid reselection of previously analyzed ions. Isolated precursor ions were subjected to collision-induced dissociation (CID) at a collision energy of 30%, with a maximum injection time of 60 ms. The resulting MS2 fragment ions were detected in the ion trap. Subsequently, the top 10 most abundant fragment ions were simultaneously isolated for further fragmentation (MS3) by higher-energy collision dissociation (HCD) at 55%. These MS3 fragment ions were detected in the Orbitrap at a resolution of 50,000, with an m/z range of 100-500.",
+   "dataProcessingProtocol": "Proteomic Data Analysis The data files from the fractions in each set were combined to perform identification and relative quantification using Proteome Discoverer version 2.4 (ThermoFisher).  Identification: Mascot version 2.5.1 from Matrix Science served as the search engine for identification. The search involved matching against the Rattus database from Uniprot, which contains 61,432 entries.  Mass Tolerance: The precursor mass tolerance was set at 5 ppm, and the fragment mass tolerance was set at 0.6 Da.  Enzymatic cleavages: Tryptic peptides were accepted with zero missed cleavages for the proteomics dataset.   Modifications: Variable modifications of methionine oxidation; fixed cysteine alkylation, and TMTpro-label modifications of N-terminus and lysine were selected. Protein validation: Percolator was utilized for the validation of identified proteins.  Normalization: Signal-to-noise (S/N) values of the TMTpro reporters for each sample were normalized within Proteome Discoverer 2.4 based on the total peptide amount.  Quantification: Quantification was based on TMTpro reporter ions, identified with a mass tolerance of 3 mmu in the MS3 HCD spectra Only unique peptides and those with an S/N ratio above 10 were considered for protein quantification, with a minimum SPS match of 65%.  Confidence filtering: Peptides were filtered for high confidence, and the identified proteins were categorized as medium confidence based on these criteria.  Statistical analysis  Data was processed with Perseus version 1.6.12.0. A minimum of three valid values per sample group was required, and Welch's t-test, paired for comparisons within the same samples over time, was utilized to assess the differential expression of proteins. Proteins displaying a \u226520% change and a p-value < 0.05 were considered significantly altered between  the groups. Gene Ontology annotations derived from www.uniprot.org were imported, and enrichment analyses regarding specific GO terms (Biological Process, Molecular Function, Cellular Component) of the differentially regulated proteins were performed. Other statistical analyses were performed with GraphPad Prism 9. Statistical significance between the two groups was determined using the Student's t-test, with a p-value less than 0.05 indicating significant differences",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002732",
+     "name": "Orbitrap Fusion Lumos"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003029",
+     "name": "Orbitrap Eclipse"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10116",
+     "name": "Rattus norvegicus (rat)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000314",
+     "name": "TMT"
+    }
+   ],
+   "keywords": [
+    "Ischemia-reperfusion injury; tissue remodeling; therapeutic targets",
+    "Myocardial ischemic preconditioning: myocardial stunning; myocardial infarction; cardiac proteomics; temporal changes"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 6954,
+    "2": 15053,
+    "3": 15048
+   },
+   "filter_prefix": {
+    "FTMS": 22002,
+    "ITMS": 15053
+   },
+   "reporter_share": {
+    "TMT": 0.018,
+    "TMTpro": 0.02,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.raw",
+  "stratum": "label:TMT",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD065759/20200727_QExHFX3_RSLC2_Heisterkamp_Keays_IMP_MAST_1_TMT_phos_25per_SCX_fr24-25.mzML",
+  "pride": {
+   "title": "Analysis of Phosphoproteome in MAST1 Mouse Mutants",
+   "sampleProcessingProtocol": "1) Phosphoproteomics workflow: Methanol/Chloroform precipitation Proteolytic digest: The ovaries were dissolved in 500uL Methanol and then protein was precipitated by adding 1mL Chloroform. After centrifugation (10min 10 000rcf) the supernatant was removed. The pellets were lysed in a solution of 10M Urea and 50mM HCl and then 1M Triethylammoniumbicarbonate (TEAB) was added to a final concentration of 100mM. The lysates were supplemented with 5 mM DTT and incubated at 37\u00b0C for 1h. The alkylation was performed by adding 10 mM Iodoacetamide and incubating for 30 min in the dark. The reaction was quenched by addition of 7.5 mM DTT and incubation at room temperature for 30 min. The samples were diluted to 6 M urea by addition of 100 mM TEAB and the proteins were digested with lysyl endopeptidase (Lys-C, Fujifilm Wako Pure Chemical Corporation) at an enzyme to protein ration of 1:50 for 3h at 37\u00baC. Subsequently, the samples were further diluted with 100mM TEAB Buffer to 2M Urea and trypsin (Trypsin Gold, Promega) was added at an enzyme to protein ratio of 1:50 and the samples were incubated overnight at 37\u00baC.  The samples were acidified to a pH below 2 with 10% TFA and were desalted using C18 cartridges (Sep-Pak Vac 1cc (200mg), Waters). Peptides were eluted with 2 x 600 \u00b5l 80% Acetonitrile (ACN) and 0.1% Formic Acid (FA), followed by freeze-drying.   TMT labeling 1.5mg of lyophilized peptides were dissolved in 240 ul of 100 mM Triethylammonium bicarbonate. TMT10-plex labelling reagents (3 vials per label) were dissolved in 41 \u03bcL of anhydrous acetonitrile. 3 vials per label (2.4 mg of reagent) were added to the peptide samples and incubated for 1h. After quenching with 5% hydroxylamine, the samples were mixed in several steps to achieve a correct mixing ratio of 1:1:1:1:1:1:1:1:1:1. (median of Top 500 proteins) Following labelling, peptides were again freeze-dried, dissolved in TFA 0.1% and split in two aliquots:  one containing 500\u00b5g for measurement of the unmodified peptides and proteome quantification and one containing 13mg for enrichment of phosphopeptides and  phosphoproteome quantification Both were desalted using C18 cartridges (Sep-Pak, Waters). Peptides were eluted with 70% ACN and 0.1% FA, followed by freeze-drying.  Phosphopeptide enrichment Phosphopeptides were enriched using TiO2 by first dissolving the dried peptide mixture in 4 ml of TiO2 loading buffer (300 mg/ml lactic acid (Sigma-Aldrich), 80% ACN, 0.1% TFA) and incubating them with 120 mg of TiO2 resin (Titansphere bulk media, 5 micron, GL Science) for 60 min at room temperature with over end rotation. For washing and elution the bead suspension was split and transferred to 8 Mobicol (MoBiTec) spin columns with a 10 \u00b5m pore filter at the outlet.  The TiO2 beads in each spin column were washed with 8 x 500 \u00b5l of TiO2 loading buffer, 8 x 500 \u00b5l of 80% ACN, 0.1% TFA, 4 x 500 \u00b5l of 1% ACN, 0.1% TFA, 4 x 500 \u00b5l of 1% ACN, 0.1% FA. Bound peptides were eluted from the resin by addition of 3 x 200 \u00b5l 0.3 M NH4OH, 2 x 200 \u00b5l 0.7 M NH4OH and 2 x 150 \u00b5l 0.4 M NH4OH and 40% ACN, eluates were unified and freeze-dried.   Fractionation of total peptides and enriched phosphopeptides by SCX The lyophilized peptide samples were dissolved in SCX buffer A (5 mM phosphate buffer pH 2.7, 15% ACN). 200\u00b5g of the unmodified peptides and the total amount of the enriched phosphopeptides were loaded on the SCX column. The SCX fractionation was performed on an Ultimate system (Thermo Fisher Scientific) using a TSKgel SP-25W (ToSOH) column (5 \u03bcm particles, 1 mm i.d. x 300 mm) at a flow rate of 40 \u03bcL/min. For the separation a ternary gradient was used, starting with 100% buffer A for 10 min, followed by a linear increase to 10% buffer B (5 mM phosphate buffer pH 2.7, 1 M NaCl, 15% ACN) and 50% buffer C (5 mM phosphate buffer pH 6.0, 15% ACN) in 15 min (for proteome) or 30 min (for phosphoproteome), to 25% buffer B and 50% buffer C in next 5 min (for proteome) or 10 min (for phosphoproteome), to 50% buffer B and 50% buffer C in next 5 min and an isocratic elution for further 15 min.  The flow-through was collected as a single fraction, along the gradient fractions were collected every minute and stored before analysis.",
+   "dataProcessingProtocol": "The nano HPLC system used was an UltiMate 3000 HPLC RSLC nano system (Thermo Scientific) coupled to a Q Exactive HF-X mass spectrometer (Thermo Scientific), equipped with a Proxeon nanospray source (Thermo Scientific). Peptides were loaded onto a trap column (Thermo Scientific, PepMap C18, 5 mm \u00d7 300 \u03bcm ID, 5 \u03bcm particles, 100 \u00c5 pore size) at a flow rate of 25 \u03bcL/min using 0.1% TFA as mobile phase. After 10 min, the trap column was switched in line with the analytical column (Thermo Scientific, PepMap C18, 500 mm \u00d7 75 \u03bcm ID, 2 \u03bcm, 100 \u00c5). Peptides were eluted using a flow rate of 230 nl/min and a binary 120 min gradient. The two step gradient started with the mobile phases: 98%A (water/formic acid, 99.9/0.1, v/v) and 2%B (water/acetonitrile/formic acid, 19.92/80/0.08, v/v/v) increased to 40%B over the next 120min, followed by a gradient in 5 min to 95%B, stayed there for 5 min and decreased in 2 min back to 98%A and 2%B for equilibration at 30\u00b0C. The Q Exactive HF-X mass spectrometer was operated in data-dependent mode, using a full scan (m/z range 380-1650, nominal resolution of 120,000, target value 3E6) followed by MS/MS scans of the 10 most abundant ions. MS/MS spectra were acquired using normalized collision energy of 35, isolation width of 0.7 m/z, resolution of 45.000, a target value of 1E5 and maximum fill time of 250 ms. For the detection of the TMT reporter ions a fixed first mass of 110 m/z was set for the MS/MS scans. Precursor ions selected for fragmentation (exclude charge state 1, 7, 8, >8) were put on a dynamic exclusion list for 30 s. Additionally, the minimum AGC target was set to 1E4 and intensity threshold was 4E4. The peptide match feature was set to preferred and the exclude isotopes feature was enabled.       For peptide identification, the RAW-files were loaded into Proteome Discoverer (version 2.3.0.523, Thermo Scientific). All hereby created MS/MS spectra were searched using MSAmanda v2.3.0.12368, engine version 2.0.0.12368 (Dorfer V. et al., J. Proteome Res. 2014 Aug 1;13(8):3679-84). The RAW-files were searched against the uniprot reference database, using mouse as sub-organism (21,963 sequences; 11,719,000 residues). The following search parameters were used: Iodoacetamide derivative on cysteine, 11-plex tandem mass tag\u00ae (TMT) on lysine were set as fixed modifications, deamidation on asparagine and glutamine, oxidation on methionine, phosphorylation on serine, threonine and tyrosine as well as Carbamylation and 11-plex TMT on peptide-N-term were set as variable modifications. Monoisotopic masses were searched within unrestricted protein masses for tryptic enzymatic specificity. The peptide mass tolerance was set to \u00b15 ppm and the fragment mass tolerance to \u00b115 ppm. The maximal number of missed cleavages was set to 2. The result was filtered to 1% FDR on protein level using Percolator algorithm integrated in Thermo Proteome Discoverer. The localization of the modification sites within the peptides was performed with the tool ptmRS, which is based on phosphoRS (Taus T. et al., J. Proteome Res. 2011, 10, 5354-62). Peptides were quantified based on Reporter Ion intensities extracted by the \u201cReporter Ions Quantifier\u201d-node implemented in Proteome Discoverer. Proteins were quantified by summing unique peptides.  To distinguish regulated phospho-peptides that are altered due to regulation of the phosphorylation site from changes due to regulation of the underlying protein, PSMs were separated into those acquired from phospho-enriched samples and others acquired from the input before enrichment to capture changes on the proteome level.  Therefore, proteins were quantified by summing unique and razor peptides detected and quantified in the input fractions. Resulting values were sum normalised across samples. Fractions of the phospho-enrichment were grouped and summarized on the peptideisoform level.  Subsequently, phosphopeptide regulations determined in the enriched fractions were corrected by regulation of the corresponding protein in the input fractions to correct for changes observed due to regulation on the proteome level. Statistical significance of differentially expressed phosphopeptides was determined using limma (Smyth, GK. Limma: linear models for microarray data. Bioinformatics and Computational Biology Solutions using R and Bioconductor (2005)) and FDR curves determined in Hein et al (Hein MY, et al: A human interactome in three quantitative dimensions organized by stoichiometries and abundances. Cell. 2015 Oct 22;163(3):712-23. doi: 10.1016/j.cell.2015.09.053. Epub 2015 Oct 22. PMID: 26496610) were applied to extract significantly regulated phosphopeptides.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002877",
+     "name": "Q Exactive HF-X"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Enlarged corpus callosum",
+    "Developing brain",
+    "Kinase",
+    "Microtubules"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 8265,
+    "2": 23524
+   },
+   "filter_prefix": {
+    "FTMS": 31789
+   },
+   "reporter_share": {
+    "TMT": 0.578,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d.zip",
+  "stratum": "label:iTRAQ",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD064410/YAS202406250020-1-METHY_Slot1-55_1_13491.d",
+  "pride": {
+   "title": "Primary mouse hepatocytes RIPK1 mass spectrometry",
+   "sampleProcessingProtocol": "Primary mouse hepatocytes were extracted  in 10 culture dishes of 10 cm. After an overnight culture period, the cells were followed by the procedure of RIPK1 immunoprecipitation. The precipitated complexes were then subjected to five successive washes using NP40 and phosphate-buffered saline (PBS). An appropriate amount of TEAB was added to adjust pH 8.0. 5 \u03bcL of suspension was used for SDS-PAGE testing. For digestion, the protein solution was reduced with 5 mM dithiothreitol for 30 min at 56 \u00b0C and alkylated with 11 mM iodoacetamide for 15 min at room temperature in darkness. The protein sample was then diluted by adding 100 mM TEAB to urea concentration less than 2 M. Finally, trypsin was added at 1:50 trypsin-to-protein mass ratio for the first digestion overnight and 1:100 trypsin-to-protein mass ratio for a second 4 h-digestion. Finally, the peptides were desalted by C18 SPE column. The tryptic peptides were dissolved in solvent A, directly loaded onto a home-made reversed-phase analytical column (25-cm length, 100 \u03bcm i.d.).",
+   "dataProcessingProtocol": "The mobile phase consisted of solvent A (0.1% formic acid, 2% acetonitrile/in water) and solvent B (0.1% formic acid, 90% acetonitrile/in water). Peptides were separated with the following gradient: 0-68 min, 6%-23%B; 68-82 min, 23%-32%B; 82-86 min, 32%-80%B; 86-90 min, 80%B, and all at a constant flow rate of 500 nL/min on a EASY-nLC 1200 UPLC system (ThermoFisher Scientific). The separated peptides were analyzed in Orbitrap Exploris 480 with a nano-electrospray ion source. The electrospray voltage applied was 2300 V. Precursors and fragments were analyzed at the Orbitrap detector. The full MS scan resolution was set to 60000 for a scan range of 400-1200 m/z. The MS/MS scan was fixed first mass as 110 m/z at a resolution of 15000 with the TurboTMT was set as off . Up to 25 most abundant precursors were then selected for further MS/MS analyses with 20 s dynamic exclusion. The HCD fragmentation was performed at a normalized collision energy (NCE) of 27%. Automatic gain control (AGC) target was set at 100%, with an intensity threshold of 50000 ions/s and a maximum injection time of Auto.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1000447",
+     "name": "LTQ"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000313",
+     "name": "iTRAQ"
+    }
+   ],
+   "keywords": [
+    "Mass",
+    "Primary mouse hepatocytes",
+    "Ripk1"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD058145/jg200721_04.raw",
+  "stratum": "label:SILAC",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD058145/jg200721_04.mzML",
+  "pride": {
+   "title": "Proteomic analysis of macrophages that have phagocytosed SILAC -bacteria using a trans-well system",
+   "sampleProcessingProtocol": "3 independent biological replicates on total protein extracts from mouse macrophages that have phagocytosed SILAC -bacteria using a trans-well system, were used. 10 \u00b5g of proteins were loaded on a 10% acrylamide SDS-PAGE gel and proteins were visualized by Colloidal Blue staining. Migration was stopped when samples had just entered the resolving gel and the unresolved region of the gel was cut into only one segment. Each SDS-PAGE band was cut into 1 mm x 1 mm gel pieces. Gel pieces were destained in 25 mM ammonium bicarbonate (NH4HCO3), 50% Acetonitrile (ACN) and shrunk in ACN for 10 min. After ACN removal, gel pieces were dried at room temperature. Proteins were first reduced in 10 mM dithiothreitol, 100 mM NH4HCO3 for 60 min at 56\u00b0C then alkylated in 100 mM iodoacetamide, 100 mM NH4HCO3 for 60 min at room temperature and shrunk in ACN for 10 min. After ACN removal, gel pieces were rehydrated with 50 mM NH4HCO3 for 10 min at room temperature. Before protein digestion, gel pieces were shrunk in ACN for 10 min and dried at room temperature. Proteins were digested by incubating each gel slice with 10 ng/\u00b5l of trypsin (V5111, Promega) in 40 mM NH4HCO3, rehydrated at 4\u00b0C for 10 min, and finally incubated overnight at 37\u00b0C. The resulting peptides were extracted from the gel by three steps: a first incubation in 40 mM NH4HCO3 for 15 min at room temperature and two incubations in 47.5% ACN, 5% formic acid for 15 min at room temperature. The three collected extractions were pooled with the initial digestion supernatant, dried in a SpeedVac, and resuspended with 0.1% formic acid for a final concentration of 0.02 \u00b5g/\u00b5L. NanoLC-MS/MS analysis were performed using an Ultimate 3000 RSLC Nano-UPHLC system (Thermo Scientific, USA) coupled to a nanospray Orbitrap Fusion\u2122 Lumos\u2122 Tribrid\u2122 Mass Spectrometer (Thermo Fisher Scientific, California, USA). Each peptide extracts were loaded on a 300 \u00b5m ID x 5 mm PepMap C18 precolumn (Thermo Scientific, USA) at a flow rate of 10 \u00b5L/min. After a 3 min desalting step, peptides were separated on a 50 cm EasySpray column (75 \u00b5m ID, 2 \u00b5m C18 beads, 100 \u00c5 pore size, ES903, Thermo Fisher Scientific) with a 4-40% linear gradient of solvent B (0.1% formic acid in 80% ACN) in 115 min. The separation flow rate was set at 300 nL/min. The mass spectrometer operated in positive ion mode at a 1.9 kV needle voltage. Data were acquired using Xcalibur 4.4 software in a data-dependent mode. MS scans (m/z 375-1500) were recorded at a resolution of R = 120000 (@ m/z 200), a standard AGC target and an injection time in automatic mode, followed by a top speed duty cycle of up to 3 seconds for MS/MS acquisition. Precursor ions (2 to 7 charge states) were isolated in the quadrupole with a mass window of 1.6 Th and fragmented with HCD@28% normalized collision energy. MS/MS data was acquired in the ion trap with rapid scan mode, a 20% normalized AGC target and a maximum injection time in dynamic mode. Selected precursors were excluded for 60 seconds.",
+   "dataProcessingProtocol": "Protein identification and label-free quantification (LFQ) were done in Proteome Discoverer 3.1. The CHIMERYS node using the prediction model inferys_3.0.0 fragmentation was used to identify proteins in batch mode by searching against a Uniprot Mus musculus and Escherichia coli K12 strain databases (54786 entries and 4362 entries, release March, 2024). Two missed enzyme cleavages were allowed for trypsin. Peptide lengths of 7\u201330 amino acids, a maximum of 3 modifications, charges of 2\u20134, and 20 ppm for fragment mass tolerance were set. Oxidation (M) and SILAC (K, R) were searched as dynamic modifications. Carbamidomethyl (C) modifications were searched as static modifications. Peptide validation was performed using the Percolator algorithm and only \u201chigh confidence\u201d peptides were retained corresponding to a 1% false discovery rate at the peptide level. Minora feature detector node (LFQ) was used along with the feature mapper and precursor ions quantifier. The normalization parameters were selected as follows: (1) Unique peptides, (2) Precursor abundance based on intensity, (3) Normalization mode: total peptide amount, (4) Protein abundance calculation: summed abundances, (5) Protein ratio calculation: pairwise ratio based and (6) Missing values were replaced with random values sampled from the lower 5% of detected values. Quantitative data were considered for master proteins and quantified by a minimum of 2 unique peptides.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002732",
+     "name": "Orbitrap Fusion Lumos",
+     "value": ""
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:562",
+     "name": "Escherichia coli",
+     "value": ""
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)",
+     "value": ""
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000425",
+     "name": "MS1 intensity based label-free quantification method"
+    }
+   ],
+   "keywords": [
+    "Innate immunity",
+    "Phagocytosis",
+    "Macrophages",
+    "Silac"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 18832,
+    "2": 91823
+   },
+   "filter_prefix": {
+    "FTMS": 18832,
+    "ITMS": 91823
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD069089/Phospho_Nucleus_Si_TAOK2.raw",
+  "stratum": "enrichment:phospho",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD069089/Phospho_Nucleus_Si_TAOK2.mzML",
+  "pride": {
+   "title": "Coordination of nuclear RNA processing by speckle-localized kinase TAOK2",
+   "sampleProcessingProtocol": "Cell culture and lysis for phosphoproteomics     A549 cells were cultured as described and were treated with phosphatase inhibitors for 1 hour prior to collection via scraping and centrifugation. Cells were resuspended in 10X volume of NIB (15 mM Tris-HCl (pH 7.5), 60 mM KCl, 15 mM NaCl, 5 mM MgCl2, 1mM CaCl2, 250 mM sucrose) containing protease and phosphatase inhibitors and homogenized by gentle pipetting. Cells were incubated on ice for 5 minutes to lyse outer cell membranes before centrifugation at 1000 rcf for 5 minutes at 4\u00b0C. The supernatant contains the cytoplasm and was reserved for further analysis. The pellet was washed by 3 times, by resuspending in NIB buffer containing protease and phosphatase inhibitors and collected by centrifugation at 1000 rcf for 5 minutes at 4\u00b0C. Nuclei were further resuspended in 50mM Triethylammonium bicarbonate (TEABC) buffer and sonicated using a probe sonicator at 325 amplitude for total of 12 seconds in three cycles.   Protein preparation for phosphoproteomics   Prior to processing,   the cytosolic fraction was buffer exchanged into 50mM TEABC via Amicon\u00ae Ultra 3K device (UFC500396), with 3 cycles of dilution and centrifugation at 12000 RCF for 30 minutes.    Protein estimation was performed via BCA assay and an equal amount of protein was taken for further processing (1200 ug).    For trypsin digestion samples from both cytosolic and nuclear fractions were first reduced by adding dithiothreitol (DTT) to a final concentration of 5 mM and incubated at 60 \u00b0C for 30 minutes. Subsequently, iodoacetamide (IAA) was added to a final concentration of 10 mM followed by incubation for 45 min in the dark at 25 \u00b0C. Finally samples were diluted with equal volumes of TEABC.    Trypsin (Promega) was added at a 1:50 ratio of protein to trypsin and incubated overnight at 37 \u00b0C. Following a digestion check (5 \u00b5g of sample underwent C18 clean up were injected into Orbitrap Q-Exactive, results showed >92% of peptides with 0% missed cleavage), the digestion reaction was quenched by slow addition of formic acid until a final concentration of 1% by volume and a pH of 3 is reached.   Double    Phosphopeptide enrichment   A double enrichment approach was used to provide optimum phospho-peptide detection. Intial phosphopeptide enrichment was performed using the High Select\u2122 TiO2\u202fPhosphopeptide Enrichment Kit (ThermoFisher) following the manufacturer\u2019s instructions. The flow through and washes from the TiO2 enrichment were subsequently further enriched using the High Select\u2122 Fe-NTA Phosphopeptide Enrichment Kit (ThermoFisher) following the manufacturer\u2019s instructions. The eluted phosphopeptides from both methods were combined and fractionation with the Pierce High pH Reversed-Phase Peptide Fractionation Kit according to the manufacturer\u2019s protocols. Fractions were dried in vacuo and stored prior to analysis.     LC-MS/MS Analysis    Thermo Scientific Orbitrap Exploris 240 mass spectrometer (ThermoFisher Scientific, Bremen, Germany) connected to the Thermo Scientific UltiMate 3000 HPLC nanoflow liquid chromatography system (ThermoFisher Scientific) was used for data acquisition. Peptide digests were reconstituted in 0.1 % formic acid in water (solvent A) to a final peptide concentration of 500 ng/mL and separated on an analytical column (75 \u00b5m \u00d7 15 cm) at a flow rate of 300 nL/min using a step gradient of 1\u201325 % solvent B (0.1 % formic acid in acetonitrile) for the first 100 minutes, 25\u201330 % for 5 minutes, 30-70 % for 5 minutes, 70\u2013100% for 5 minutes and 1 % for 5 minutes for a total run time of 120 minutes. The mass spectrometer was operated in data-dependent acquisition mode. A survey full scan MS (from m/z 400\u20131600) was acquired with a resolution of 60,000 Normalized AGC target 300 with an injection time of 50 ms. Data was acquired in topN with 20 dependent scans. Peptides were fragmented using normalized collision energy with 37 % and detected at a mass resolution of 30,000 Normalized AGC target 100 with an injection time of 50 ms. Dynamic exclusion was set for 8 s with a 10 ppm mass window.",
+   "dataProcessingProtocol": "Data Analysis    Raw data files were processed using the Proteome Discoverer software suite (version 3.0, Thermo Fisher Scientific) with the SEQUEST HT search engine. Spectral data were searched against the UniProtKB Human reference proteome supplemented with the Common Repository of Adventitious Proteins (cRAP, 125 entries) to account for potential contaminants. Trypsin was specified as the proteolytic enzyme, allowing up to one missed cleavage. Static modifications included carbamidomethylation of cysteine residues (+57.021 Da), while dynamic modifications included methionine oxidation (+15.995 Da), protein N-terminal acetylation (+42.011 Da) and phosphorylation (+79.996 Da) at Ser, Thr and Tyr. Peptide identifications were filtered to a minimum length of seven amino acids. Mass tolerances were set to 10 ppm for precursor ions and 0.02 Da for fragment ions. False discovery rates (FDRs) were calculated using a target-decoy approach with Percolator, and results were filtered to a 1% FDR threshold at the peptide-spectrum match (PSM) level. Data was searched using the LFQ pipeline in Proteome Discoverer to identify and quantify phosphorylated peptides and proteins.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002523",
+     "name": "Q Exactive HF"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Phosphoproteome",
+    "Speckle-localized kinase taok2",
+    "Nuclear rna processing"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 7635,
+    "2": 95824
+   },
+   "filter_prefix": {
+    "FTMS": 103459
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD048861/P4327_6_1_1_11085.d.zip",
+  "stratum": "instrument:Astral",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD048861/P4327_6_1_1_11085.d",
+  "pride": {
+   "title": "GID/CTLH E3 ligase complex control cell fate programs for sexual development of Plasmodium falciparum",
+   "sampleProcessingProtocol": "Eluates from IPs were subjected to FASP digestion method. For global proteomics analysis, red blood cell pellets were subjected to USP3 digestion method. Peptides were subjected to either C18 stage tip clean up prior to LC-MS analysis on a timsTOF Pro MS instrument (Bruker) using a diaPASEF method or DDA or DIA method on an Orbitrap Eclipse instrument (Thermo Fisher) or DIA method on an Orbitrap Astral instrument (Thermo Fisher). \nFor kGG peptide enrichment, red blood cell pellets were directly lysed with SDC lysis buffer and subjected to an in-house workflow for kGG peptide enrichment followed by LC-MS/MS analysis via DIA analysis on an Orbitrap Eclipse instrument. ",
+   "dataProcessingProtocol": "Raw DDA MS data (IPs: IGP2, GID8 and DiCre.WT, DiCre.WT.Rapamycin, HA.DPL and HA.DPL.Rapamycin) were searched using MaxQuant 2.0.1.0, incorporating the Andromeda search engine 97. The analysis was conducted against the P. falciparum 3D7 Reference proteome FASTA database obtained from UniProt (October 2021) and a separate reverse decoy database using a strict trypsin specificity allowing up to 2 missed cleavages. The minimum required peptide length was set to 8 amino acids. Modifications: Carbamidomethylation of Cys was set as a fixed modification, while N-acetylation of proteins, and oxidation of Met were set as variable modifications. First search peptide tolerance was set at 20 ppm and main search set at 20 ppm (other settings left as default). Maximum peptide mass [Da] was set at 4600. The \u201cmatch between runs\u201d option in MaxQuant was used to transfer identifications made between runs based on matching precursors with high mass accuracy. Peptide-spectrum match and protein identifications were filtered using a target-decoy approach at an FDR of 1%. Label-free quantification (LFQ) quantification was selected, with a minimum ratio count of 2. Peptide-spectrum match scores and protein identifications were filtered using a target-decoy approach at an FDR of 1%.  \n\nRaw DIA data (IPs: CPSF, DiCre and GID7 and WT, HA-tagged and WT, GD1-HA (in WT cells) and GD1-HA (in GID7KO cells) and global proteomics: WT, GID1, GID2, GID8 and GID9 and IGP, GID1, GID2 and GID7) were analysed using DIA-NN (Demichev et al., 2022) 1.8 in library-free mode. diaPASEF .d files were searched against reviewed sequences from P. falciparum 3D7 Reference proteome obtained from Uniprot (October 2021) with the following settings: trypsin specificity, peptide length of 7-30 residues, cysteine carbidomethylation as a fixed modification, variable modifications set to N-terminal protein acetylation and oxidation of methionine, the maximum number of missed cleavages at 1. Mass accuracy was set to 10 ppm for both MS1 and MS2 spectra and match between runs (MBR) enabled, and filtering outputs set at a precursor q-value < 1%. Raw DIA data (global proteomics: WT, GD1.KO and IGP2.WT, \u2206DPL) were analysed on Spectronaut version 19.2 using BGS factory settings of directDIA analysis. A combined Human and Plasmodium falciparum Uniprot Reference Proteome (2021) was used for database searching.\n\nData processing and statistical analyses were performed in R (v 4.2.0 - v4.4.0). Protein groups flagged as false hits, contaminants, reverse sequences, or 'only identified by site' were removed. Protein quantitative intensities were log2-transformed prior to downstream processing. Proteins lacking proteotypic precursors and those with q-values > 0.01 were excluded. Data quality was assessed by inspecting global log-intensity distributions, the number of detected precursors and proteins per sample and the extent and pattern of missing values. Sample-level structure and potential technical effects were further evaluated using principal component analysis (PCA) and relative log expression (RLE) diagnostics. Proteins were then filtered to retain those quantified in at least 60% of samples within at least one experimental group. \nTo reduce systematic technical variation, intensities were normalised across samples using cyclic loess normalisation implemented in limma (v3.60.4). Because the IP control and treated groups exhibited markedly different global abundance profiles, cyclic loess normalisation was performed within experimental groups to avoid borrowing information across conditions. This was done in an adhoc basis for the global studies (see summary table). \n\nStatistical analyses comprised (i) global longitudinal/trajectory modelling using maSigPro (v1.78.0), where applicable, (ii) unsupervised hierarchical clustering (hclust) to group proteins by similarity in their longitudinal trajectories over time, and (iii) differential abundance testing for pairwise contrasts and multi-group comparisons (ANOVA framework) using limma. Statistical analyses comprised differential abundance testing for pairwise contrasts and multi-group comparisons (ANOVA framework) using limma (v3.52.4). For differential analyses, linear models were fitted and moderated using empirical Bayes shrinkage, and p-values were adjusted for multiple testing using the Benjamini\u2013Hochberg false discovery rate (FDR) procedure, with proteins considered significant at FDR-adjusted p-value < 0.05. Visualisations were generated in R, including volcano plots using ggplot2 (v3.5.2), heatmaps using pheatmap (v1.0.12), and UpSet plots using ComplexUpset (v1.3.3). A barcode enrichment plot was generated to visualise the distribution of a predefined protein set along the ranked differential-expression statistic (moderated t-statistics from limma), with the running enrichment curve computed using barcodeplot function implemented in limma. \n\nFor kGG peptide data analysis, MS raw files were processed using DIA-NN 1.8.1. Library-free searching with kGG variable modification enabled with a maximum of two modifications and two-missed cleavages was performed with the P. falciparum 3D7 proteome (Uniprot UP000001450), with MBR enabled and Robust LC quantification. Precursors were averaged and filtered to retain kGG peptides that were observed in at least 3/5 replicates for at least one condition. Peptide intensities variance-stabilisation normalised, imputed using a mixed MLE/MinProb approach and limma differential expression analysis performed using the DEP R package. Significance testing of log2-transformed intensities was performed, and Benjamini-Hochberg corrected p-values <0.01 were considered significant. \n",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003378",
+     "name": "Orbitrap Astral"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003029",
+     "name": "Orbitrap Eclipse"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003005",
+     "name": "timsTOF Pro"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:36329",
+     "name": "Plasmodium falciparum (isolate 3d7)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000652",
+     "name": "Relative quantification"
+    }
+   ],
+   "keywords": [
+    ""
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD074553/FleR_1DE04_lect-B_1_Slot1-19_01_2811.d.zip",
+  "stratum": "instrument:timsTOF DDA",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD074553/FleR_1DE04_lect-B_1_Slot1-19_01_2811.d",
+  "pride": {
+   "title": "Integrin beta 1 and mannose receptor 2 are involved in the antifungal activity of bronchial epithelial cells through Aspergillus fumigatus lectin FleA interactions",
+   "sampleProcessingProtocol": "Human bronchial epithelial cells (BEAS-2B, ATCC) were maintained at 37\u00b0C and 5% CO2 and serially passaged in F-12 culture medium (Invitrogen) supplemented with 10% foetal calf serum (FCS) (Eurobio), 1% penicillin and streptomycin (Invitrogen), and 10 mM HEPES in 75-cm2 culture flask. BEAS-2B cells contained in a 75-cm2 culture flask were pre-incubated with biotinylated or not biotinylated lectin (2 \u00b5M) in 5 mL of PBS during 1 hour at 4\u00b0C. Each experimental condition was realized in triplicate. Cells were lysed with cell lysis buffer containing proteases and phosphatases inhibitors during 10 min and centrifugated at 13,000 x g during 10 min. The supernatants, containing biotinylated or not biotinylated lectin with its receptors, were incubated with magnetic beads coupled to streptavidin, during 1 hour at RT under agitation. A magnet separated beads with biotinylated lectin with its receptor from non-specific proteins. After washing the beads with recommended buffers, biotinylated lectin and its receptors were separated from the beads thanks to elution solution. To allow the proteomic analysis by LC-MS/MS, the eluates were lyophilized during 6 hours at medium temperature with a Speed-Vacuum. Lyophilized eluates were solubilized in 20 \u00b5l Laemmli buffer (62.5 mM Tris/HCl pH 6.8; 2% SDS; 10% glycerol; 0.01% Bromophenol blue; 25 mM DTT), incubated in an ultra-sonic bath for 5 minutes and at 60 \u00b0C for 5 minutes under stirring then centrifuged at 14000 rpm for 2 minutes to pellet the remaining beads. Supernatants were loaded on a 10 % SDS-PAGE for a short migration (about 1 cm). The gel was fixed in 30% ethanol and 5% acetic acid with moderate shaking overnight and then stained with silver nitrate. After protein bands reached a desired intensity, the reaction was stopped by pouring off developing solution and replacing with 5% acetic acid for 15 min. The gel was washed and stored in Milli-Q water. The whole lanes were excised from the gel and cut in small pieces (about 1 mm3) for reduction, alkylation and in-gel digestion with trypsin. Peptides were dried using a vacuum centrifuge and resuspended in 0.1% formic acid (Sigma) and 2% acetonitrile. Automated peptide desalting was performed with the DigestPro MSi station (CEM) using home-made StageTips (3 layers of 3M Empore C18 Disc stacked inside a 10 \u00b5l tip) as described in Hamada et al., 2021 (Hamada et al., 2021). Peptides were analyzed with a nanoElute UHPLC (Bruker) coupled to a timsTOF Pro mass spectrometer (Bruker). Peptides were separated on an Odyssey RP-C18 analytical column (25 cm, 75 \u03bcm i.d., 120 \u00c5, 1,6 \u00b5m IonOpticks) at a flow rate of 400 nL/min, at 50\u00b0C, with mobile phase A (ACN 2 % / FA 0.1 %) and B (ACN 99.9% / FA 0.1%). A 30 min elution gradient was run from 0% to 3% B in 1 min, 3% to 15 % B in 17 min then 15% to 23% B in 7 min and 23% to 32% B in 5 min. MS acquisition was run in DDA mode with PASEF. Accumulation time was set to 100 msec in the TIMS tunnel. Capillary voltage was set to 1,6 kV, mass range from 100 to 1700 m/z in MS and MS/MS. Dynamic exclusion was activated for ions within 0.015 m/z and 0.015 V.s/cm\u00b2 and released after 0,4 min. Exclusion was reconsidered if precursor ion intensity was 4 times superior. Low abundance precursors below the target value of 20,000 a.u. and intensity of 2,500 a.u. were selected several times for PASEF-MS/MS until the target value was reached. Parent ion selection was achieved by using a two-dimensional m/z and 1/k0 selection area filter allowing the exclusion of singly charged ions. Total cycle time was 1,29 sec with 10 PASEF cycles.",
+   "dataProcessingProtocol": "Raw data were processed using Data Analysis 5.1 (Bruker) to generate mgf files. Mgf files were processed with X!Tandem pipeline 0.2.36 using X!Tandem engine 2017.2.1.4. The search parameters were as following: mass tolerance of 25 ppm for MS1 and MS2, carbamidomethyl as fixed modification and oxidation (on M residue) as variable modifications; 1 missed cleavage allowed. Searches (normal and decoy) were performed against the combination of 2 databases: UniProt Homo sapiens database (2019-04 release) including the supplementary sequence of Fucose-specific lectin FleA from A. fumigatus (UniProt ID = A0A0J5Q677_ASPFM) and a contaminants database. The identification p-values of peptides and proteins were adjusted to get corresponding FDR < 1%, with a minimum of 2 peptides per protein. Proteins from contaminants database were removed. The specific spectral counts of significantly identified proteins were used to compare protein abundances between the different conditions. To highlight candidate proteins, protein list was filtered to retain only proteins present at least in 2 from 3 biotinylated lectin samples and not detected in all control samples.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003005",
+     "name": "timsTOF Pro"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000436",
+     "name": "Spectrum counting"
+    }
+   ],
+   "keywords": [
+    "Conidia",
+    "Mannose receptor 2",
+    "Affinity proteomics",
+    "Mass spectrometry",
+    "Bronchial epithelial cells",
+    "Flea",
+    "Fungal pathogen",
+    "Lamp1",
+    "Integrin beta 1",
+    "Aspergillus fumigatus",
+    "Aspergillosis",
+    "Timstof pro",
+    "Lectin"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD058482/1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d.zip",
+  "stratum": "instrument:timsTOF DIA",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD058482/1_MWY-23-2498-b_DIA_mouse_QC1_Slot2-45_1_8456.d",
+  "pride": {
+   "title": "Gastric ulcer mice gastric tissue",
+   "sampleProcessingProtocol": "Extracted proteins were quantified using a BCA kit (Beyotime, China). Peptides were desalted before further analysis. Samples were separated using a NanoElute UHPLC system with nanoliter flow rates and analyzed using a timsTOF Pro mass spectrometer (Bruker, Germany) in PASEF mode for diaPASEF acquisition.",
+   "dataProcessingProtocol": "Data were processed using DIA-NN software (v1.8.1) and the Uniprot-proteome_UP000000589_Mus_musculus.fasta database. A total of 55,319 high-quality reads were obtained and filtered for further analysis. 4.10.4 Protein quantification. Relative protein quantification was conducted using the MaxLFQ algorithm. T-tests were performed for each protein in the control and model groups, with corresponding P values calculated. Functional annotation of proteins was carried out using GO, KEGG, and subcellular localization databases.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003005",
+     "name": "timsTOF Pro"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000312",
+     "name": "Label free"
+    }
+   ],
+   "keywords": [
+    "Mice",
+    "Gastric tissue",
+    "Gastric ulcer"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD085074/3_slot1-1_1_12214.d.zip",
+  "stratum": "instrument:TOF",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD085074/3_slot1-1_1_12214.d",
+  "pride": {
+   "title": "Proteomic analysis of human TE 353.Sk cells following cold atmospheric plasma (CAP) irradiation",
+   "sampleProcessingProtocol": "Human TE 353.Sk cells were cultured and subjected to cold atmospheric plasma (CAP) irradiation. Cells were then harvested and lysed using a lysis buffer (e.g., 8M Urea or RIPA) supplemented with protease inhibitors. The extracted proteins were quantified, reduced with Dithiothreitol (DTT), and alkylated with Iodoacetamide (IAA). Protein digestion was performed using sequencing-grade modified trypsin overnight at 37\u00b0C. The resulting peptides were desalted using C18 cartridges (or StageTips), vacuum-dried, and resuspended in 0.1% formic acid prior to LC-MS/MS analysis.",
+   "dataProcessingProtocol": "The raw mass spectrometry data were processed and searched using MaxQuant software against the human UniProt protein database. The search parameters included trypsin as the specific enzyme with up to two missed cleavages allowed. Carbamidomethylation of cysteines was set as a fixed modification, while oxidation of methionine and protein N-terminal acetylation were set as variable modifications. The false discovery rate (FDR) was controlled at <1% at both the peptide and protein levels. Label-free quantification (LFQ) intensities were used for downstream quantitative analysis.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1000932",
+     "name": "TripleTOF 5600"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Human",
+    "Te 353.sk",
+    "Fibroblast",
+    "Proteomics",
+    "Cold atmospheric plasma",
+    "Cap",
+    "Lc-ms/ms"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.raw",
+  "stratum": "instrument:ion trap MS2",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD062808/230907_PS16366_BBB_11_iBEC_MP23_031_iBEC_differentiation_290623.mzML",
+  "pride": {
+   "title": "ApoE4 disrupts intracellular trafficking and iron homeostasis in an improved iPSC-based model of human brain endothelial cells",
+   "sampleProcessingProtocol": "We compared primary brain endothelial cells (HBMVEC, n=6 from three different batches), immortalized endothelial cells (HCMEC/D3, n=3 different passages), and induced ECM-supported brain endothelial cells (iCE-BECs, n=4 differentiations) with whole proteomics analysis. HCMEC/D3 (SCC066, Merck) cells were cultured in EGM-2 Endothelial Cell Growth Medium-2 BulletKit (CC-3162, Lonza) for three sequential passages and collected when at confluence. Three independent batches of HBMVECs were purchased from AngioProteomie (cAP-0002, AngioProteomie) and cultured in EGM-2 Endothelial Cell Growth Medium-2 BulletKit (CC-3162, Lonza) in flasks coated with quick coating solution (cAP-01, Angioproteomie). Each cell batch was cultured for two subsequent passages and collected when at confluence. iCE-BECs were differentiated as described in the manuscript with the same title and collected at day 14 in culture. Culture media were removed and cells were washed with phosphate buffered saline (PBS). Cells were detached using trypsin 0.25%-EDTA (ThermoFisher, 25200056) for HCMEC/D3 or TrypLETM (12563011, ThermoFisher) for HBMVECs and iCE-BECs, resuspended in culture medium and centrifuged at 180 g at 4\u00b0C for 5 min. Cell pellets were then washed with cold PBS and centrifuged. This washing step was repeated again once before snap freezing the cell pellets on dry ice for about 15 min. Cell pellets were then stored at -80\u00b0C.  Samples were reduced, alkylated, digested with trypsin and peptides purified using the PreOmics iST kit according to the supplier\u2019s specifications. Peptide samples were resuspended in 2% (v/v) acetonitrile and 0.5% (v/v) formic acid solution and 1ug of peptides were analyzed by liquid chromatography (nano capillary system, EASY-nLC\u2122 1200 system, Thermo Scientific) on a C18 reverse-phase nano-high-performance liquid chromatography column connected to a mass spectrometer (Orbitrap ExplorisTM 480, Thermo Scientific) via electrospray ionization.",
+   "dataProcessingProtocol": "The DIA method consisted of one full range MS1 from 340 to 1210 m/z at 120k resolution, with a custom AGC target and 20ms max injection time. Then 28 DIA segments were acquired at 15k resolution with a standard AGC target and 20 ms max injection time. HCD fragmentation was set to normalized collision energy optimized for each segment. The spectra were recorded in profile mode. The default charge state for the MS2 was set to 3. Raw files have been processed with Spectronaut 18, with experiment settings based on BGS Default SNE for a DIA library free search, using global imputation to deal with missing values. Default settings included peptide and protein level false discovery rate control at 1 %. Measurements were normalized separately using local regression normalization. The mass spectrometric data were analyzed using Pulsar search engine as implemented in Spectronaut software, the false discovery rate on peptide and protein level was set to 1 %. A human UniProt fasta database (Homo Sapiens, 2022 07 01) was used for the search engine, allowing for 2 missed cleavages and variable modifications (N term acetylation and methionine oxidation). Distributions of both raw and normalized data at the protein level were assessed to evaluate sample consistency. Principal Component Analysis (PCA) was conducted to reveal the overall data structure and to identify potential experimental artifacts. Outlier detection was implemented using the Mahalanobis distance, calculated from the first three principal components. No outliers were removed. The differential abundance analysis was performed to identify proteins with significant changes in expression levels between the different conditions. For this statistical analysis, we utilized the R package \u201climma\u201d. Unlike standard t-tests, which compare proteins individually, the \u201climma\u201d; approach accounts for the overall variance observed across all proteins. This typically results in adjusted P-values, especially at the tails of the distribution, and is particularly well-suited for studies with small sample sizes.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001910",
+     "name": "LTQ Orbitrap Elite",
+     "value": ""
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)",
+     "value": ""
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000450",
+     "name": "Data-independent acquisition"
+    }
+   ],
+   "keywords": [
+    "Blood brain barrier",
+    "Iron homeostasis",
+    "Apoe4",
+    "Tfr"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 3190,
+    "2": 89294
+   },
+   "filter_prefix": {
+    "FTMS": 92484
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD056911/TgSNF2L-bands_1.raw",
+  "stratum": "instrument:ion trap MS2",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD056911/TgSNF2L-bands_1.mzML",
+  "pride": {
+   "title": "MS-based proteomic characterization of Toxoplasma gondii SNF2L, SNF2h, RFTS and RSF1d interactomes",
+   "sampleProcessingProtocol": "Toxoplasma extracts from RH\u0394ku80 cells stably expressing HAFlag-tagged SNF2L, HAFlag-tagged SNF2h, HAFlag-tagged RFTS and HAFlag-tagged RSF1d proteins, respectively, were incubated with anti-FLAG M2 affinity gel (Sigma-Aldrich) for 1 hour at 4\u00b0C. Beads were washed with 10-column volumes of BC500 buffer (20 mM Tris-HCl, pH 8.0, 500 mM KCl, 20% glycerol, 1 mM EDTA, 1 mM DTT, 0.5% NP-40, and protease inhibitors). Bound polypeptides were eluted stepwise with 250 \u03bcg/ml FLAG peptide (Sigma Aldrich) diluted in BC100 buffer. For SNF2L size exclusion chromatography, protein eluates were loaded onto a Superose 6 HR 10/30 column equilibrated with BC500. The flow rate was set at 0.35 ml/min, and 0.5-ml fractions were collected. For characterization of HAFlag-tagged TgSNF2L, TgSNF2h, TgRFTS or TgRSF1d interactomes, eluted proteins were solubilized in Laemmli buffer. Proteins were then either separated by SDS-PAGE in (TgSNF2L and TgSNF2h interactomes, one replicate per bait proteins) or stacked in the top of (TgSNF2h and TgRFTS interactomes, three independent replicates per bait protein, and TgRSF1d, one replicate) in the top of a 4-12% NuPAGE gel (Invitrogen) and stained with Coomassie blue R-250 (Bio-Rad). Protein bands (respectively 14 and 15 most intense bands for TgSNF2L and TgSNF2h interactomes fully separated by SDS-PAGE, and single bands corresponding to total proteins in the case of stacked interactomes) were excised from gels before in-gel digestion using modified trypsin (Promega, sequencing grade). The resulting peptides were analyzed by online nanoliquid chromatography coupled to MS/MS: Ultimate 3000 coupled to LTQ-Orbitrap Velos Pro (Thermo Fisher Scientific) for SNF2L interactome, coupled to Q-Exactive Plus (Thermo Fisher Scientific) for SNF2h interactome fully separated by SDS-PAGE and coupled to Q-Exactive HF (Thermo Fisher Scientific) for TgRSF1d interactome, and UHPLC Vanquish Neo coupled to Orbitrap Ascend Tribrid (Thermo Fisher Scientific) for SNF2h and RFTS stacked interactomes, using 25-min and 180-min gradients, respectively. For this, peptides were sampled on a 300 \u03bcm \u00d7 5 mm PepMap C18 precolumn and separated in a 75 \u03bcm x 250 mm C18 column (PepMap, 3 \u03bcm, Thermo Fisher Scientific) for SNF2L interactome, Reprosil-Pur 120 C18-AQ, 1.9 \u00b5m, Dr. Maisch HPLC GmBH for SNF2h interactome fully separated by SDS-PAGE, and Aurora Generation 3, 1.7 \u03bcm, IonOpticks for RSF1d interactome), and a 75 \u03bcm x 600 mm C18 column (Aurora Generation 3, 1.7 \u03bcm, IonOpticks) for SNF2h and RFTS stacked interactomes. MS and MS/MS data were acquired using the Xcalibur software (Thermo Fisher Scientific).",
+   "dataProcessingProtocol": "Peptides and proteins were identified by Mascot (version 2.8.0, Matrix Science) through concomitant searches against the Toxoplasma gondii database (ME49 taxonomy, version 68 downloaded from ToxoDB), the Uniprot database (Homo sapiens taxonomy), and a homemade database containing the sequences of classical contaminant proteins found in proteomic analyses (human keratins, trypsin...). Trypsin/P was chosen as the enzyme and two missed cleavages were allowed. Precursor and fragment mass error tolerances were set at respectively at 10 and 20 ppm. Peptide modifications allowed during the search were: Carbamidomethyl (C, fixed), Acetyl (Protein N-term, variable) and Oxidation (M, variable). The Proline software (version 2.2.0) was used for the compilation, grouping, and filtering of the results (conservation of rank 1 peptides, peptide length \u2265 6 amino acids, false discovery rate of peptide-spectrum-match identifications < 1%, and minimum of one specific peptide per identified protein group).",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003356",
+     "name": "Orbitrap Ascend"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001742",
+     "name": "LTQ Orbitrap Velos"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002523",
+     "name": "Q Exactive HF"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:383379",
+     "name": "Toxoplasma gondii rh"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Toxoplasma gondii",
+    "Atp-dependent remodeler",
+    "Coimmunoprecipitation",
+    "Gene expression",
+    "Nanolc-ms/ms",
+    "Chromatin",
+    "Insulator"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 517,
+    "2": 3268
+   },
+   "filter_prefix": {
+    "FTMS": 517,
+    "ITMS": 3268
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d.zip",
+  "stratum": "acquisition:Orbitrap DIA",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD084488/20240719_TTOF01_EVO_SA_Orbi5287_Sample03_S2-E3_1_12780.d",
+  "pride": {
+   "title": "The Scm FCS finger binds the Pcl Tudor domain to link canonical PRC1 and PRC2.1 in Drosophila",
+   "sampleProcessingProtocol": "Interaction Proteomics: Sample preparation A total of 100 \u00b5L of SDC buffer containing 1% sodium deoxycholate (SDC), 40 mM 2-chloroacetamide (Sigma-Aldrich), and 10 mM tris(2-carboxyethyl)phosphine (TCEP; Thermo Fisher Scientific) in 100 mM Tris-HCl (pH 8.0) was added to the magnetic beads and incubated for 20 min at 37 \u00b0C. The samples were subsequently diluted 1:1 with water. Proteins were digested with 0.5 \u00b5g LysC for 1.5 h at 37 \u00b0C, followed by overnight digestion with 0.5 \u00b5g trypsin (Promega) at 37 \u00b0C. Peptides in the supernatant were separated from the beads using a magnetic rack. The peptide solution was acidified to a final concentration of 1% trifluoroacetic acid (TFA; Merck) and purified using SCX StageTips. Approximately 200 ng of peptides was subsequently loaded onto Evotips (Evotip Pure, Evosep). LC-MS measurement Peptides were eluted from the Evotips onto a 15 cm PepSep C18 column (15 cm \u00d7 150 \u00b5m, 1.5 \u00b5m; Bruker Daltonics) using an Evosep Eno HPLC system (Evosep). The column temperature was maintained at 50 \u00b0C, and peptide separation was performed using the 30 samples-per-day (SPD) method. Mass spectrometric data were acquired on a timsTOF Pro mass spectrometer controlled by timsControl software and operated in data-independent acquisition parallel accumulation\u2013serial fragmentation (DIA-PASEF) mode. The MS scan range was set to 100\u20131700 m/z, with an ion mobility range of 1/K\u2080 = 0.70\u20131.30 Vs cm\u207b\u00b2. Equal ion accumulation and ramp times of 100 ms were used in the dual TIMS analyzer, resulting in a spectral acquisition rate of 9.52 Hz. DIA-PASEF scans covered the 350.2\u20131199.9 Da range using 42 DIA-PASEF windows, each assigned to a single TIMS scan. Precursor isolation windows were alternated, resulting in a total cycle time of 2.21 s. Collision energy was linearly ramped from 45 eV at 1/K\u2080 = 1.30 Vs cm\u207b\u00b2 to 27 eV at 1/K\u2080 = 0.85 Vs cm\u207b\u00b2.  Native MS: Sample preparation and online buffer exchange Online buffer exchange coupled to native MS was performed using a Thermo Scientific Vanquish Flex UHPLC system with duo pumps coupled to a Thermo Scientific Orbitrap Exploris 480 with BioPharma option. Online buffer exchange used a Thermo Scientific NativePac OBE-1 SEC column. The mobile phase was 200 mM ammonium acetate, run isocratically at 0.2 mL/min over a 10min method. Buffer-exchanged proteins eluted first and were directed to the MS; non-volatile salts eluted later and were diverted to waste using a six-port valve. Native MS measurement Native MS analyses were performed on a Thermo Scientific Orbitrap Exploris 480 with BioPharma option, operated in Intact Protein application mode. The spray voltage was set to 3.4 kV (positive ion, HESI source), the RF lens to 150% and sheath gas to 15. The ion transfer tube temperature was 280 \u00b0C. Source fragmentation was set to 60 V. Data were acquired in profile mode at a resolution setting of 15,000 at m/z 200 with transient averaging enabled. The scan range was m/z 1000\u20138000. The AGC target was set to Custom at 300%, with a maximum injection time of 200 ms and one microscan per spectrum.",
+   "dataProcessingProtocol": "Interaction Proteomics: Data analysis Raw data were processed using Spectronaut version 20.2 (Biognosys) in directDIA+ (library-free) mode. Spectra were searched against the UniProt database of Drosophila (SwissProt and TrEMBL, downloaded in 2023). Carbamidomethylation of cysteine residues was specified as a fixed modification, whereas methionine oxidation and protein N-terminal acetylation were included as variable modifications. Protein abundances across samples were quantified using label-free quantification (LFQ; MaxLFQ) at the MS2 level.  Native MS: Spectra were averaged over the retention-time window of the buffer-exchanged protein peak (2.10\u20132.35 min), selected to exclude a later-eluting polymer contaminant, and deconvolved using UniDec v8.2.1. Deconvolution used a mass range of 6,000\u201318,000 Da sampled every 0.1 Da, a charge range of 3\u201320 (observed charge states 4\u20138), and an m/z range of 990\u20133600. The peak shape was modelled as a Gaussian with a fixed peak FWHM (mzsig) of 1.0 Th; charge smooth width and point smooth width were both 1.0 and mass smooth width was 0. The number of iterations was 50. A curved background subtraction (buffer 100) and an intensity threshold of 0.01 were applied during data processing. The adduct mass was set to the mass of a proton (1.007276 Da). Peak detection used a peak window of 5.0 Da and a peak detection threshold of 0.02, with a peak plotting threshold of 0.1 and a minimum peak separation of 0.025. Harmonic suppression was enabled and the native charge offset was constrained to \u00b13 to suppress spurious assignments at integer multiples of the monomer mass. Species were assigned using the UniDec Oligomer and Mass Tools with a matching tolerance of 5 Da, taking Zn\u00b2\u207a binding as +63.36 Da (Zn \u2212 2H), Na\u207a as +21.98 Da and K\u207a as +38.09 Da. Peaks supported by fewer than two charge states or with a charge-distribution standard deviation below 0.30, were classified as deconvolution artifacts and excluded from the reported species.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003028",
+     "name": "Orbitrap Exploris 480"
+    },
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003404",
+     "name": "timsTOF HT"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:7227",
+     "name": "Drosophila melanogaster (fruit fly)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Scm",
+    "Polycomb response elements",
+    "Prc1",
+    "Pcl",
+    "Prc2.1",
+    "Drosophila"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "note": "Bruker .d: analysis.tdf"
+  }
+ },
+ {
+  "run": "PXD017077/atg12-2-CRep3_T3.raw",
+  "stratum": "organism:plant",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD017077/atg12-2-CRep3_T3.mzML",
+  "pride": {
+   "title": "INTEGRATED MULTI-OMICS ANALYSES OF MAIZE REVEAL ROLES FOR AUTOPHAGIC DURING FIXED CARBON STARVATION",
+   "sampleProcessingProtocol": "Proteins were extracted at 4 \u00b0C from pulverized leaves into 50 mM HEPES (pH 7.5), 5 mM Na2EDTA, 2 mM dithiotreitol, and 1X plant protease inhibitor cocktail (P9599; Sigma-Aldrich).  After clarification by centrifugation at 16,000 Xg, 60 \u00b5g of protein in a total volume of 150 \u00b5l was precipitated in 4:1:3 (v/v) methanol/chloroform/water and collected by centrifugation.  The resulting pellet was washed once with the same mix, lyophilized to dryness, resuspended into 100 \u00b5l of 8 M urea, and reduced for 1 hr at 22 \u00b0C with 10 mM dithiothreitol, followed by alkylation with 20 mM iodoacetamide for 1 hr.  The reaction was quenched with 20 mM dithiotreitol and diluted with with 900 \u00b5l of 25 mM ammonium bicarbonate to reduce the urea concentration below 1.5 M, and digested overnight at 37 \u00b0C with 0.5 \u00b5g of sequencing-grade modified porcine trypsin (Promega).  The resulting peptides were lyophilized to a final volume of ~250 \u00b5l, acidified with 10% trifluoroacetic acid until the pH was below 3.0, and then desalted and concentrated with a 100 \u00b5l Bond Elut OMIX C18 pipette tip (Agilent Technologies) according to the manufacturer\u2019s instructions.  The peptides were eluted in 50 \u00b5l of 75% acetonitrile and 0.1% acetic acid, lyophilized, and resuspended in 20 \u00b5l 5% acetonitrile and 0.1% formic acid.  Nano-scale LC separation of the tryptic peptides was performed using a Dionex Ultimate\u2122 3000 Rapid Separation system equipped with a 75 \u00b5m x 25 cm Acclaim PepMap RSLC C18 column (Thermo Fisher Scientific), in combination with a 2-hr linear 4% to 36% acetonitrile gradient in 0.1% formic acid and a flow rate of 250 nl/min.  Eluted peptides were analyzed online by a Q Exactive Plus spectrometer (Thermo Fisher Scientific) in the positive ESI mode.  Data-dependent acquisition of full MS scans (mass range of 380-1500 m/z) at a resolution of 70,000 was collected, with the automatic gain control (AGC) target set to 3 x 106, and the maximum fill time set to 200 msec.  High-energy collision-induced dissociation fragmentation of the 15 strongest peaks was performed with an intensity threshold of 4 x 104 counts and an isolation window of 3.0 m/z, and excluded precursors that had unassigned, +1, +7, +8, or >+8 charge states.  MS/MS scans were conducted at a resolution of 17,500, with an AGC target of 2 x 105 and a maximum fill time of 100 msec.  Dynamic exclusion was performed with a repeat count of 2 and an exclusion duration of 30 sec, while the minimum MS ion count for triggering MS/MS was set to 4 x 103 counts.  Each sample was analyzed in quadruplicate to enable broad coverage; the first two runs were performed without an exclusion list, while the third and fourth runs were performed with an exclusion list, containing the 5,000 most abundant peptides that were detected in the first two run, to increase sample coverage and maximize suppression of abundant peptides.  Raw MS2 files from all four runs were merged, resulting in two technical replicates per sample.  A digest of cytochrome C (Thermo Scientific) was analyzed every 18th run to monitor sensitivity and retention time drift.",
+   "dataProcessingProtocol": "The resulting MS/MS datasets were queried by Proteome Discoverer (version 2.0.0.802; Thermo Fisher Scientific) against the Z. mays proteome database (Zea-mays.AGPv3.21.pep.all from www.maizegdb.org) and a list of common protein contaminants.  Peptides were assigned by SEQUEST HT 72, allowing a maximum of 2 missed tryptic cleavages, a minimum peptide length of 6, a precursor mass tolerance of 10 ppm, and fragment mass tolerances of 0.02 Da.  Carbamidomethylation of cysteines and oxidation of methionine were specified as static and dynamic modifications, respectively.  A FDR of 0.01 (high confidence) and 0.05 (medium confidence) validated peptide spectral matches.  Label-free quantification based on MS1 precursor ion intensity was performed in Proteome Discoverer with a minimum Quan value threshold set to 0.0001 for unique peptides; the \u201c3 Top N\u201d peptides were used for area calculation 73.  Protein abundances were normalized based on the values obtained from 150 proteins considered least variable among the samples (stdev/average) (Supplemental Dataset 9), which was validated by comparing the abundances of 18 amply-detected histones.  Values were log2-transformed and missing values were imputed assuming a normal distribution in Perseus 64.  Consistent differences in both atg12 alleles versus wild-type were calculated by ANOVA contrasts (p \u2264 0.05).  To further reduce the number of false positives, proteins with a FDR >0.05 in either or both atg12-1 or atg12-2 were also excluded.   GO enrichments were identified by the AgriGO analysis toolkit in combination with the Z. mays AGPv3.30 database 74,75.  The analyses were conducted independently for the 2nd and 4th leaves, using the list of identified proteins per leaf as the reference.  After p-values and FDR <0.05 were determined for each GO-annotation category, a more precise gene identification overview list was constructed that included the most significant GO-annotation terms to increase accuracy and curtail redundancy.  GO-annotation categories shown here were selected based on their uniqueness, p-value significance, and degree of completeness.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:4577",
+     "name": "Zea mays (maize)"
+    }
+   ],
+   "quantificationMethods": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "PRIDE",
+     "accession": "PRIDE:0000425",
+     "name": "MS1 intensity based label-free quantification method"
+    }
+   ],
+   "keywords": [
+    "Autophagy",
+    "Maize",
+    "Lcms"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 15302,
+    "2": 41310
+   },
+   "filter_prefix": {
+    "FTMS": 56612
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD076268/20210514_Z-1.raw",
+  "stratum": "organism:bacterium",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD076268/20210514_Z-1.mzML",
+  "pride": {
+   "title": "Phosphorylation of rhizobial effector NopZ by soybean NORK promotes association with NENA and enhances nodulation",
+   "sampleProcessingProtocol": "For MS, His-GmNORK\u03b1CD-Myc was co-expressed with His-NopZ-FLAG by using Duet vectors in E. coli cells. Total proteins were extracted from cells. Samples were incubated on ice for 30\u2009min and centrifuged three times at 12,000 \u00d7 g for 10\u2009min at 4\u00b0C. The supernatant was added to 10\u2009\u03bcL Ni-NTA agarose beads followed by end-to-end rotation at 4\u00b0C for 4\u2009h. The beads were washed at least 15 times with washing buffer. The bound proteins were then eluted using imidazole-containing buffer and separated by SDS\u2013PAGE. Protein bands corresponding to the expected molecular weight were excised from the gel and subjected to in-gel digestion following reduction and alkylation. The resulting peptides were analyzed by liquid chromatography\u2013tandem mass spectrometry (LC\u2013MS/MS) to examine the modification status of His-tagged proteins under co-expression conditions.",
+   "dataProcessingProtocol": "The resulting peptides were analyzed by LC\u2013MS/MS using a Q Exactive HF mass spectrometer. Raw data were searched against a custom database containing the sequences of the target proteins along with the E. coli proteome. This dataset was used to identify protein modifications and modification sites under co-expression conditions",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1002523",
+     "name": "Q Exactive HF"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:562",
+     "name": "Escherichia coli"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Soybean;phosphorylation;effector;npc"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 12259,
+    "2": 28886
+   },
+   "filter_prefix": {
+    "FTMS": 41145
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD017303/150930_RK_isoformes_9_01.raw",
+  "stratum": "organism:mouse or rat",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD017303/150930_RK_isoformes_9_01.mzML",
+  "pride": {
+   "title": "Consequences of Cyp2c44 deletion on proteome of the microsomal fraction of primary polyoma middle T (PyMT) tumors",
+   "sampleProcessingProtocol": "Microsomes were generated from tumours by homogenized with Tris/HCl (50 mmol/L), 0.25 mol/L sucrose, 0.5 umol/L potassium chloride (pH 7.4, containing 2 mmol/L EDTA, 1 mmol/L DTT, 0.1 mmol/L PMSF) and lysed with glass potter. The microsomal fraction was prepared by differential centrifugation (1,000 g for 10 minutes, 10,000 g for 20 minutes and 100,000 g for 90 minutes; all at 4\u00b0C) and the pellet was resuspended in microsome buffer containing 50 mmol/L Tris/HCl , 20% glycerine (pH 7.7, containing freshly prepared 5 mmol/L EDTA, 1 mmol/L DTT, 0.1 mmol/L PMSF) and stored in aliquots at -80\u00b0C until used. Microsomal protein (10 \u03bcg) was loaded on a Bis-Tris NUPAGE 3-12% gradient gel and stained with Coomassie. The gel region corresponding to CYP proteins (40-70 kDa) was cut into 4 pieces and destained in 60% methanol, 50 mmol/L ammonium bicarbonate (ABC). Solutions were removed by centrifugation for 2 minutes at 600\u00d7g. Proteins were reduced in 10 mmol/L DTT, 50 mmol/L ABC for one hour at 56\u00b0C and alkylated for 45 minutes in 30 mmol/L iodoacteamide. Samples were digested for 16 hours with trypsin (sequencing grade, Promega) at 37\u00b0C in 50 mmol/L ABC, 0.01% Protease Max (Promega) and 1 mmol/L CaCl2. Peptides were eluted in 30% acetonitrile and 3% formic acid, centrifuged into a fresh 96 well plate, dried in a speed vacuum and resolved in 1% acetonitrile and 0.5% formic acid. Liquid chromatography / mass spectrometry (LC/MS) was performed on Thermo Scientific\u2122 Q Exactive mass spectrometer coupled to an ultra-high performance liquid chromatography unit (Thermo Scientific Dionex Ultimate 3000) via a Nanospray Flex Ion- Source (Thermo Scientific). Peptides were loaded on a C18 reversed-phase precolumn (Zorbax 300SB-C18, Agilent Technologies) followed by separation on in-house packed 2.4 \u03bcm Reprosil C18 resin (Dr. Maisch GmbH) picotip emitter tip (diameter 100 \u03bcm, 15 cm long, New Objectives) using a gradient from mobile phase A (4% acetonitrile, 0.1% formic acid) to 30 % mobile phase B (80% acetonitrile, 0.1% formic acid) for 70 min and an additional gradient to 60% B for30 min with a flow rate of 400 nl/min. Each run was finished by washout with 99% B for 5 min and column equilibration with 1% B. Mass spectrometry (MS) data were recorded by data dependent Top10 acquisition (selecting the ten most abundant precursor ions in positive mode for high energy collision dissociation fragmentation). The full MS scan range was 300 to 2000 m/z with resolution of 70000 at m/z 200, and an automatic gain control value of 3xE6 total ion counts with a maximal ion injection time of 160 ms. Only higher charged ions (2+) were selected for MS/MS scans with a resolution of 17500, an isolation window of 2 m/z and an automatic gain control value set to 1xE5 ions with a maximal ion injection time of 150 ms. Following fragmentation event all selected ions were excluded in a time frame of 30 seconds.",
+   "dataProcessingProtocol": "X calibur Raw files were analyzed by proteomics software Max Quant (1.5.3.30) (Cox et al, 2008). The enzyme specificity was set to trypsin, missed cleavages were limited to 2. Acetylation of Nterminus (+42.01), deamidation on N and Q, and oxidation of methionine (+15.99) were selected for variable modification, carbamidomethylation (+57.02) on cysteines was set as fixed modification. The mouse proteome set from Uniprot (Download February 2016, 79950 entries) was used to identify peptides and proteins with a false discovery rate of 1%. Label free quantification values were obtained from at least one identified peptide.   Cox J, Mann M. (2008) MaxQuant enables high peptide identification rates, individualized p.p.b.-range mass accuracies and proteome-wide protein quantification. Nat Biotechnol. 26:1367-72.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1001911",
+     "name": "Q Exactive",
+     "value": ""
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:10090",
+     "name": "Mus musculus (mouse)",
+     "value": ""
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Breast cancer",
+    "Macrophage",
+    "Wdfy1",
+    "Lymphangiogenesis",
+    "Lc-msms",
+    "Metastasis"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 5935,
+    "2": 31225
+   },
+   "filter_prefix": {
+    "FTMS": 37160
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ },
+ {
+  "run": "PXD084665/Tissue_D28_R1.raw",
+  "stratum": "baseline:Orbitrap DDA label-free human",
+  "input": "/scratch/kohlbach/pilot0112/in/PXD084665/Tissue_D28_R1.mzML",
+  "pride": {
+   "title": "A Self-Organized Tri-Lineage Bone Model in Liquefied Microcapsules Captures Matrix Dynamics in Early Remodelling",
+   "sampleProcessingProtocol": "BM-hMSCs and THP-1 cells were co-cultured within gelatine liquefied microcapsules (mCAPs). Forty-eight hours before collection at days 21, 28, and 35, mCAPs were washed three times with PBS and transferred to serum-free, phenol red-free culture medium at a ratio of 50 mCAPs per 3 mL of medium. After 48 h, conditioned medium was collected for secretome analysis, flash-frozen in liquid nitrogen, and stored at \u221280 \u00b0C. For extracellular vesicle (EV) analysis, EVs were enriched from conditioned medium by column-based size-exclusion chromatography using PD-10 desalting columns packed with Sephadex G-25. EV-containing fractions were flash-frozen, lyophilized, and reconstituted in PBS. For tissue proteomics, 10\u201315 mCAPs were collected, homogenized using a Potter\u2013Elvehjem homogenizer, incubated for 2 h at 4 \u00b0C in RIPA lysis and extraction buffer, flash-frozen in liquid nitrogen, and stored at \u221280 \u00b0C.  For LC-MS/MS analysis, proteins were solubilized in 100 mM Tris (pH 8.5), 1% sodium deoxycholate, 10 mM TCEP, and 40 mM chloroacetamide for 10 min at 95 \u00b0C and 1000 rpm. Samples were subsequently processed according to the solid-phase-enhanced sample preparation (SP3) protocol and enzymatically digested overnight at 37 \u00b0C with Trypsin/LysC.",
+   "dataProcessingProtocol": "Raw LC-MS/MS data were processed using Proteome Discoverer v3.1.1.93 (Thermo Scientific). MS/MS spectra were searched against the reviewed Homo sapiens UniProt proteome database (release 2024_01; 20,418 entries), including a list of common protein contaminants. Peptide identification was performed using the Sequest HT and MSPepSearch search engines, considering tryptic peptides. Protein abundance was determined by label-free quantification (LFQ), and samples collected at days 21, 28, and 35 were compared.  For downstream analyses, potential contaminants were excluded and only proteins identified in at least three replicates were retained. Protein identities were mapped to UniProtKB/Swiss-Prot accession numbers and only reviewed proteins were considered for subsequent analyses.",
+   "instruments": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "MS",
+     "accession": "MS:1003029",
+     "name": "Orbitrap Eclipse"
+    }
+   ],
+   "organisms": [
+    {
+     "@type": "CvParam",
+     "cvLabel": "NEWT",
+     "accession": "NEWT:9606",
+     "name": "Homo sapiens (human)"
+    }
+   ],
+   "quantificationMethods": [],
+   "keywords": [
+    "Lc-ms; bm-hmscs; thp-1; osteogenesis; osteoclastogenesis; secretoma; tissue; extracellular vesicles; microcapsules; gelatine; 3d bone models"
+   ]
+  },
+  "sdrf": [],
+  "indicators": {
+   "ms_levels": {
+    "1": 8571,
+    "2": 100480
+   },
+   "filter_prefix": {
+    "FTMS": 8571,
+    "ITMS": 100480
+   },
+   "reporter_share": {
+    "TMT": 0.0,
+    "TMTpro": 0.0,
+    "iTRAQ4": 0.0,
+    "iTRAQ8": 0.0
+   }
+  }
+ }
+]
