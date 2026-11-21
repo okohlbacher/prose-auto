@@ -47,7 +47,7 @@ MZ_REF = 1000.0          # windows in Da and ppm are compared at m/z 1,000
 # given at least 10 expected assessed scenarios;
 # wrong_protease is capped at wrong_label's bound (development 25/25 sits at the ceiling). A kind without such a bound
 # is experimental: reported with its interval, never a gate.
-CHECK_BOUND = {("pre", "correct"): 0.70, ("pre", "unrelated"): 0.50, ("pre", "related_close"): 0.45,
+CHECK_BOUND = {("pre", "correct"): 0.75, ("pre", "unrelated"): 0.50, ("pre", "related_close"): 0.45,
                ("pre", "related_distant"): 0.45, ("post", "correct"): 0.75, ("post", "unrelated"): 0.75,
                ("post", "related_distant"): 0.20, ("post", "wrong_label"): 0.65, ("post", "wrong_protease"): 0.65}
 EXPERIMENTAL = {("post", "related_close"), ("pre", "incomplete"), ("post", "incomplete")}

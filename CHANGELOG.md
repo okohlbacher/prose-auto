@@ -27,7 +27,7 @@ the 215 runs with settings, so the identifications and SDRF scores are those of 
 on 5 more runs and on 1 fewer (PXD053053), net 4, with no decision changed; PXD053053's panel pass no longer uses
 the QC kit's TMTpro label.
 
-Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets unchanged)
+Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
 - Scenario-specific searches for the wrong-database checks; a taxonomy rule for the scenarios (`scenarios.py`,
   `resolve_uniprot.py`) and the manifest for all 40 runs (UniProt 2026_04; 3 runs excluded by rule).
 - Run classes: top-down (new endpoint S8), stopped, missing, organism not verified.
@@ -39,8 +39,10 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`; the drawn sets 
   comparator arm, not the truth.
 - Third review: checks keyed by source and arm, exact P3 boundary, Holm over all nine gates, uninformative Cys
   comparisons, label vocabulary, reference-database manifest (`refdb.py`), frozen scenario rows kept on adjudication.
-- A pilot of 19 independent runs (PREREG §0): 12 eligible; P1 1.098, P2 1.250, P3 auto 11/12; power from the pilot
-  calls for about 300 drawn runs (proposed, not drawn).
+- A pilot of 19 independent runs (PREREG §0): 12 eligible; P1 1.098, P2 1.250, P3 auto 11/12.
+- Held-out set topped up to 300 drawn runs (`draw_topup.py`, seed 20261122; adopted by the author), P3 gates kept
+  (X 0.75, margin -0.05): joint power 0.98 at the pilot effect. Pre-search specificity bound 0.70 -> 0.75 at 300;
+  `refdb_draw.tsv` for all 300 runs; execution plan on BinAC2 (PREREG §10.1).
 
 ## 0.1.11 (2026-11-20)
 

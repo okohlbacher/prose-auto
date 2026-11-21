@@ -59,28 +59,28 @@ held-out predicates and queries, one or two runs per stratum.
 **Power from the pilot** (`power.txt`, `power_grid.txt`):
 - **Method:** the pilot's 12 eligible runs are resampled by quota pool; pools without a pilot run draw from all 12.
   37 % of the drawn runs are lost (7 of 19).
-- **Joint power of P1, P2 and P3 (both gates):**
+- **Joint power of P1, P2 and P3 (both gates)**, on the 300-run quota mix (`power_grid.txt`, 200 simulations per
+  cell; the drawn count includes the runs tagged top-down, which are removed):
 
 | Drawn runs | X | Margin | Pilot effect | auto PSMs ×0.98 and 2 % fewer compliant | ×0.97 and 5 % fewer |
 |---|---|---|---|---|---|
-| 187 (current draw) | 0.75 | −0.05 | 0.43 | 0.32 | 0.15 |
-| 250 | 0.75 | −0.05 | 0.80 | 0.62 | 0.29 |
-| 300 | 0.75 | −0.05 | 0.93 | 0.90 | 0.56 |
-| 300 | 0.75 | −0.10 | 0.99 | 0.96 | 0.74 |
-| 300 | 0.70 | −0.10 | 1.00 | 0.99 | 0.93 |
-| 400 | 0.75 | −0.05 | 0.96 | 0.93 | 0.66 |
+| 187 (first draw) | 0.75 | −0.05 | 0.20 | 0.17 | 0.14 |
+| 250 | 0.75 | −0.05 | 0.92 | 0.85 | 0.65 |
+| **300 (adopted)** | **0.75** | **−0.05** | **0.97** | **0.95** | **0.69** |
+| 300 | 0.75 | −0.10 | 0.99 | 0.99 | 0.94 |
+| 300 | 0.70 | −0.10 | 1.00 | 1.00 | 0.98 |
+| 400 | 0.75 | −0.05 | 0.99 | 0.94 | 0.80 |
 
-- **The binding constraint** is the number of eligible runs: 187 drawn give about 115, under the 120-run minimum, in
+- **At the adopted design** (`power.txt`, 1,000 simulations): about 184 eligible runs; joint power 0.98 at the pilot
+  effect, 0.97 with auto PSMs ×0.97, 0.92 with 2 % fewer compliant auto runs, 0.77 with 5 % fewer.
+- **The binding constraint** at 187 drawn was the number of eligible runs: about 115, under the 120-run minimum, in
   most simulations.
 - **What the margins need:** P1 and P2 have power 1.00 from 250 drawn runs at every effect shown. P3 sets the margin.
 
-**Proposal for sign-off** (the author decides; nothing has been changed):
-1. **Draw 300 runs:** a top-up of 113 runs by the same quotas, scaled (`draw_sets.py`, new seed). It excludes the
-   187 held-out runs, the wrong-database runs, every candidate project and the pilot. The top-up has not been drawn.
-2. **Keep X = 0.75 and the margin at −0.05:** joint power 0.93 at the pilot effect and 0.90 at a mildly worse one.
-   The alternative, the margin at −0.10, gives 0.99 and 0.96.
-3. **Recompute the check bounds at the final size** with `power.py`, by the frozen rule. At 187 drawn, post-search
-   specificity would drop from 0.75 to 0.70, because only about 100 runs would be assessed.
+**Adopted by the author on 2026-11-21:**
+1. **300 drawn runs:** a top-up of 113 runs by `draw_topup.py` (§2.1).
+2. **X = 0.75 and the margin at −0.05**, unchanged.
+3. **The check bounds were recomputed at 300** by the frozen rule (§9).
 
 **Caveats:**
 - The pilot is small: 12 runs, one annotator, and a simplified organism check.
@@ -124,9 +124,20 @@ held-out predicates and queries, one or two runs per stratum.
 
 ### 2.1 The held-out runs
 
-**The draw.** The sets were drawn on 2026-11-20 with seed 20261120 by `draw_sets.py`, from PRIDE's v3 search API.
-They are unchanged from the 0.1.11 draft; the files are byte-identical to `acceptance/0.1.11/` of fac1a34 (`SHA256SUMS`). No fix
-of 0.1.12 required a new draw.
+**The draw.** Two steps, both from PRIDE's v3 search API:
+- **2026-11-20:** 187 runs, seed 20261120, by `draw_sets.py`. These sets are unchanged from the 0.1.11 draft; the files
+  were byte-identical to `acceptance/0.1.11/` of fac1a34.
+- **2026-11-21, the top-up to 300 (§0):** 113 runs, seed 20261122, by `draw_topup.py`:
+  - the same strata, queries, predicates and file rule;
+  - each stratum's 187-run quota scaled to 300 by largest remainder, minus the runs already drawn;
+  - the exclusions: `exclude.txt`, the 187 runs, `wrongdb.tsv`, `candidates.tsv` and the pilot's draw and candidates;
+  - where a pool runs out, its unfilled places pass one at a time to the strata in draw order. No Asp-N project was
+    left (6 places), and the label-free baseline pool held 5 of 8. The 9 places went to Glu-C, chymotrypsin, Lys-C,
+    TMTpro SPS-MS3, TMTpro, TMT, iTRAQ, SILAC and glyco;
+  - the 113 rows are appended to `heldout.tsv`, whose first 187 rows are unchanged. `draw_topup.py` refuses to run
+    unless `heldout.tsv` is still the 187-run file.
+
+The wrong-database set and the scenarios are unchanged: `scenarios.py` rebuilds `scenarios.tsv` byte for byte.
 
 **Excluded from the draw:** the 2,691 accessions in `exclude.txt`. These are every PXD named in the prose-auto
 development tree:
@@ -140,12 +151,14 @@ Whole-PRIDE screens and catalogues (candidate screens, the bigbio clone) were no
 
 | File | Runs | Content |
 |---|---|---|
-| `heldout.tsv` | 187 | one vendor file per project, 50 MB–6 GB, by quota (below), 253 GB in total |
+| `heldout.tsv` | 300 | one vendor file per project, 50 MB–6 GB, by quota (below), 399 GB in total (187 runs of 253 GB, then the top-up of 113 runs of 146 GB) |
 | `wrongdb.tsv` | 40 | 30 single-organism runs of `heldout.tsv` (seeded) and 10 runs of multi-species projects, 55 GB in total |
-| `candidates.tsv` | 283 | every project the draw looked at, with the file it chose, or `-` when it had none (86 projects had no vendor file of 50 MB–6 GB) |
-| `draw.log` | | queries, pools and fills |
+| `candidates.tsv` | 283 | every project the first draw looked at, with the file it chose, or `-` when it had none (86 projects had no vendor file of 50 MB–6 GB) |
+| `topup.tsv`, `topup_candidates.tsv` | 113, 159 | the top-up runs (also in `heldout.tsv`) and every project it looked at |
+| `draw.log`, `draw_topup.log` | | queries, pools and fills |
+| `refdb_draw.tsv` | 300 | the reference-database manifest from PRIDE's organism field (`refdb.py`, UniProt snapshot `uniprot_heldout/`); rebuilt from `adjudicated.tsv` after the annotation (§3.1) |
 
-**Quotas.** Column `stratum` of `heldout.tsv` names the stratum. A project counts for the first stratum that takes it,
+**Quotas** (runs of the first draw; with the top-up, see `draw_topup.log`). Column `stratum` of `heldout.tsv` names the stratum. A project counts for the first stratum that takes it,
 rarest first.
 
 | Stratum | Runs | Selected by |
@@ -168,8 +181,8 @@ The reference annotation (§3) puts every run in one class.
 
 - **bottom-up:** in P1–P3 and S1–S7.
 - **top-down or intact protein:** out of P1–P3. Endpoint S8 instead tests whether prose-auto stopped with the
-  top-down message, as it should. Five drawn runs carry "Top-down proteomics" in the experiment field; the annotation
-  decides.
+  top-down message, as it should. Eight drawn runs (five of the first draw, three of the top-up) carry "Top-down
+  proteomics" in the experiment field; the annotation decides.
 - **no proteome:** a metagenome, no species-level organism, or a species without a UniProt reference proteome of its
   own (prose-auto would search a relative; the reference database would be undefined). Out of P1–P3; counted.
 - **organism not verified** (§3.1): out of P1–P3; counted.
@@ -182,7 +195,8 @@ These rules apply within the eligible runs:
   but a missing arm result is left out of the endpoints that need that arm, and counted.
 - **Denominators:** every endpoint reports its denominator and the counts left out, by reason.
 - **The minimum:** with fewer than 120 eligible runs (bottom-up, organism verified, not missing), P1–P3 and the study
-  get no verdict (`score.MIN_ELIGIBLE`, tested at 119 and 120). `power.txt` assumes 10 % missing, about 164 eligible.
+  get no verdict (`score.MIN_ELIGIBLE`, tested at 119 and 120). `power.txt` assumes the pilot's loss (37 %), about 184
+  eligible of the 292 runs not tagged top-down.
 
 ### 2.3 The wrong-database scenarios (`scenarios.py`, frozen manifest)
 
@@ -368,8 +382,9 @@ replaced and disclosed.
 
 **Power.** The power comes from the pilot (§0: 12 eligible runs, prose-auto 0.1.12 against the annotated
 reference), resampled by quota pool through `score.py`'s own functions.
-- **The current draw** (187): joint power 0.43, because only about 115 runs stay eligible.
-- **300 drawn,** X 0.75, margin −0.05: 0.93.
+- **The draw** (300, X 0.75, margin −0.05): joint power 0.98 at the pilot effect; 0.92 and 0.77 when 2 % and 5 % of
+  the compliant auto runs become noncompliant (§0, `power.txt`).
+- **The first draw alone** (187) would have given 0.20: only about 115 runs stay eligible.
 
 The development corpus (prose-auto 0.1.3 against the optimal settings) gave a P3 power of 0.03. It is replaced by the
 pilot as the power basis and kept only as a disclosure.
@@ -461,19 +476,20 @@ gate without an assessed scenario keeps p = 1 and does not pass.
 
 | Check | Kind | Bound | Development share | Held-out n (expected) | Power under Holm |
 |---|---|---|---|---|---|
-| pre | correct (specificity) | 0.70 | 0.863 (158/183) | 99 | 0.99 |
+| pre | correct (specificity) | 0.75 | 0.863 (158/183) | 158 | 0.96 |
 | pre | unrelated | 0.50 | 0.838 (140/167) | 32 | 0.98 |
-| pre | related_close (same family) | 0.45 | 0.779 (81/104) | 31 | 0.97 |
-| pre | related_distant (same order or class) | 0.45 | 0.778 (7/9) | 30 | 0.98 |
-| post | correct (specificity) | 0.75 | 0.869 (159/183) | 100 | 0.91 |
+| pre | related_close (same family) | 0.45 | 0.779 (81/104) | 31 | 0.96 |
+| pre | related_distant (same order or class) | 0.45 | 0.778 (7/9) | 30 | 0.97 |
+| post | correct (specificity) | 0.75 | 0.869 (159/183) | 160 | 0.98 |
 | post | unrelated | 0.75 | 0.988 (163/165) | 32 | 1.00 |
 | post | related_distant | 0.20 | 0.556 (5/9) | 30 | 0.98 |
 | post | wrong_label | 0.65 | 0.960 (24/25) | 25 | 1.00 |
 | post | wrong_protease | 0.65 | 1.000 (25/25) | 25 | 1.00 |
 
-Held-out n for specificity assumes the pilot's loss rate (37 %) on the 187 drawn runs. At that size the exact rule
-puts post-search specificity at 0.70 (power 0.670 at 0.75). The bounds are recomputed at the final size (§0) before
-the freeze. Power under Holm: `power.txt`, 1,000 simulations, standard error ≤ 0.009.
+Held-out n for specificity assumes the pilot's loss rate (37 %) on the 300 drawn runs. Recomputed at that size by the
+frozen rule, pre-search specificity rises from 0.70 to 0.75 (exact power 0.819) and post-search specificity stays at
+0.75 (0.899). The other seven gates depend only on the unchanged scenario manifest and keep their bounds. Power under
+Holm: `power.txt`, 1,000 simulations, standard error ≤ 0.006.
 
 **How the bounds were set** (`power.py`):
 - **The bound:** each is the largest bound, in steps of 0.05 from 0.10, with single-gate power ≥ 0.80 at 0.05/9
@@ -502,8 +518,9 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
    - fetch the FASTA of every reference organism and every scenario of `scenarios.tsv` (its UniProt proteome ids);
    - write `FREEZE.md` with the SHA-256 of:
      - `extract.py`, `score.py`, `scenarios.py`, `resolve_uniprot.py` and `power.py`;
-     - `heldout.tsv`, `wrongdb.tsv` and `scenarios.tsv`;
-     - `uniprot/` (lineages, candidates, the request log);
+     - `heldout.tsv` (300 runs), `topup.tsv`, `wrongdb.tsv`, `scenarios.tsv` and `refdb_draw.tsv`, with
+       `draw_sets.py` and `draw_topup.py`;
+     - `uniprot/` and `uniprot_heldout/` (lineages, candidates, the request log);
      - every FASTA;
      - the binaries and environment of §1 (FASTag bundle, ProSE, DIAspeXtract, FileConverter, mzpeak-convert,
        `pip freeze` of the Python environment) and the Jev model, version, parameters and cache;
@@ -541,6 +558,50 @@ The order is fixed. Nothing of a held-out raw file is downloaded or opened befor
 - the scenario rules, including adjudication.
 
 On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to end.
+
+### 10.1 Execution plan (where each step runs; nothing started)
+
+| Step (§10) | Where | Load |
+|---|---|---|
+| 3. Download and conversion | IBMI: `pxd get` and `pxd convert` into the shared PRIDE mirror `/ceph/ibmi/abi/data/PXD` (the mirror's recipe), on a claimed IBMI node | 300 vendor files, 399 GB, and their mzML; the mirror keeps its 50 GB quota margin (3.9 TB free on 2026-11-21) |
+| 4. Annotation subset searches (§3.2, §3.3) | BinAC2, array A | 300 tasks, a few subset searches each |
+| 5a. Every prose-auto `analyze`: the auto arm, the ablations of §7, the S6 pre-search analyses | IBMI, on a claimed node, 8 at a time with 8 threads | about 2,000 analyses at a median 145 s (pilot): about 10 h. They call Jev, whose key reaches only IBMI and only over ssh stdin, so they do not run on BinAC2 |
+| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per held-out run) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per held-out run and 213 scenario searches |
+| 5c. Post-search checks (`prose-auto check`) | BinAC2, in the task of their search | — |
+| 6. `extract.py`, `score.py` | IBMI | minutes |
+
+**BinAC2 (RV bw26g016):**
+- **Paths:**
+  - inputs (mzML, FASTA, `cmd.json` of each analysis) and outputs: `/pfs/10/project/bw26g016/prose-auto-0112/{in,out}`;
+  - inputs are copied with `pxd stage --to binac2j:…`;
+  - intermediates go to the node-local `$TMPDIR`;
+  - the container and the frozen tree live in the workspace `proseauto`, which must be extended past 2026-12-14 if the
+    runs go later.
+- **Environment:** the Ubuntu 24.04 container of the October 2026 development run (below), with the frozen IBMI tree bound at its
+  own paths. Each task checks the SHA-256 of ProSE, DIAspeXtract and the FASTA files against `FREEZE.md` before it
+  searches, and stops on a mismatch.
+- **Slurm:** partition `compute`, arrays with at most 40 tasks running. Per task:
+  - `--cpus-per-task=32`, that is 16 physical cores, since hyperthreading is on;
+  - ProSE `-threads 16`, with `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and `MKL_NUM_THREADS` all 16;
+  - `--mem=128gb`. The pilot's largest search peaked at 18 GB. In the October 2026 development run on BinAC2
+    (`bench2`, 127 runs, job 6309342), 34 tasks ran out of memory at 96 GB, with the conversion inside the task.
+    All 127 projects are in `exclude.txt` and none is in a 0.1.12 set;
+  - `--time=06:00:00`.
+- **A failed task:** one rerun with twice the memory and time. A run that fails again is missing (§2.2).
+- **Results:** copied back to Ceph with `rsync` from an absolute source, hashed, and appended to `FREEZE.md`.
+
+**Budget and ETA:**
+
+| Item | Estimate |
+|---|---|
+| Pilot searches (8 threads) | median 5 s, 90th percentile 21 s, longest 91 s |
+| Arrays B and C | about 50 node-hours; the cap is 150 |
+| Wall time with 40 tasks running | about 6 h, plus the queue (compute was 199 of 204 nodes allocated on 2026-11-21) |
+| IBMI analyses | about 10 h |
+| Conversion | about 4 h |
+| Download | depends on Globus |
+
+The first 10 tasks of array B recalibrate the time limit before the rest are released.
 
 ## 11. What is not claimed
 
@@ -642,3 +703,25 @@ On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to e
 7. **S1** uses prose-auto's label vocabulary. **S6** reports identification losses and check times.
 8. **§0 Pilot** was added. It proposes a top-up to 300 drawn runs and keeps the P3 gates (X 0.75, −0.05). Not yet
    adopted: the author decides.
+
+### 2026-11-21c, 0.1.12 (before sign-off; the author's decision on the pilot)
+
+1. **Sample size:** the author adopted the top-up to 300 drawn runs and kept X = 0.75 and the margin at −0.05.
+   `draw_topup.py` drew 113 runs (seed 20261122) and appended them to `heldout.tsv` (§2.1). Asp-N stays at 10 runs:
+   no project was left.
+2. **Power at 300** (`power.txt`, `power_grid.txt`; §0, §5): joint power 0.98 at the pilot effect, about 184
+   eligible runs. The grid now counts every drawn run, the top-down share included. Before, its 187 row counted 187
+   runs not tagged top-down.
+3. **Check bounds at 300** by the frozen rule (§9): pre-search specificity 0.70 → 0.75; the other eight are unchanged.
+4. **Manifests:**
+   - `scenarios.tsv` is unchanged; it rebuilds byte for byte from the unchanged `wrongdb.tsv`;
+   - `refdb_draw.tsv` gives the reference databases of all 300 runs from PRIDE's organism field;
+   - its UniProt snapshot `uniprot_heldout/` is the `--snapshot` of the rebuild after adjudication;
+   - on the PRIDE field, 282 runs have a database and 18 are no-proteome: 12 species without a reference proteome of
+     their own, and 6 names UniProt's taxonomy does not resolve (synonyms such as *Neosartorya fumigata*, and
+     non-species names). The annotation decides (§3.1);
+   - `refdb.py` now puts its own folder on the import path, as `resolve_uniprot.py` does, so it runs under
+     `python -I`.
+5. **Execution plan** (§10.1): searches and checks on BinAC2, and every analysis that calls Jev on IBMI, with the node
+   budget and the ETA.
+

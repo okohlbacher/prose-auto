@@ -1,0 +1,453 @@
+1	|	root	|		|	scientific name	|
+2	|	Bacteria	|		|	scientific name	|
+286	|	Pseudomonas	|		|	scientific name	|
+287	|	Pseudomonas aeruginosa	|		|	scientific name	|
+481	|	Neisseriaceae	|		|	scientific name	|
+482	|	Neisseria	|		|	scientific name	|
+485	|	Neisseria gonorrhoeae	|		|	scientific name	|
+543	|	Enterobacteriaceae	|		|	scientific name	|
+561	|	Escherichia	|		|	scientific name	|
+562	|	Escherichia coli	|		|	scientific name	|
+590	|	Salmonella	|		|	scientific name	|
+642	|	Aeromonas	|		|	scientific name	|
+654	|	Aeromonas veronii	|		|	scientific name	|
+1224	|	Pseudomonadota	|		|	scientific name	|
+1236	|	Gammaproteobacteria	|		|	scientific name	|
+1239	|	Bacillota	|		|	scientific name	|
+1279	|	Staphylococcus	|		|	scientific name	|
+1280	|	Staphylococcus aureus	|		|	scientific name	|
+1300	|	Streptococcaceae	|		|	scientific name	|
+1301	|	Streptococcus	|		|	scientific name	|
+1313	|	Streptococcus pneumoniae	|		|	scientific name	|
+1385	|	Caryophanales	|		|	scientific name	|
+1462	|	Geobacillus kaustophilus	|		|	scientific name	|
+1637	|	Listeria	|		|	scientific name	|
+1639	|	Listeria monocytogenes	|		|	scientific name	|
+1760	|	Actinomycetes	|		|	scientific name	|
+1883	|	Streptomyces	|		|	scientific name	|
+1886	|	Streptomyces albidoflavus	|		|	scientific name	|
+2062	|	Streptomycetaceae	|		|	scientific name	|
+2157	|	Archaea	|		|	scientific name	|
+2191	|	Methanomicrobiales	|		|	scientific name	|
+2202	|	Methanospirillum	|		|	scientific name	|
+2203	|	Methanospirillum hungatei	|		|	scientific name	|
+2222	|	Methanothrix	|		|	scientific name	|
+2223	|	Methanothrix soehngenii	|		|	scientific name	|
+2759	|	Eukaryota	|		|	scientific name	|
+3041	|	Chlorophyta	|		|	scientific name	|
+3042	|	Chlamydomonadales	|		|	scientific name	|
+3051	|	Chlamydomonadaceae	|		|	scientific name	|
+3052	|	Chlamydomonas	|		|	scientific name	|
+3055	|	Chlamydomonas reinhardtii	|		|	scientific name	|
+3166	|	Chlorophyceae	|		|	scientific name	|
+3193	|	Embryophyta	|		|	scientific name	|
+3195	|	Marchantiophyta	|		|	scientific name	|
+3196	|	Marchantia	|		|	scientific name	|
+3197	|	Marchantia polymorpha	|		|	scientific name	|
+3313	|	Pinidae	|		|	scientific name	|
+3318	|	Pinaceae	|		|	scientific name	|
+3337	|	Pinus	|		|	scientific name	|
+3398	|	Magnoliopsida	|		|	scientific name	|
+3699	|	Brassicales	|		|	scientific name	|
+3700	|	Brassicaceae	|		|	scientific name	|
+3701	|	Arabidopsis	|		|	scientific name	|
+3702	|	Arabidopsis thaliana	|		|	scientific name	|
+3803	|	Fabaceae	|		|	scientific name	|
+3814	|	Papilionoideae	|		|	scientific name	|
+3877	|	Medicago	|		|	scientific name	|
+3879	|	Medicago sativa	|		|	scientific name	|
+4069	|	Solanales	|		|	scientific name	|
+4070	|	Solanaceae	|		|	scientific name	|
+4081	|	Solanum lycopersicum	|		|	scientific name	|
+4085	|	Nicotiana	|		|	scientific name	|
+4100	|	Nicotiana benthamiana	|		|	scientific name	|
+4107	|	Solanum	|		|	scientific name	|
+4113	|	Solanum tuberosum	|		|	scientific name	|
+4447	|	Liliopsida	|		|	scientific name	|
+4479	|	Poaceae	|		|	scientific name	|
+4512	|	Hordeum	|		|	scientific name	|
+4513	|	Hordeum vulgare	|		|	scientific name	|
+4564	|	Triticum	|		|	scientific name	|
+4565	|	Triticum aestivum	|		|	scientific name	|
+4575	|	Zea	|		|	scientific name	|
+4577	|	Zea mays	|		|	scientific name	|
+4734	|	commelinids	|		|	scientific name	|
+4751	|	Fungi	|		|	scientific name	|
+4890	|	Ascomycota	|		|	scientific name	|
+4891	|	Saccharomycetes	|		|	scientific name	|
+4892	|	Saccharomycetales	|		|	scientific name	|
+4893	|	Saccharomycetaceae	|		|	scientific name	|
+4894	|	Schizosaccharomycetaceae	|		|	scientific name	|
+4895	|	Schizosaccharomyces	|		|	scientific name	|
+4896	|	Schizosaccharomyces pombe	|		|	scientific name	|
+4909	|	Pichia kudriavzevii	|		|	scientific name	|
+4919	|	Pichia	|		|	scientific name	|
+4930	|	Saccharomyces	|		|	scientific name	|
+4932	|	Saccharomyces cerevisiae	|		|	scientific name	|
+5042	|	Eurotiales	|		|	scientific name	|
+5178	|	Helotiales	|		|	scientific name	|
+5475	|	Candida	|		|	scientific name	|
+5476	|	Candida albicans	|		|	scientific name	|
+5653	|	Kinetoplastea	|		|	scientific name	|
+5654	|	Trypanosomatidae	|		|	scientific name	|
+5690	|	Trypanosoma	|		|	scientific name	|
+5691	|	Trypanosoma brucei	|		|	scientific name	|
+5794	|	Apicomplexa	|		|	scientific name	|
+5819	|	Haemosporida	|		|	scientific name	|
+5820	|	Plasmodium	|		|	scientific name	|
+5833	|	Plasmodium falciparum	|		|	scientific name	|
+6072	|	Eumetazoa	|		|	scientific name	|
+6231	|	Nematoda	|		|	scientific name	|
+6236	|	Rhabditida	|		|	scientific name	|
+6237	|	Caenorhabditis	|		|	scientific name	|
+6239	|	Caenorhabditis elegans	|		|	scientific name	|
+6243	|	Rhabditidae	|		|	scientific name	|
+6340	|	Annelida	|		|	scientific name	|
+6381	|	Oligochaeta	|		|	scientific name	|
+6391	|	Lumbricina	|		|	scientific name	|
+6392	|	Lumbricidae	|		|	scientific name	|
+6447	|	Mollusca	|		|	scientific name	|
+6448	|	Gastropoda	|		|	scientific name	|
+6479	|	Neogastropoda	|		|	scientific name	|
+6656	|	Arthropoda	|		|	scientific name	|
+6960	|	Hexapoda	|		|	scientific name	|
+7147	|	Diptera	|		|	scientific name	|
+7203	|	Brachycera	|		|	scientific name	|
+7214	|	Drosophilidae	|		|	scientific name	|
+7215	|	Drosophila	|		|	scientific name	|
+7227	|	Drosophila melanogaster	|		|	scientific name	|
+7496	|	Pterygota	|		|	scientific name	|
+7711	|	Chordata	|		|	scientific name	|
+7712	|	Tunicata	|		|	scientific name	|
+7713	|	Ascidiacea	|		|	scientific name	|
+7716	|	Phlebobranchia	|		|	scientific name	|
+7717	|	Cionidae	|		|	scientific name	|
+7718	|	Ciona	|		|	scientific name	|
+7719	|	Ciona intestinalis	|		|	scientific name	|
+7742	|	Vertebrata	|		|	scientific name	|
+7776	|	Gnathostomata	|		|	scientific name	|
+7777	|	Chondrichthyes	|		|	scientific name	|
+7778	|	Elasmobranchii	|		|	scientific name	|
+7826	|	Scyliorhinidae	|		|	scientific name	|
+7829	|	Scyliorhinus	|		|	scientific name	|
+7830	|	Scyliorhinus canicula	|		|	scientific name	|
+7898	|	Actinopterygii	|		|	scientific name	|
+7952	|	Cypriniformes	|		|	scientific name	|
+7954	|	Danio	|		|	scientific name	|
+7955	|	Danio rerio	|		|	scientific name	|
+8287	|	Sarcopterygii	|		|	scientific name	|
+8292	|	Amphibia	|		|	scientific name	|
+8342	|	Anura	|		|	scientific name	|
+8352	|	Pipidae	|		|	scientific name	|
+8353	|	Xenopus	|		|	scientific name	|
+8355	|	Xenopus laevis	|		|	scientific name	|
+8360	|	Xenopodinae	|		|	scientific name	|
+8457	|	Sauropsida	|		|	scientific name	|
+8492	|	Archosauria	|		|	scientific name	|
+8504	|	Lepidosauria	|		|	scientific name	|
+8509	|	Squamata	|		|	scientific name	|
+8570	|	Serpentes	|		|	scientific name	|
+8689	|	Viperidae	|		|	scientific name	|
+8710	|	Crotalinae	|		|	scientific name	|
+8721	|	Bothrops	|		|	scientific name	|
+8724	|	Bothrops jararaca	|		|	scientific name	|
+8782	|	Aves	|		|	scientific name	|
+8825	|	Neognathae	|		|	scientific name	|
+8976	|	Galliformes	|		|	scientific name	|
+9005	|	Phasianidae	|		|	scientific name	|
+9030	|	Gallus	|		|	scientific name	|
+9031	|	Gallus gallus	|		|	scientific name	|
+9072	|	Phasianinae	|		|	scientific name	|
+9347	|	Eutheria	|		|	scientific name	|
+9443	|	Primates	|		|	scientific name	|
+9526	|	Catarrhini	|		|	scientific name	|
+9527	|	Cercopithecidae	|		|	scientific name	|
+9528	|	Cercopithecinae	|		|	scientific name	|
+9539	|	Macaca	|		|	scientific name	|
+9541	|	Macaca fascicularis	|		|	scientific name	|
+9604	|	Hominidae	|		|	scientific name	|
+9605	|	Homo	|		|	scientific name	|
+9606	|	Homo sapiens	|		|	scientific name	|
+9821	|	Suidae	|		|	scientific name	|
+9822	|	Sus	|		|	scientific name	|
+9823	|	Sus scrofa	|		|	scientific name	|
+9845	|	Ruminantia	|		|	scientific name	|
+9895	|	Bovidae	|		|	scientific name	|
+9903	|	Bos	|		|	scientific name	|
+9913	|	Bos taurus	|		|	scientific name	|
+9975	|	Lagomorpha	|		|	scientific name	|
+9979	|	Leporidae	|		|	scientific name	|
+9984	|	Oryctolagus	|		|	scientific name	|
+9986	|	Oryctolagus cuniculus	|		|	scientific name	|
+9989	|	Rodentia	|		|	scientific name	|
+10026	|	Cricetinae	|		|	scientific name	|
+10035	|	Mesocricetus	|		|	scientific name	|
+10036	|	Mesocricetus auratus	|		|	scientific name	|
+10066	|	Muridae	|		|	scientific name	|
+10088	|	Mus	|		|	scientific name	|
+10090	|	Mus musculus	|		|	scientific name	|
+10114	|	Rattus	|		|	scientific name	|
+10116	|	Rattus norvegicus	|		|	scientific name	|
+10239	|	Viruses	|		|	scientific name	|
+11157	|	Mononegavirales	|		|	scientific name	|
+11158	|	Paramyxoviridae	|		|	scientific name	|
+11229	|	Morbillivirus	|		|	scientific name	|
+11234	|	Measles morbillivirus	|		|	scientific name	|
+11974	|	Caliciviridae	|		|	scientific name	|
+11983	|	Norwalk virus	|		|	scientific name	|
+12333	|	unclassified bacterial viruses	|		|	scientific name	|
+12908	|	unclassified sequences	|		|	scientific name	|
+27592	|	Bovinae	|		|	scientific name	|
+28067	|	Rubrivivax	|		|	scientific name	|
+28216	|	Betaproteobacteria	|		|	scientific name	|
+28568	|	Trichocomaceae	|		|	scientific name	|
+28890	|	Methanobacteriota	|		|	scientific name	|
+28901	|	Salmonella enterica	|		|	scientific name	|
+28908	|	Marchantiales	|		|	scientific name	|
+28983	|	Sclerotiniaceae	|		|	scientific name	|
+29585	|	Marchantiaceae	|		|	scientific name	|
+30319	|	Pipoidea	|		|	scientific name	|
+30483	|	Carcharhiniformes	|		|	scientific name	|
+30727	|	Cyprinoidei	|		|	scientific name	|
+30863	|	Pomacentridae	|		|	scientific name	|
+32341	|	Sophophora	|		|	scientific name	|
+32346	|	melanogaster group	|		|	scientific name	|
+32351	|	melanogaster subgroup	|		|	scientific name	|
+32443	|	Teleostei	|		|	scientific name	|
+32519	|	Ostariophysi	|		|	scientific name	|
+32523	|	Tetrapoda	|		|	scientific name	|
+32524	|	Amniota	|		|	scientific name	|
+32525	|	Theria	|		|	scientific name	|
+32561	|	Sauria	|		|	scientific name	|
+32644	|	unidentified	|		|	scientific name	|
+33090	|	Viridiplantae	|		|	scientific name	|
+33154	|	Opisthokonta	|		|	scientific name	|
+33196	|	Botrytis	|		|	scientific name	|
+33208	|	Metazoa	|		|	scientific name	|
+33213	|	Bilateria	|		|	scientific name	|
+33317	|	Protostomia	|		|	scientific name	|
+33340	|	Neoptera	|		|	scientific name	|
+33392	|	Endopterygota	|		|	scientific name	|
+33511	|	Deuterostomia	|		|	scientific name	|
+33630	|	Alveolata	|		|	scientific name	|
+33682	|	Euglenozoa	|		|	scientific name	|
+34346	|	Schizosaccharomycetales	|		|	scientific name	|
+34989	|	Colubroidea	|		|	scientific name	|
+35493	|	Streptophyta	|		|	scientific name	|
+35497	|	Suina	|		|	scientific name	|
+35500	|	Pecora	|		|	scientific name	|
+36015	|	Pichia kluyveri	|		|	scientific name	|
+38820	|	Poales	|		|	scientific name	|
+39107	|	Murinae	|		|	scientific name	|
+39475	|	Muricoidea	|		|	scientific name	|
+39476	|	Muricidae	|		|	scientific name	|
+39700	|	Trypanozoon	|		|	scientific name	|
+40559	|	Botrytis cinerea	|		|	scientific name	|
+40674	|	Mammalia	|		|	scientific name	|
+41665	|	Neopterygii	|		|	scientific name	|
+41666	|	Batrachia	|		|	scientific name	|
+42113	|	Clitellata	|		|	scientific name	|
+43733	|	Muscomorpha	|		|	scientific name	|
+43738	|	Schizophora	|		|	scientific name	|
+43741	|	Acalyptratae	|		|	scientific name	|
+43746	|	Ephydroidea	|		|	scientific name	|
+43845	|	Drosophilinae	|		|	scientific name	|
+46877	|	Drosophilini	|		|	scientific name	|
+49274	|	Solanum subgen. Lycopersicon	|		|	scientific name	|
+50557	|	Insecta	|		|	scientific name	|
+55879	|	Rhabditoidea	|		|	scientific name	|
+55885	|	Peloderinae	|		|	scientific name	|
+58019	|	Pinopsida	|		|	scientific name	|
+58023	|	Tracheophyta	|		|	scientific name	|
+58024	|	Spermatophyta	|		|	scientific name	|
+59201	|	Salmonella enterica I	|		|	scientific name	|
+68825	|	Rasamsonia emersonii	|		|	scientific name	|
+69555	|	Caenogastropoda	|		|	scientific name	|
+71240	|	eudicotyledons	|		|	scientific name	|
+71274	|	asterids	|		|	scientific name	|
+71275	|	rosids	|		|	scientific name	|
+72025	|	Fabales	|		|	scientific name	|
+72274	|	Pseudomonadales	|		|	scientific name	|
+78536	|	Euphyllophyta	|		|	scientific name	|
+80840	|	Burkholderiales	|		|	scientific name	|
+80965	|	Acanthochromis	|		|	scientific name	|
+80966	|	Acanthochromis polyacanthus	|		|	scientific name	|
+84642	|	Aeromonadaceae	|		|	scientific name	|
+85011	|	Kitasatosporales	|		|	scientific name	|
+85512	|	Dicondylia	|		|	scientific name	|
+88770	|	Panarthropoda	|		|	scientific name	|
+89593	|	Craniata	|		|	scientific name	|
+90371	|	Salmonella typhimurium	|		|	scientific name	|
+90964	|	Staphylococcaceae	|		|	scientific name	|
+91061	|	Bacilli	|		|	scientific name	|
+91347	|	Enterobacterales	|		|	scientific name	|
+91561	|	Artiodactyla	|		|	scientific name	|
+91827	|	Gunneridae	|		|	scientific name	|
+91835	|	fabids	|		|	scientific name	|
+91836	|	malvids	|		|	scientific name	|
+91888	|	lamiids	|		|	scientific name	|
+116954	|	Dendrobaena	|		|	scientific name	|
+117570	|	Teleostomi	|		|	scientific name	|
+117571	|	Euteleostomi	|		|	scientific name	|
+119089	|	Chromadorea	|		|	scientific name	|
+119195	|	Galeoidea	|		|	scientific name	|
+119197	|	Galeomorphii	|		|	scientific name	|
+119203	|	Selachii	|		|	scientific name	|
+123365	|	Neoteleostei	|		|	scientific name	|
+123366	|	Eurypterygia	|		|	scientific name	|
+123367	|	Ctenosquamata	|		|	scientific name	|
+123368	|	Acanthomorphata	|		|	scientific name	|
+123369	|	Euacanthomorphacea	|		|	scientific name	|
+129337	|	Geobacillus	|		|	scientific name	|
+131221	|	Streptophytina	|		|	scientific name	|
+131567	|	cellular organisms	|		|	scientific name	|
+134470	|	Stramonita	|		|	scientific name	|
+134471	|	Stramonita haemastoma	|		|	scientific name	|
+135621	|	Pseudomonadaceae	|		|	scientific name	|
+135624	|	Aeromonadales	|		|	scientific name	|
+136841	|	Pseudomonas aeruginosa group	|		|	scientific name	|
+139272	|	Pinus subgen. Strobus	|		|	scientific name	|
+142786	|	Norovirus	|		|	scientific name	|
+143067	|	Methanotrichaceae	|		|	scientific name	|
+147368	|	Pooideae	|		|	scientific name	|
+147369	|	Panicoideae	|		|	scientific name	|
+147370	|	PACMAD clade	|		|	scientific name	|
+147389	|	Triticeae	|		|	scientific name	|
+147429	|	Andropogoneae	|		|	scientific name	|
+147537	|	Saccharomycotina	|		|	scientific name	|
+147538	|	Pezizomycotina	|		|	scientific name	|
+147545	|	Eurotiomycetes	|		|	scientific name	|
+147548	|	Leotiomycetes	|		|	scientific name	|
+147554	|	Schizosaccharomycetes	|		|	scientific name	|
+163742	|	Trifolieae	|		|	scientific name	|
+186623	|	Actinopteri	|		|	scientific name	|
+186625	|	Clupeocephala	|		|	scientific name	|
+186626	|	Otophysi	|		|	scientific name	|
+186627	|	Cypriniphysae	|		|	scientific name	|
+186634	|	Otomorpha	|		|	scientific name	|
+186770	|	Marchantiopsida	|		|	scientific name	|
+186774	|	Marchantiidae	|		|	scientific name	|
+186820	|	Listeriaceae	|		|	scientific name	|
+186826	|	Lactobacillales	|		|	scientific name	|
+196137	|	Methanospirillaceae	|		|	scientific name	|
+197562	|	Pancrustacea	|		|	scientific name	|
+197563	|	Mandibulata	|		|	scientific name	|
+201174	|	Actinomycetota	|		|	scientific name	|
+206351	|	Neisseriales	|		|	scientific name	|
+207598	|	Homininae	|		|	scientific name	|
+224756	|	Methanomicrobia	|		|	scientific name	|
+252739	|	Pinus fenzeliana	|		|	scientific name	|
+262014	|	Xenopus	|		|	scientific name	|
+314145	|	Laurasiatheria	|		|	scientific name	|
+314146	|	Euarchontoglires	|		|	scientific name	|
+314147	|	Glires	|		|	scientific name	|
+314293	|	Simiiformes	|		|	scientific name	|
+314294	|	Cercopithecoidea	|		|	scientific name	|
+314295	|	Hominoidea	|		|	scientific name	|
+316997	|	Rubrivivax benzoatilyticus	|		|	scientific name	|
+332521	|	Dendrobaena veneta	|		|	scientific name	|
+337677	|	Cricetidae	|		|	scientific name	|
+337687	|	Muroidea	|		|	scientific name	|
+357231	|	Murine norovirus	|		|	scientific name	|
+359160	|	BOP clade	|		|	scientific name	|
+376913	|	Haplorrhini	|		|	scientific name	|
+418107	|	Laverania	|		|	scientific name	|
+422676	|	Aconoidasida	|		|	scientific name	|
+424551	|	Solanoideae	|		|	scientific name	|
+424554	|	Nicotianoideae	|		|	scientific name	|
+424562	|	Nicotianeae	|		|	scientific name	|
+424574	|	Solaneae	|		|	scientific name	|
+436486	|	Dinosauria	|		|	scientific name	|
+436489	|	Saurischia	|		|	scientific name	|
+436491	|	Theropoda	|		|	scientific name	|
+436492	|	Coelurosauria	|		|	scientific name	|
+451864	|	Dikarya	|		|	scientific name	|
+451866	|	Taphrinomycotina	|		|	scientific name	|
+451871	|	Eurotiomycetidae	|		|	scientific name	|
+464095	|	Picornavirales	|		|	scientific name	|
+480117	|	Cyclorrhapha	|		|	scientific name	|
+480118	|	Eremoneura	|		|	scientific name	|
+715989	|	sordariomyceta	|		|	scientific name	|
+716545	|	saccharomyceta	|		|	scientific name	|
+716546	|	leotiomyceta	|		|	scientific name	|
+766764	|	Debaryomycetaceae	|		|	scientific name	|
+862507	|	Mus	|		|	scientific name	|
+980083	|	Camelineae	|		|	scientific name	|
+1046325	|	Lumbricinae	|		|	scientific name	|
+1132856	|	Rasamsonia	|		|	scientific name	|
+1156497	|	Pichiaceae	|		|	scientific name	|
+1206794	|	Ecdysozoa	|		|	scientific name	|
+1206795	|	Lophotrochozoa	|		|	scientific name	|
+1246677	|	Norovirus GV	|		|	scientific name	|
+1329799	|	Archelosauria	|		|	scientific name	|
+1329911	|	Toxicofera	|		|	scientific name	|
+1329912	|	Episquamata	|		|	scientific name	|
+1329950	|	Unidentata	|		|	scientific name	|
+1329961	|	Bifurcata	|		|	scientific name	|
+1338369	|	Dipnotetrapodomorpha	|		|	scientific name	|
+1437010	|	Boreoeutheria	|		|	scientific name	|
+1437180	|	Acrogymnospermae	|		|	scientific name	|
+1437183	|	Mesangiospermae	|		|	scientific name	|
+1437197	|	Petrosaviidae	|		|	scientific name	|
+1437201	|	Pentapetalae	|		|	scientific name	|
+1446380	|	Pinales	|		|	scientific name	|
+1477431	|	Streptomyces albidoflavus group	|		|	scientific name	|
+1489341	|	Osteoglossocephalai	|		|	scientific name	|
+1489388	|	Euteleosteomorpha	|		|	scientific name	|
+1489872	|	Percomorphaceae	|		|	scientific name	|
+1489908	|	Ovalentaria	|		|	scientific name	|
+1489909	|	Ovalentaria incertae sedis	|		|	scientific name	|
+1500966	|	Pseudomonas populi	|		|	scientific name	|
+1505648	|	Geobacillus thermoleovorans group	|		|	scientific name	|
+1549675	|	Galloanserae	|		|	scientific name	|
+1639119	|	Plasmodiidae	|		|	scientific name	|
+1648017	|	Hordeinae	|		|	scientific name	|
+1648029	|	Tripsacinae	|		|	scientific name	|
+1648030	|	Triticinae	|		|	scientific name	|
+1648033	|	Andropogonodae	|		|	scientific name	|
+1648038	|	Triticodae	|		|	scientific name	|
+1783272	|	Bacillati	|		|	scientific name	|
+1963758	|	Myomorpha	|		|	scientific name	|
+2231382	|	NPAAA clade	|		|	scientific name	|
+2231393	|	50 kb inversion clade	|		|	scientific name	|
+2233838	|	Hologalegina	|		|	scientific name	|
+2233839	|	IRL clade	|		|	scientific name	|
+2290931	|	Stenosarchaea group	|		|	scientific name	|
+2301116	|	Rhabditina	|		|	scientific name	|
+2301119	|	Rhabditomorpha	|		|	scientific name	|
+2497569	|	Negarnaviricota	|		|	scientific name	|
+2497570	|	Haploviricotina	|		|	scientific name	|
+2497574	|	Monjiviricetes	|		|	scientific name	|
+2559587	|	Riboviria	|		|	scientific name	|
+2560076	|	Orthoparamyxovirinae	|		|	scientific name	|
+2611352	|	Discoba	|		|	scientific name	|
+2692248	|	core chlorophytes	|		|	scientific name	|
+2697495	|	Spiralia	|		|	scientific name	|
+2698737	|	Sar	|		|	scientific name	|
+2704647	|	Metakinetoplastina	|		|	scientific name	|
+2704949	|	Trypanosomatida	|		|	scientific name	|
+2732396	|	Orthornavirae	|		|	scientific name	|
+2732408	|	Pisuviricota	|		|	scientific name	|
+2732506	|	Pisoniviricetes	|		|	scientific name	|
+2743709	|	Danionidae	|		|	scientific name	|
+2743711	|	Danioninae	|		|	scientific name	|
+2787823	|	unclassified entries	|		|	scientific name	|
+2803884	|	Crassiclitellata	|		|	scientific name	|
+2812636	|	CS clade	|		|	scientific name	|
+2821352	|	Conifers I	|		|	scientific name	|
+2905377	|	Methanotrichales	|		|	scientific name	|
+2916678	|	Serinales	|		|	scientific name	|
+2975441	|	Sphaerotilaceae	|		|	scientific name	|
+3052345	|	Morbillivirus hominis	|		|	scientific name	|
+3102713	|	Escherichia phage	|		|	scientific name	|
+3120669	|	Anoxybacillaceae	|		|	scientific name	|
+3239874	|	Pichiomycetes	|		|	scientific name	|
+3243775	|	Pichiales	|		|	scientific name	|
+3366610	|	Methanobacteriati	|		|	scientific name	|
+3379134	|	Pseudomonadati	|		|	scientific name	|
+3431196	|	Norovirus norwalkense	|		|	scientific name	|
+3701028	|	Altocrustacea	|		|	scientific name	|
+3701030	|	Allotriocarida	|		|	scientific name	|
+3701061	|	Eumetabola	|		|	scientific name	|
+3701062	|	Aparaglossata	|		|	scientific name	|
+3701063	|	Panorpida	|		|	scientific name	|

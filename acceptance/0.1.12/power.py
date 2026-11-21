@@ -16,7 +16,7 @@ unchanged: the 120-run minimum, PSM eligibility, the ratio conventions, P3's sig
 Clopper-Pearson absolute gate. Shifts show the margins: auto PSMs x0.98 / x0.97, and 2 or 5 % of the compliant auto
 runs made noncompliant. P2 needs a defaults arm on every PRIMARY run, and at least 10 of them (the pilot), else its
 power is unknown (the development corpus: 16 data sets of their own, apart from the 228 runs).
---grid: joint power (P1, P2, P3 both gates) for draws of 187 to 400 runs and P3 bounds X in {0.70, 0.75, 0.80} and
+--grid: joint power (P1, P2, P3 both gates) for draws of 187 to 400 runs (all drawn runs; the top-down share removed) and P3 bounds X in {0.70, 0.75, 0.80} and
 margins in {-0.05, -0.10}, at the PRIMARY effect and at the worse ones.
 
 Checks. Per gate, the held-out scenario count (the manifest) times the development share assessed, and the development
@@ -48,7 +48,7 @@ eligible, counts, _ = SC.accounting(drawn, ref)
 runs_ok = [r for r in pool_of if r in eligible and (r, "auto") in tab and (r, "reference") in tab
            and "missing" not in (tab[(r, "auto")]["status"], tab[(r, "reference")]["status"])]
 # the share of drawn runs lost before the endpoints (missing, organism not verified, no proteome): from the PRIMARY
-# data, at least 10 %; the 5 runs tagged top-down are removed apart
+# data, at least 10 %; the runs tagged top-down are removed apart
 MISSING = max(0.10, 1 - len(eligible) / max(1, counts["drawn"] - counts["top-down"]))
 pools = {}
 for r in runs_ok:
@@ -65,13 +65,14 @@ def stratum_pool(s):
 
 
 held = SC.read(os.path.join(HERE, "heldout.tsv"), ["stratum", "experiment"])
+N_ALL = len(held)
 held = [h for h in held if "top-down" not in (h["experiment"] or "").lower()]
 want = [stratum_pool(h["stratum"]) for h in held]
 empty = sorted({p for p in want if not pools.get(p)})
 out.append("primary pools: " + ", ".join(f"{k} {len(v)}" for k, v in sorted(pools.items()))
            + (f"; no runs in {', '.join(empty)}: drawn from all runs" if empty else ""))
 out.append(f"lost before the endpoints: {MISSING:.3f} of the drawn runs ({counts})")
-out.append(f"held-out draw: {len(held)} runs not tagged top-down, by pool: " +
+out.append(f"held-out draw: {N_ALL} runs, {len(held)} not tagged top-down, by pool: " +
            ", ".join(f"{k} {want.count(k)}" for k in sorted(set(want))))
 
 
@@ -147,12 +148,13 @@ if not GRID:
                    f"{fmt(e['P1'])}, P2 {fmt(e['P2'])}, P3 both gates {fmt(e['P3'])}, joint {fmt(e['joint'])}")
 else:
     out.append("design grid (joint power of P1, P2 and P3 with both gates; P1 / P2 / P3 in brackets):")
+    # nd counts every drawn run; the share tagged top-down in heldout.tsv is removed before the simulation
     for nd in (187, 250, 300, 400):
         for x in (0.70, 0.75, 0.80):
             for m_ in (SC.P3_MARGIN_FRAC, SC.Fraction(-1, 10)):
                 cells = []
                 for shift, flip in ((1.0, 0.0), (0.98, 0.02), (0.97, 0.05)):
-                    e = primary(nd, shift, flip, x, m_, sims=max(200, SIMS // 4))
+                    e = primary(round(nd * len(want) / N_ALL), shift, flip, x, m_, sims=max(200, SIMS // 4))
                     cells.append(f"{fmt(e['joint'])} ({fmt(e['P1'])}/{fmt(e['P2'])}/{fmt(e['P3'])})")
                 out.append(f"drawn {nd}, X {x:.2f}, margin {float(m_):+.2f}: pilot effect {cells[0]}; "
                            f"x0.98 and 2 % fewer compliant {cells[1]}; x0.97 and 5 % fewer {cells[2]}")

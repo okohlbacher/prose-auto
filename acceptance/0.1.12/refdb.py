@@ -9,9 +9,11 @@ class. The organism names follow scenarios.species_names; TAXDIR and candidates.
 for RUNS.tsv (with --snapshot after adjudication). A run is no-proteome when no species is named, a name is not in
 the taxonomy, or a species has no reference proteome of its own; it then has no database and leaves P1-P3 (§2.2)."""
 import csv
+import os
 import sys
 
-from scenarios import at_rank, load_tax, species_names
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from scenarios import at_rank, load_tax, species_names   # noqa: E402
 
 
 def main(runs, taxdir, candfile):

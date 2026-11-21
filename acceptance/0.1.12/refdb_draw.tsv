@@ -1,0 +1,301 @@
+accession	file	class	organisms	taxids	proteomes	note
+PXD038231	20220726_bkc_23-0075_Goldberg_Hasan_RAP.raw	bottom-up	Plasmodium falciparum	5833	UP000001450	
+PXD001281	20130528_09_qEx_TT_T90_IP_I_II.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD015549	Griese_20181031_R2lox_S07_r3.raw	bottom-up	Geobacillus kaustophilus	1462	UP000001172	
+PXD068367	aSN_WT_gluC_GD5_1_14100.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD070124	h020598_DLB_BSA5_2p0_794_version_inactive_r2_E03_inj01.raw	bottom-up	Bos taurus	9913	UP000009136	
+PXD001217	AZ_PABJ_120610.RAW	bottom-up	Bothrops jararaca	8724	UP000681084	
+PXD084992	Pyk2-Src_phosph_60m-1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD013363	CCD-S1-GluCKGG-FT-C_180414173051.raw	bottom-up	Mus musculus; Mus musculus	10090; 10090	UP000000589; UP000000589	
+PXD002525	L1rep-2.raw	bottom-up	Caenorhabditis elegans	6239	UP000001940	
+PXD018333	H3982FD.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD047019	20220521_EXPL7_LC6_IAH_collab_AP_SUMO_RKO_01_F2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD079895	16217_tTau-IP_Exon4a_20260425060215.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD011361	NTD_Wt_AspN_LysC_50ms_set1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079838	tTau_27_UL-17607-10_MC.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD031548	20211214_EXPL7_LC6_IAH_collab_JC_SUMO_8D_03_F5x.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD024144	20200211_QE6_LC6_IAH_collab_PC_SUMO_AdD0_04_F6.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD079878	pTau217_29_7557_MU.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD010659	Diaz_INF2-4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD061276	20200804_EXPL7_LC12_IAH_collab_VM-AD_SUMO_P_02_F5.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD024574	FUS04873_PF_2.raw	bottom-up	Trypanosoma brucei	5691	UP000008524	
+PXD013038	FCarrieri_161006_05.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD025430	HBe_3CA_3.raw	no-proteome	Homo sapiens	9606		not in the taxonomy: Hepatitis b
+PXD010782	HF331_MSQ1275b_20180309_SAndrews_MITF_GSK_2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD046394	P1411-3-GFP_TM55B_NA.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD049110	ETD-1208-S-FL-Chymo-PNG-Neu-VVA.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD050366	20221024_F1_UM4_Peng0013_SA_EXT00_F_S2_Chymo_01.raw	no-proteome	Measles morbillivirus	3052345		no reference proteome of its own: Measles morbillivirus
+PXD043731	MMD6494_chymo_F2b.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD019016	Upperband_API.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD023659	V200409_06.raw	bottom-up	Mus musculus; Sus scrofa	10090; 9823	UP000000589; UP000008227	
+PXD036345	FP060222_11.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD075809	PRC-7113DDA_UPRC_3702_H11119_2p_IonOpt18_25cm_Breusegem-shotgun-DDA-2.raw	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD078573	20250305_AI_Rui_Xlink_F2_Slot1-11_1_9608.d.zip	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD022812	20170210_QEP1_PBE_JH_Sofia_HCT116_NEDP1_KD_Nedd8_double_diGly_SCX_04.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD065808	PSD_1MC2_020820.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD071719	20250815_SB_B3-Hb-GAPDH_Xlinks_6Plex_TMT.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD071955	20250118_BoDo_ZH03_ZH_5_107_6_SiHa_pup2_1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067823	ACE_0999_4000ng_RZ05.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD028507	DCT-S2-GluC-KGG-M.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD001648	20121219_BoSo_Ecoli_SuperSilac_EtOH_Rep2_IG_HCD_LysC_prestress_02.raw	bottom-up	Escherichia coli	562	UP000001410	
+PXD003468	20140802_Maja_Ecoli_LysC_OffGel_A_WT_10hrsLys4_0hrsLys0_12.raw	bottom-up	Escherichia coli	562	UP000001410	
+PXD060110	Ecl1_0146_R0072-01_S002021_L_H43_TMT16_01.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD053061	Adipocytes_Phospho_HpHF11.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD062886	PL21-PB-Frankel_11.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD036641	JM04824.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD056517	PanC_020624_TMT_2_SF05.raw	no-proteome	Methanospirillum hungatei; Methanothrix soehngenii	2203; 2223		not in the taxonomy: Clostridium cellulolyticum, Desulfovibrio vulgaris
+PXD063776	220930_37817_AS_L3.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD054545	a27937.raw	bottom-up	Xenopus laevis	8355	UP000186698	
+PXD060120	20220827_HF2_01_PK_1_TMT12.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD056979	20210617_TMT_8set_coronary_artery_frac8_3.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD063107	20250226_nU5_Exp2_Amir_B2_04.raw	bottom-up	Neisseria gonorrhoeae	485	UP000002564	
+PXD055647	ORC_03047.raw	bottom-up	Xenopus laevis; Drosophila melanogaster; Ciona intestinalis	8355; 7227; 7719	UP000186698; UP000000803; UP000008144	
+PXD074581	ABI1quantIP.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD062540	ORC_02102.raw	bottom-up	Homo sapiens; Xenopus laevis; Saccharomyces cerevisiae	9606; 8355; 4932	UP000005640; UP000186698; UP000002311	
+PXD054989	20240418_Ec_12_MS3_F12.raw	bottom-up	Gallus gallus	9031	UP000000539	
+PXD071434	OxidoResist_LCTA2940_MDAMB231_Frac09.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD068869	xb07892.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD066618	OH_20210818_TMTA_pST4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD066626	iMEF_Eclipse_2024Aug29_P24-058_Maher_F20.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD071550	20200309_ZYP_melotonin_ITDR_52_F2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD066652	20240823_JM_Benerji_DIA_15.raw	bottom-up	Homo sapiens; Mus musculus	9606; 10090	UP000005640; UP000000589	
+PXD080876	CAC20220225lut_Ag_lib4_2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD072739	SLK-TMT-CvsKD-f36.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD079152	OR3_2025_07_19_JS25_005_flag_R.raw	bottom-up	Salmonella typhimurium; Mus musculus	28901; 10090	UP000298196; UP000000589	
+PXD071068	BMMSC_6PlexTMT_Sup_FN20.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD063105	240524_organoid_EV_iTRAQ_24mM_2_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD059190	FR3_2_IJ.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD022064	F8032TQ_12.raw	no-proteome	Pinus fenzeliana	252739		no reference proteome of its own: Pinus fenzeliana
+PXD024916	Orbi05251XM_HJC_T2_5.raw	bottom-up	Caenorhabditis elegans	6239	UP000001940	
+PXD033938	3.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD054699	2019_HC_E3_F1.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD055514	iTRAQ6_08.raw	bottom-up	Rubrivivax benzoatilyticus	316997	UP000802098	
+PXD019413	Pig3-4.wiff	bottom-up	Sus scrofa	9823	UP000008227	
+PXD035420	20220502_SFB1_PBE_IM_HCT116_SILAC_eto_PPM1Di_TiO2_R3_5.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD077432	20250423_4a_RL_i03.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD047413	20220724_MC_LLQE_BMDM_LPS_rep2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD036348	NOZ_PvsGemR_BR1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD073367	20250430_HF_LC2_BSP_20024_01_500ng_45min_MIX02_01.raw	bottom-up	Homo sapiens; Escherichia coli; Staphylococcus aureus	9606; 562; 1280	UP000005640; UP000001410; UP000008816	
+PXD047664	P22_081_Singapur_Smim26_SampleIV_11.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD032030	Q20210823-05.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD058147	jg210713_03.raw	bottom-up	Mus musculus; Escherichia coli	10090; 562	UP000000589; UP000001410	
+PXD034397	Mesothelin_Ascites_Sample829_Fr3_TrpDig_1a.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD023719	GlycoPeptide_50cmC18_TGHPT_NASH92_PRM.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD048188	21-284_LJL0628_sample-HIBE-PG-2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD002707	QE_130716_152_Plasma_0.8MNaCl.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD014390	3_Tnglycopep_C1GalT1_UDPGal_OpeRATOR.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD024770	T6.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD041899	061120-AdventHealth-serum-EV-27-phos.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD059726	XB07482DPST_D06_1.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD042616	10R-b.raw	no-proteome				not in the taxonomy: Neosartorya fumigata
+PXD040159	TMT_Camk2dKO_T01.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD053428	240404_HN_YiYa_p_04.raw	bottom-up	Marchantia polymorpha	3197	UP000244005	
+PXD041239	2110063LNWSAM09266-9275_TMT10PO4AUAT-frx12.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD051981	220419_36811_KA_L.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079682	Shawn_TiO2_18.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD080350	Astral_MSP2501323_GV32_N1.raw	bottom-up	Chlamydomonas reinhardtii	3055	UP000006906	
+PXD064180	091624_OptmzDIA_15m_0p01mNBA_Hela200ng_1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD075362	Snitrosylation_HFpEF4.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD066659	OLEP07_200ng_CPR_HEK_180SPD_33_rep1_Frac18.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD058606	AD_rep2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD061848	2023107_Demo_Beatson_TMT_11SPD_F7.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD055853	CRG_Barcelona_500ng_CSF_MK008_05_60SPD_01.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD063931	20250228_EVO5_AST5_DIA_IO5cm_80SPD_ML_Collab_Phospho_islet_CPH_Donor3_GLP_1_100nM_4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD077933	HFX186_IPP285_AN_HLA-E_250ug3D12_JK_NoCrossLink_5kDaFilter_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079686	0628_2_1_Slot2-47_1_11489.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD082607	20240220_SCP_EE_2_S_Slot1-41_1_6620.d.zip	bottom-up	Streptococcus pneumoniae	1313	UP000000585	
+PXD075355	JesusCantoral_sol791-34-25_13_CA4_B05.10_DDA-PASEF_SG_0.8-1.5_Aurora25cm_30min_Slot2-13_1_9-12-2025_8334.d.zip	bottom-up	Pichia kluyveri; Botrytis cinerea; Pichia kudriavzevii	36015; 40559; 4909	UP001378960; UP000001798; UP000249293	
+PXD076026	LinB-P208D_FD_1_7-5-2025_19-25-36.d.zip	bottom-up	Escherichia coli	562	UP000001410	
+PXD074707	LN_20241212_T7capping_cond02_rep5_run45_S1-C5_1_5569.d.zip	no-proteome	Murine norovirus; Mesocricetus auratus	3431196; 10036		no reference proteome of its own: Murine norovirus
+PXD069035	MJT_5_3474.d.zip	no-proteome	Stramonita haemastoma	134471		no reference proteome of its own: Stramonita haemastoma
+PXD074155	IMXP71_S4_IMXP01279_Infliximab_1M_HLA2_ElA_S4-A4_1_7574.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD041421	N20211212chenc_WOSP00101_DDA_60min_A549_rep1_1_Slot2-28_1_9853.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD069605	timsTOF2_9241_11-28-2024_Slot1-49_GS_AB_global_ID3KD_HDACi_R2.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD051453	20231212_TIMS5_PRIEVO3_PRI_X1345_P125_R1053_21min_DIA_S6_S3-A6_1_8696.d.zip	bottom-up	Homo sapiens; Saccharomyces cerevisiae; Saccharomyces cerevisiae	9606; 4932; 4932	UP000005640; UP000002311; UP000002311	
+PXD054266	A200318_bcc_ct_heart_aur2_100min_HOCM534_243.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD061499	P2023-17_Core_NKUAMed_Iliopoulos_BAL_mouse8_1_SP3_rep3_100ng_Slot1-53_1_6173.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD064921	250527_SG_EarlyTimeInh_rerun_SECR_MIX_4_R2_S1-A4_1_14757.d.ZIP	bottom-up	Homo sapiens	9606	UP000005640	
+PXD046958	t241003_PO1959_Evosep_15x75x1p5_30SPD_400ng_KO2_05_S1-E1_1_1038.d.tar	bottom-up	Mus musculus	10090	UP000000589	
+PXD057946	20230531_TISTOF_EV_Droui001_EXT00_135_S100_S3-C3_1_969.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD058096	210830_DentalCells_DPSC_DC-1-1-C_SET11.wiff	bottom-up	Homo sapiens	9606	UP000005640	
+PXD063182	211001_DDA_PCZ_Venetin1_sep_11.raw	no-proteome	Dendrobaena veneta	332521		no reference proteome of its own: Dendrobaena veneta
+PXD047310	20190926_06.wiff	bottom-up	Homo sapiens	9606	UP000005640	
+PXD051236	NonBart4_IDA3.wiff	bottom-up	Homo sapiens	9606	UP000005640	
+PXD077562	NB_MC_260803-Sample2_13684.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD074184	24012_E1_PRM_NS1.raw	no-proteome	Murine norovirus	3431196		no reference proteome of its own: Murine norovirus
+PXD057696	807-10_Slot2-26_1_3794.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD055562	jc_20130111_ORBI_2013-01-11_SH11_s6_7067_pIgA_HK_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD056381	GST-TbCSB.raw	no-proteome	Nicotiana benthamiana	4100		no reference proteome of its own: Nicotiana benthamiana
+PXD064257	HC2_Orbitrap.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD065058	S11017.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD058522	zebra31_24092024.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD066711	CARDIO_MIXPEP_PC_1_6ND_5LUGLIO24.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD060807	CUSA_TD_ND_Core_290523_run1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD085645	EC-DIA120-26-117-004.raw	bottom-up	Plasmodium falciparum	5833	UP000001450	
+PXD087665	20250509_7_N159_AD_1_DIA_130m2uL.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086419	250915_Liu_20231_130min_2ul_DIA.raw	bottom-up	Escherichia coli	562	UP000001410	
+PXD029531	eJD904_re.raw	bottom-up	Homo sapiens; Saccharomyces cerevisiae; Escherichia coli	9606; 4932; 562	UP000005640; UP000002311; UP000001410	
+PXD084030	Gk16CL_ZA1_7.raw	bottom-up	Rattus norvegicus	10116	UP000002494	
+PXD082651	XB01822B1DAR1_M18_LNs2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD082602	D4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086188	20240304_D3000_ACCLAIM_DIA_SMHHMS02_01_RTSTD_R120R015_NCE27_50ms_090min_02.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD085201	20230331_E2_Neo_ColID_AUR01_25cm_FW_Sergio_CSF_V30.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD082746	2506_PISABR5_DIA_Ctrl_2.raw	bottom-up	Plasmodium falciparum	5833	UP000001450	
+PXD044303	woMSBSthylakoidsnative_L00845.RAW	bottom-up	Zea mays	4577	UP000007305	
+PXD045331	wo_nucs_Base6_L03618.RAW	bottom-up	Zea mays	4577	UP000007305	
+PXD028672	20200916_112_S223624_Chol_ToMV_8_4_Day8-Chol-TomV.raw	bottom-up	Solanum lycopersicum	4081	UP000004994	
+PXD012684	HAU1.raw	bottom-up	Hordeum vulgare	4513	UP000011116	
+PXD001286	L16538_Silke_110713_MetoxCof_TP1_18.RAW	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD073734	E20240804_06.raw	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD034922	1807001-Q4_NAT3-protA.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD020369	20190712_Snow_phos_3f.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD052597	HFX_19152_EL_50-1_DDA_191223.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD026806	MP_MDR09062020_S03_DDA02.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD000955	Orbi3_EvKe_SA_IP_FINAL_pHis3_4_02.RAW	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD079150	20260125_EB_Henrot_SN31_01_Slot1-15_1_9755.d.zip	bottom-up	Escherichia coli	562	UP000001410	
+PXD075197	SirM.raw	bottom-up	Salmonella typhimurium	28901	UP000298196	
+PXD075029	PIA25_000464_eighth_MIC_L1_2.raw	bottom-up	Salmonella enterica	28901	UP000298196	
+PXD084660	Seq94432_HFX.raw	bottom-up	Listeria monocytogenes	1639	UP000000817	
+PXD078556	Sp451_GpsB_2_1ug_01.raw	bottom-up	Streptococcus pneumoniae	1313	UP000000585	
+PXD076108	mnmA_2_Slot1-14_1_3379.d.zip	bottom-up	Escherichia coli	562	UP000001410	
+PXD023933	20190607_zebrafish_WT_MT_500ng_90min_TMT_HCD_F6.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD005129	280_124F1.RAW	bottom-up	Danio rerio	7955	UP000000437	
+PXD005137	280_bobe_B17.RAW	bottom-up	Danio rerio	7955	UP000000437	
+PXD081626	251216_Preethi_1_4_Slot2-4_1_12177.d.zip	bottom-up	Danio rerio	7955	UP000000437	
+PXD043679	IA2836_kallemw_04_WWK_C010_72h_D.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD043236	220608_QE1_ulianaf_MJ_02_06.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD036512	20201110_LUMOS1_LC4_SCL_SA_collab_S2R_DMSO_R1_F3.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD055043	GFP-FAC-3.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD043234	220103_QE1_ulianaf_MJ_02_11.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD018425	tc_o292_F6A_f08265.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD025394	20190517_OR15_AG4_Samma001_SA_MousePancreas_Proteome_DTT_10_50pc.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD065944	AGCB_KN_2503_WT_216_Slot1-45_1_16789.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD022956	AgedMuscleAL4Lum_19aug2307.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD003177	2014-12-18_3052_500ng_c1-9FT26_MS2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD050840	P10_DIA_R4_20230107.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD084753	210730_HFX_Prof_KSW_251_E01.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD082665	Control_02.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086975	Exploris04975-XJD-MJ-20240712-GST-IRG1-GLU.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD087517	12_KL_MVIC_A722_sph.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD087065	12_AL_RV1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083450	HFX23-3481_Sokolov_S4_FT.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD082542	20250417_Khavari_IFerguson_15015_3_M3.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD082879	Cat_4_long2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD087375	240801_KC_2418BH_02_S01.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083638	10T13.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083232	S290443_pUb_T14_3.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD085135	oecf3-SP0612-30.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083670	20220222_Fusion_Pinnock_HA48_A4I_6.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD006582	20160921_HomepackedPicofrit_K2_AB_MR_15cm_70min_BL1.raw	bottom-up	Homo sapiens; Bos taurus	9606; 9913	UP000005640; UP000009136	
+PXD035126	C3_pool_MSMS_fragmentation_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD005202	20160514_05_qEx_TT_T90_Celeg_inVitro_klp19_KeGG_lysC_IT1s_T1.raw	bottom-up	Caenorhabditis elegans	6239	UP000001940	
+PXD014802	GFP-HP_gamma_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD043966	2023-05-08-mFcgRIII-chymo-gluc-250ng-MSonly-B.raw	bottom-up	Homo sapiens; Mus musculus	9606; 10090	UP000005640; UP000000589	
+PXD019709	041_Large66_C17_CHECK.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD003774	VKC1_K_1h_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD022186	FL1111_MSQ1616_Emily_EF11_dil-10.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD030879	IgG2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD005677	20151211_Orbi6_DaHo_SA_Nicolai_KidneyCO_empty.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD015802	Uba4C202S_B2.raw	no-proteome				not in the taxonomy: Chaetomium thermophilum
+PXD068276	DDA_V05_1.raw	bottom-up	Triticum aestivum; Hordeum vulgare	4565; 4513	UP000019116; UP000011116	
+PXD063283	RFnegCCPnegC4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD024332	20171221_QEP2_FBU_MO_Spombe_Sp20C05.raw	bottom-up	Schizosaccharomyces pombe	4896	UP000002485	
+PXD069750	03_KN_PBMC-M_IFNg_N119_N122_x5_30min_Fr13.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD009173	20170607_MS_KB_Ecoli_Chym_pNDMpMGhipA_Phospho05.raw	bottom-up	Escherichia coli	562	UP000001410	
+PXD000859	V17297_3346_Liston_shotgun1_16.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD013346	CCD_SUMO_LysCKGG_A2.raw	bottom-up	Mus musculus; Mus musculus	10090; 10090	UP000000589; UP000000589	
+PXD079457	A01054.raw	no-proteome	Escherichia phage; Salmonella enterica; Escherichia coli	3102713; 28901; 562		no reference proteome of its own: Escherichia phage
+PXD040193	20220717_LU_LC2_GT_HM_E428_400ng_F03.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067068	P1497_Set1_F3.raw	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD033401	04021_PP_Fraction_8.raw	bottom-up	Rattus norvegicus	10116	UP000002494	
+PXD075183	CP_ZHENYU_FRAC5.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD056176	DOCPAC_8h_47C_5_20180923174001.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD048479	CF_20211129_M397-BR3_pSTP_TMT16pro.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD053572	52301_1_EXP_1011_hs_TMT16_prof_plex1_250ng_F23.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD061861	20210502_FS1_BK_21_04_F065_Mix1_Fr1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083668	1966_Red_G.raw	bottom-up	Bos taurus	9913	UP000009136	
+PXD072863	010425_Fraction_13.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD070857	Semenkovich_040_4738_8141_01.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD067633	MM000734.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067839	XB08272DA_CGPA_3_Slot2-2_1_17718.d.zip	bottom-up	Oryctolagus cuniculus	9986	UP000001811	
+PXD069892	20160510_FSN20182_LC010189_col246397_25cm_peptides_unenriched_TMT10plex_SPS_04.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD051176	20170505_PX_Mart_iTRAQ_F12_2-E5_01_9997.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD024039	Z9066TQ_1.raw	bottom-up	Candida albicans	5476	UP000000559	
+PXD077433	Skin_F9.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD025642	S9380TQ03_5.raw	no-proteome	Medicago sativa	3879		no reference proteome of its own: Medicago sativa
+PXD020350	20160616Celia_a01.raw	bottom-up	Acanthochromis polyacanthus	80966	UP000257200	
+PXD076262	QEP240105_RN_meso_14.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD038263	20221026_EXPL7_LC6_IAH_collab_MC_H_IP_04.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD051785	Samejima_etal_2024_WT_G2auxin_vs_WT_G2noauxin_Rep5.raw	bottom-up	Gallus gallus	9031	UP000000539	
+PXD060878	RawData_n1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD074652	107406.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD050581	20221024_MK_EM_FAIMS_1CV_whisper_10SPD_DIA_wt1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD023448	28_mouse_kidney_max_refrigerator_7day_50cm_130min_1.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD050644	20211105_KMJ_EM_CD74_HEK_CTR_TRYPSIN.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD001425	Glyco_9.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD042607	20190722_coreQEP2_AnWe_LC12-17_SA_Orbi3279Sample09.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD079746	JM10582.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067609	F009965_2p_Ionopticks10_trapPM7_PSB-748_Tak1_HU_4.raw	bottom-up	Marchantia polymorpha	3197	UP000244005	
+PXD059650	SO_260924_Calumenin_NO_TPST.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD054974	ED2522_takacsl_TiO2_HCD.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD073279	Ig01CYP_UV_C_1_4.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD071205	LFQ_Astral_DIA_Optimized_DI_5min_250pg_Condition_A_REP5.raw	bottom-up	Homo sapiens; Saccharomyces cerevisiae; Escherichia coli	9606; 4932; 562	UP000005640; UP000002311; UP000001410	
+PXD059553	CTHKO-1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067973	B4.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD052082	RN_211205_PBMCs_CTR-IP_vDIA_01.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079679	XA00287DA_Control_Slot1-43_1_2375.d.zip	bottom-up	Bos taurus	9913	UP000009136	
+PXD087266	XA05687LQ_A_Slot1-13_1_22488.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079349	TAU8_CTX_Slot1-55_1_12533.d.zip	bottom-up	Macaca fascicularis	9541	UP000233100	
+PXD072994	tims_23oct1338_Slot1-26_1_6271.d.zip	bottom-up	Mus musculus	10090	UP000000589	
+PXD070632	20211001_MM_Shuhan_Placenta_Cell_T6.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD049405	200ngHeLa_top2000_apop_PRM_45m_5_Slot1-2_11-1-2023_7477.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086892	gJD3070_B-F11_1_3275.d.zip	bottom-up	Homo sapiens; Saccharomyces cerevisiae	9606; 4932	UP000005640; UP000002311	
+PXD070222	20240215_027_S635221_GLODprot_113_1466.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD067063	esf4_9418_Slot2-3_1_3281.d.zip	bottom-up	Homo sapiens	9606	UP000005640	
+PXD068859	6641_HT1_DIA-GPF_RSLC_2col-108min_GPF1_cos_7_cells_1_GA7_1_6177.d.zip	no-proteome				not in the taxonomy: Cercopithecus aethiops
+PXD050471	20210831_03.wiff	bottom-up	Aeromonas veronii	654	UP000323129	
+PXD046350	FM_libPool-PS.wiff	no-proteome	Scyliorhinus canicula	7830		no reference proteome of its own: Scyliorhinus canicula
+PXD077540	RAW_GSK_3.wiff	bottom-up	Mus musculus	10090	UP000000589	
+PXD050811	191210_HFD_R1_SET12.wiff	bottom-up	Mus musculus	10090	UP000000589	
+PXD086242	SozenB_20241112_02_DDA_01.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD062944	115276.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD081654	retinal_microglia_medium_TPC2KO_2.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD064637	PAmBLE3.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD059613	XA08740DA_W3_5.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086884	wJD764_re.raw	bottom-up	Homo sapiens; Saccharomyces cerevisiae; Escherichia coli; Saccharomyces cerevisiae	9606; 4932; 562; 4932	UP000005640; UP000002311; UP000001410; UP000002311	
+PXD083028	20220106_QE5_YABH_RDS3363_PlasmaProt_Mouse_GDF15_DIA_26.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD087134	CR_251208_1143_Exploris_11.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD045423	eSK260.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086824	wAL00270.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD086879	wAP459.raw	no-proteome	Homo sapiens; Mus musculus; Mus musculus; unidentified	9606; 10090; 10090; 32644		no reference proteome of its own: unidentified
+PXD002767	Sar_S258_2446_3.raw	bottom-up	Solanum tuberosum	4113	UP000011115	
+PXD078284	E20260123_03.raw	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD060471	Vegetative_24dayoldplants_biologicalexperiment2_analysis1..raw	bottom-up	Arabidopsis thaliana	3702	UP000006548	
+PXD006262	WT_10_B.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD031412	MDR_27092021_TMT13_WT_O2_R30_DDA01.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD000316	L14195_1027_yNATA_del_20-24-2.RAW	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD078908	9237_MOL0097_S006_DM10_Neg_LD10_T0_B_1_Slot1-15.d.zip	bottom-up	Streptomyces albidoflavus	1886	UP000318052	
+PXD080063	DISOMMA_P_AERUGINOSA_TREATED_2_REP2_31mag24.raw	bottom-up	Pseudomonas aeruginosa	287	UP000000653	
+PXD075883	WT_03.raw	no-proteome	Pseudomonas populi	1500966		no reference proteome of its own: Pseudomonas populi
+PXD023506	190126_HN_1MH_Total_01.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD046978	musc_13het1.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD043676	IA2736_kallemw_12.raw	bottom-up	Danio rerio	7955	UP000000437	
+PXD043237	230131_EXP_IBC_ulianaf_MJ_02_03.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD046192	20190620_HN_0031_JuEf_rep02_sample_10.raw	bottom-up	Drosophila melanogaster	7227	UP000000803	
+PXD064064	1st_DDA_phospho_0_4.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD026214	150930_RK_P450_WT_PYMT_12_03.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD041631	SS_MN_PNA_10282022_F3.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD082501	Proteomics_EMB_P28.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083409	20240712_HumphriesM_FatimaM_1in2_06_Sample_16.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083904	SHED_CM_D1.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD083032	Seq91074_HFX.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD082567	2_2.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD049300	Ex1_20231121_JPL_CH08_DSS.raw	bottom-up	Bos taurus; Mus musculus; Rattus norvegicus	9913; 10090; 10116	UP000009136; UP000000589; UP000002494	
+PXD044322	20230214_jlb_OVRodriguez_v1GFP_6hchymo_160ng_60min_Wat25cmBEH_1.raw	bottom-up	Escherichia coli	562	UP000001410	
+PXD073596	vps21d.raw	bottom-up	Saccharomyces cerevisiae	4932	UP000002311	
+PXD067220	Ref_1024-12_FAIMS_RTS_MS3.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD079334	20240430_AS_LC4_GF_Sante_exp2_400ng_F13.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD074762	20220225_Eclipse_LC4_PepMap50cm-cartridge_Mazumdar_Kuchler_MPL_MUW_TMT10plex_fr5_4p.raw	no-proteome				not in the taxonomy: [candida] auris
+PXD042600	19205-13.raw	bottom-up	Mus musculus	10090	UP000000589	
+PXD065526	20220707_EXPL10_nLC1_JW_SA_HCT_CTRL-GFP-L_CINP-dtag-RPL28-GFP-c4-M_DtagV144h-H_N3_reAq.raw	bottom-up	Homo sapiens	9606	UP000005640	
+PXD053647	E_XX_3_95_WG_7.raw	bottom-up	Homo sapiens	9606	UP000005640	

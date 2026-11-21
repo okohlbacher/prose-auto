@@ -417,3 +417,14 @@ def test_refdb_manifest(tmp_path):
     assert rows["PXD2"][5] == "UP5640; UP0589"
     assert rows["PXD3"][2] == "no-proteome" and rows["PXD3"][5] == ""
     assert rows["PXD4"][2] == "no-proteome"
+
+
+def test_topup_quotas():
+    """the 187-run quotas scaled to 300 by largest remainder: 113 more, every stratum at least as large as before"""
+    TU = _load("draw_topup")
+    have = {}
+    for line in open(os.path.join(D, "heldout.tsv")).read().splitlines()[1:188]:
+        have[line.split("\t")[0]] = have.get(line.split("\t")[0], 0) + 1
+    q = TU.quotas(have)
+    assert sum(q.values()) == 113 and min(q.values()) >= 0
+    assert q["protease:Asp-N"] == 6 and q["baseline:Orbitrap DDA label-free human"] == 8

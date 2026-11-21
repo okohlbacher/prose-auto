@@ -1,0 +1,63 @@
+seed 20261122; 2999 excluded accessions; top-up 113 runs to 300
+query 'Glu-C': 194 projects
+protease:Glu-C: 6 of 6 (pool 10)
+query 'Asp-N': 85 projects
+protease:Asp-N: 0 of 6 (pool 0)
+query 'chymotrypsin': 559 projects
+protease:chymotrypsin: 6 of 6 (pool 63)
+query 'Lys-C': 600 projects
+query 'LysC': 600 projects
+query 'endoproteinase Lys-C': 315 projects
+protease:Lys-C: 6 of 6 (pool 12)
+query 'TMTpro SPS': 5 projects
+query 'SPS-MS3': 525 projects
+query 'MS3': 600 projects
+label:TMTpro SPS-MS3: 4 of 4 (pool 289)
+query 'TMTpro': 600 projects
+label:TMTpro: 5 of 5 (pool 551)
+query 'TMT': 600 projects
+label:TMT: 6 of 6 (pool 352)
+query 'iTRAQ': 600 projects
+label:iTRAQ: 5 of 5 (pool 566)
+query 'SILAC': 600 projects
+label:SILAC: 5 of 5 (pool 551)
+query 'glycoproteomics': 426 projects
+enrichment:glyco: 4 of 4 (pool 355)
+query 'phosphoproteomics': 600 projects
+enrichment:phospho: 5 of 5 (pool 536)
+query 'Astral': 563 projects
+instrument:Astral: 5 of 5 (pool 398)
+query 'timsTOF': 600 projects
+instrument:timsTOF DDA: 5 of 5 (pool 171)
+query 'diaPASEF': 600 projects
+instrument:timsTOF DIA: 5 of 5 (pool 506)
+query 'TripleTOF': 600 projects
+instrument:TOF: 4 of 4 (pool 516)
+query 'LTQ Orbitrap': 600 projects
+instrument:ion trap MS2: 5 of 5 (pool 519)
+query 'data-independent acquisition': 67 projects
+acquisition:Orbitrap DIA: 6 of 6 (pool 14)
+query 'plant proteome': 32 projects
+organism:plant: 3 of 3 (pool 14)
+query 'yeast proteome': 101 projects
+organism:fungus: 3 of 3 (pool 58)
+query 'bacterial': 67 projects
+organism:bacterium: 3 of 3 (pool 5)
+query 'zebrafish proteome': 10 projects
+organism:other vertebrate: 3 of 3 (pool 3)
+query 'drosophila proteome': 17 projects
+organism:invertebrate: 2 of 2 (pool 12)
+query 'mouse proteome': 415 projects
+organism:mouse or rat: 3 of 3 (pool 312)
+query 'label-free': 74 projects
+baseline:Orbitrap DDA label-free human: 5 of 8 (pool 5)
+unfilled place passed to protease:Glu-C
+unfilled place passed to protease:chymotrypsin
+unfilled place passed to protease:Lys-C
+unfilled place passed to label:TMTpro SPS-MS3
+unfilled place passed to label:TMTpro
+unfilled place passed to label:TMT
+unfilled place passed to label:iTRAQ
+unfilled place passed to label:SILAC
+unfilled place passed to enrichment:glyco
+top-up 113 runs, 146114 MB; heldout.tsv now 300 runs, sha256 93d30a52f1a4df5859c8112d863c73ac6ae1da7f2276953b82621064f01b7ad3
