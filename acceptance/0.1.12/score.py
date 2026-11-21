@@ -482,6 +482,20 @@ def accuracy(ref, dec, runs, arm="auto"):
     return out
 
 
+def scenario_counts(d, scn, pilot=False):
+    """scenario_counts.tsv: required when scenarios were built (the pilot predates it), unique (run, kind), and every
+    built scenario covered"""
+    built = built_scenarios(scn)
+    rows_ = read(f"{d}/scenario_counts.tsv", ["run", "kind", "status", "psm"], required=bool(built) and not pilot)
+    _unique(rows_, ["run", "kind"], "scenario_counts.tsv")
+    _enum(rows_, "status", {"ok", "missing"}, "scenario_counts.tsv")
+    if rows_ or not pilot:
+        miss = sorted(built - {(r["run"], r["kind"]) for r in rows_})
+        if miss:
+            raise InputError(f"scenario_counts.tsv: built scenarios without a row: {miss[:5]}")
+    return rows_
+
+
 def built_scenarios(scn):
     return {(f"{r['accession']}/{r['file']}", r["kind"]) for r in scn
             if r["kind"] not in ("excluded", "unresolved") and r["databases"] not in (None, "none")}
@@ -680,7 +694,7 @@ def primary(tab, runs, pilot=False, p3_abs=None, p3_margin=None):
 def score(d, heldout=None, pilot=False):
     heldout = heldout or os.path.join(os.path.dirname(os.path.abspath(__file__)), "heldout.tsv")
     drawn, ref, res, dec, chk, scn, tim = load(d, heldout)
-    cnt_rows = read(f"{d}/scenario_counts.tsv", ["run", "kind", "status", "psm"], required=False)
+    cnt_rows = scenario_counts(d, scn, pilot)
     tab = {(r["run"], r["arm"]): r for r in res}
     runs, counts, cls = accounting(drawn, ref, tab)
     out = {"runs": counts, "class": cls, **primary(tab, runs, pilot)}

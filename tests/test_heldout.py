@@ -132,7 +132,11 @@ def test_run_plan_and_reference_rows():
     assert set(p["searches"]) == {"auto", "reference", "sdrf", "defaults", "texts"}   # spectra_only: same command
     assert p["searches"]["sdrf"][p["searches"]["sdrf"].index("-Search:enzyme") + 1] == "Lys-C"
     assert p["best_psm"]["start"]["protease"] == "Trypsin" and p["proteomes"] == ["UP000005640"]
-    assert HN.run_plan("k", adj, {"proteomes": "UP1"}, win, {"auto": {"no_digest": {}}}, "x")["stopped"]
+    st = HN.run_plan("k", adj, {"proteomes": "UP1"}, win, {"auto": {"no_digest": {}}, "texts": reports["texts"]},
+                     "x.mzML", {"texts": "t.mzML"})   # a stopped auto: released, auto stopped, the comparators run
+    assert st["stopped"] == ["auto"] and "auto" not in st["searches"]
+    assert {"reference", "sdrf", "defaults", "texts"} <= set(st["searches"]) and st["spectra"] == "x.mzML"
+    assert st["arm_spectra"] == {"texts": "t.mzML"}
     assert "missing" in HN.run_plan("k", adj, {"proteomes": "UP1"}, win, {"auto": None}, "x")
     a = {"PXD1/a.raw": {"class": "bottom-up", "label": "none"}, "PXD2/b.raw": {"class": "bottom-up"},
          "PXD3/c.raw": {"class": "bottom-up"}}
@@ -165,14 +169,36 @@ def test_frozen_check_and_jev_pin(tmp_path, monkeypatch):
     f.write_text("changed")
     with pytest.raises(SystemExit, match="changed since the freeze"):
         HN.check_frozen([str(f)])
-    monkeypatch.setenv("JEV_MODEL", "jev-latest")
-    with pytest.raises(SystemExit, match="pinned"):
+    with pytest.raises(SystemExit, match="records no Jev model"):
+        HN.jev_env()
+
+
+def test_jev_must_equal_the_frozen_model_endpoint_votes(tmp_path, monkeypatch):
+    fz = tmp_path / "FREEZE.md"
+    monkeypatch.setattr(HN, "FREEZE", str(fz))
+    for v in ("JEV_MODEL", "JEV_URL", "PROSE_AUTO_JEV_VOTES"):
+        monkeypatch.delenv(v, raising=False)
+    fz.write_text("- Jev model: jev-latest\n- Jev endpoint: https://x/api\n- Jev votes: 3\n")
+    with pytest.raises(SystemExit, match="not pinned"):
+        HN.jev_env()
+    fz.write_text("- Jev model: jev-2026-11-01\n- Jev endpoint: https://x/api\n- Jev votes: 3\n")
+    monkeypatch.setenv("JEV_API_KEY", "k")
+    assert HN.jev_env() == {"JEV_MODEL": "jev-2026-11-01", "JEV_URL": "https://x/api", "PROSE_AUTO_JEV_VOTES": "3"}
+    monkeypatch.setenv("JEV_MODEL", "jev-2026-12-01")          # any other model, even a pinned one, stops
+    with pytest.raises(SystemExit, match="differs from FREEZE.md"):
         HN.jev_env()
     monkeypatch.setenv("JEV_MODEL", "jev-2026-11-01")
-    monkeypatch.delenv("JEV_API_KEY", raising=False)
+    monkeypatch.setenv("PROSE_AUTO_JEV_VOTES", "1")
+    with pytest.raises(SystemExit, match="differs from FREEZE.md"):
+        HN.jev_env()
+    monkeypatch.delenv("PROSE_AUTO_JEV_VOTES")
+    monkeypatch.delenv("JEV_API_KEY")
     monkeypatch.delenv("TYPESAFE_API_KEY", raising=False)
     with pytest.raises(SystemExit, match="ssh stdin"):
         HN.jev_env()
+    fz.write_text(fz.read_text() + f"{'a' * 64}  /x\n{'b' * 64}  /x\n")
+    with pytest.raises(SystemExit, match="two digests"):
+        HN.frozen_hashes()
 
 
 def test_freeze_section_is_deterministic(tmp_path):
@@ -272,3 +298,120 @@ def test_best_psm_unspecific_only_in_final(tmp_path, monkeypatch):
     assert j["result"] == {"protease": "unspecific cleavage", "label": "TMT6plex", "cys": "Carbamidomethyl (C)"}
     assert calls[-1][0] == "run" and calls[-1][1] == "unspecific cleavage"
     assert A.best_specific("Trypsin", PSMS) == "Trypsin"
+
+
+def test_stopped_auto_is_released_and_scored_stopped(tmp_path, monkeypatch):
+    """review item 1: plan() releases a stopped run; task() writes auto status=stopped (with its report) and runs the
+    comparators; extract.py then reads auto as stopped (0 PSMs)"""
+    H = tmp_path / "H"
+    monkeypatch.setattr(HN, "H", str(H))
+    k = "PXD1/a.raw"
+    (H / "runs" / k / "auto").mkdir(parents=True)
+    (H / "runs" / k / "auto" / "a.auto.json").write_text(json.dumps({"no_digest": {"why": "top-down"}}))
+    p = {"run": k, "spectra": "x.mzML", "stopped": ["auto"], "searches": {"reference": ["-Search:enzyme", "Trypsin"]},
+         "settings": {}, "reports": {}, "db": "db.fasta", "proteomes": [], "arm_spectra": {}}
+    (H / "plan").mkdir()
+    (H / "plan" / "release.txt").write_text(k + "\n")
+    (H / "plan" / "PXD1__a.raw.json").write_text(json.dumps(p))
+    for f in ("check_frozen", "check_inputs", "child_import_origin"):
+        monkeypatch.setattr(HN, f, lambda *a, **kw: None)
+    ran = []
+    monkeypatch.setattr(HN, "search", lambda sp, db, cli, o, n: ran.append(o) or {"psm": {"accepted": 500}})
+    monkeypatch.setattr(HN, "env", lambda *a: {})
+    HN.task(1)
+    auto = H / "out" / "runs" / k / "auto"
+    assert (auto / "status").read_text().strip() == "stopped" and (auto / "a.auto.json").exists()
+    assert ran == [str(H / "out" / "runs" / k / "reference")]
+    EX = importlib.util.spec_from_file_location("extract", os.path.join(D, "..", "extract.py"))
+    ex = importlib.util.module_from_spec(EX)
+    EX.loader.exec_module(ex)
+    assert ex.result(str(auto))[0] == "stopped"
+
+
+def test_rerun_once_then_missing(tmp_path, monkeypatch):
+    """review item 6: a failed unit is rerun once (the stage exits 1 in between), then it is missing and names its
+    step; a success on the rerun counts"""
+    monkeypatch.setattr(HN, "FAILED", [])
+    d = str(tmp_path / "u")
+    assert HN.run_unit(d, "search", lambda: False) == "retry" and HN.FAILED
+    assert HN.run_unit(d, "search", lambda: False) == "missing"
+    assert open(f"{d}/search.failed").read().strip() == "search"
+    assert HN.run_unit(d, "search", lambda: True) == "missing"            # never a third attempt
+    d2 = str(tmp_path / "v")
+    HN.run_unit(d2, "check", lambda: False)
+    assert HN.run_unit(d2, "check", lambda: True) == "ok"
+    def boom():
+        raise RuntimeError("killed")
+    assert HN.run_unit(str(tmp_path / "w"), "verify", boom) == "retry"   # an exception is a failed attempt
+
+
+def test_failed_search_is_rerun_then_missing_and_best_psm_waits(tmp_path, monkeypatch):
+    """review items 6 and 12: search() reruns a failed ProSE once, then status=missing; best_psm selects only when
+    every candidate has a result and is missing when one is out of attempts"""
+    monkeypatch.setattr(HN, "FAILED", [])
+    monkeypatch.setattr(HN, "prose_run", lambda cmd, log: 1)
+    o = str(tmp_path / "s")
+    assert HN.search("x.mzML", "db", ["-Search:enzyme", "Trypsin"], o, "run") is None
+    assert not os.path.exists(f"{o}/status") and HN.FAILED
+    assert HN.search("x.mzML", "db", ["-Search:enzyme", "Trypsin"], o, "run") is None
+    assert open(f"{o}/status").read().strip() == "missing"
+    calls = {"n": 0}
+
+    def fake(sp, db, cli, d, name):
+        calls["n"] += 1
+        if "Lys_C" in d:
+            os.makedirs(d, exist_ok=True)
+            open(f"{d}/status", "w").write("missing\n")
+            return None
+        return {"psm": {"accepted": 100, "combined": 0.5}}
+    monkeypatch.setattr(HN, "search", fake)
+    monkeypatch.setattr(HN, "subset_mzml", lambda s, out: out)
+    monkeypatch.setattr(HN, "X", str(tmp_path))
+    p = {"run": "PXD1/a.raw", "spectra": "a.mzML", "db": "db", "best_psm": {
+        "start": {"protease": "Trypsin", "label": "label free", "cys": "Carbamidomethyl (C)"},
+        "enrichment": "none", "prec": None, "frag": None}}
+    bp = str(tmp_path / "bp")
+    assert HN.best_psm(p, bp) is None
+    assert open(f"{bp}/status").read().strip() == "missing" and "Lys-C" in open(f"{bp}/best_psm.failed").read()
+    assert not os.path.exists(f"{bp}/best_psm.json")                    # no selection from an unresolved ladder
+
+
+def test_search_reuses_only_the_same_command(tmp_path, monkeypatch):
+    monkeypatch.setattr(HN, "FAILED", [])
+    o = tmp_path / "s"
+    o.mkdir()
+    (o / "eval.json").write_text(json.dumps({"psm": {"accepted": 7}}))
+    cmd = A.prose_cmd(HN.TOOLS["prose"], "x.mzML", "db", str(o / "run.idXML"), ["-Search:enzyme", "Trypsin"], 99)
+    (o / "cmd.json").write_text(json.dumps(cmd))                         # other thread count: the same search
+    assert HN.search("x.mzML", "db", ["-Search:enzyme", "Trypsin"], str(o), "run")["psm"]["accepted"] == 7
+    monkeypatch.setattr(HN, "prose_run", lambda cmd, log: 1)
+    assert HN.search("x.mzML", "db", ["-Search:enzyme", "Lys-C"], str(o), "run") is None   # another command
+    assert (o / "eval.json.stale").exists()
+
+
+def test_stage_order_gates(tmp_path, monkeypatch):
+    """review item 16: analyze and plan refuse before the seal; the seal refuses while conversions are open; the
+    top-up refuses once an arm has run"""
+    H = tmp_path / "H"
+    monkeypatch.setattr(HN, "H", str(H))
+    monkeypatch.setattr(HN, "FREEZE", str(tmp_path / "FREEZE.md"))
+    monkeypatch.setattr(HN, "CONV", str(tmp_path / "conversion.tsv"))
+    (tmp_path / "FREEZE.md").write_text("# FREEZE\n")
+    with pytest.raises(SystemExit, match="not sealed"):
+        HN.analyze(1)
+    with pytest.raises(SystemExit, match="not sealed"):
+        HN.plan()
+    (tmp_path / "conversion.tsv").write_text("run\tstatus\tattempts\nPXD1/a.raw\tfailed\t1\n")
+    with pytest.raises(SystemExit, match="due a rerun"):
+        HN.seal()
+    (H / "runs" / "PXD1" / "a.raw" / "auto").mkdir(parents=True)
+    (H / "runs" / "PXD1" / "a.raw" / "auto" / "a.auto.json").write_text("{}")
+    with pytest.raises(SystemExit, match="an arm has run"):
+        HN.topup_count()
+    DT = importlib.util.spec_from_file_location("draw_topup", os.path.join(D, "..", "draw_topup.py"))
+    dt = importlib.util.module_from_spec(DT)
+    DT.loader.exec_module(dt)
+    with pytest.raises(SystemExit, match="refused"):
+        dt.batch(1, str(H / "annotation" / "topup"))
+    (tmp_path / "FREEZE.md").write_text("# FREEZE\n## Step 4: the annotation sealed (x)\n")
+    assert HN.sealed()

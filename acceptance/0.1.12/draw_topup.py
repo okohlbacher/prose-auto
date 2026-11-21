@@ -24,6 +24,8 @@ with seed BATCH_SEEDS[K], fixed in advance. Its quotas are the 187-run quotas sc
 each stratum already has (at least 0); unfilled places pass on as above. Its exclusions are those of the top-up plus
 every drawn run and every candidate of the top-up and of earlier batches. An empty batch (every pool exhausted) is
 logged, and the study then gets no verdict, as at the cap."""
+import glob
+import os
 import collections
 import hashlib
 import math
@@ -124,6 +126,11 @@ def batch(k, d):
     sys.path.insert(0, str(HERE))
     import score as SC
     held = HERE / "heldout.tsv"
+    h = os.path.dirname(os.path.dirname(os.path.abspath(d)))   # DIR is H/annotation/topup
+    fz = os.environ.get("PROSE_AUTO_FREEZE", str(HERE / "FREEZE.md"))
+    if (os.path.exists(fz) and "Step 4: the annotation sealed" in open(fz).read()) or \
+            glob.glob(f"{h}/runs/*/*/*/*.auto.json"):
+        sys.exit(f"batch {k}: refused: the annotation is sealed or an arm has run (the top-up comes before any arm)")
     rows = held.read_text().splitlines()[1:]
     if k not in BATCH_SEEDS or len(rows) != N_TOTAL + BATCH * (k - 1):
         sys.exit(f"batch {k}: heldout.tsv has {len(rows)} runs, expected {N_TOTAL + BATCH * (k - 1)}")

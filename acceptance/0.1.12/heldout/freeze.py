@@ -1,7 +1,9 @@
 """FREEZE.md of PREREG 0.1.12 §10: the SHA-256 of everything frozen, written once at step 2 and appended to at steps 3-6.
 
-    python freeze.py init --container SHA256 --jev-model NAME   step 2: the list below -> ../FREEZE.md (refuses when it
-                                                                  exists)
+    python freeze.py init --container SHA256 --jev-model ID --jev-url URL --jev-votes N
+                                                                step 2: the list below -> ../FREEZE.md (refuses when it
+                                                                exists); ID is the concrete model id jev-latest resolves
+                                                                to, never *latest*
     python freeze.py append "TITLE" PATH...                     a later step: the files (directories recursively)
 
 A line '<sha256>  <path>' per file (harness.check_frozen reads them); a bundle also gets 'tree <sha256>  <dir>', the
@@ -66,16 +68,20 @@ def section(title, paths, trees=()):
     return "\n".join(out + ["```", ""])
 
 
-def init(container, jev_model):
+def init(container, jev_model, jev_url, jev_votes, allow_dirty=False):
     if os.path.exists(OUT):
         raise SystemExit(f"{OUT} exists: the freeze is written once; later steps append")
     if not jev_model or "latest" in jev_model:
         raise SystemExit("--jev-model must name a pinned Jev model")
+    if not jev_url.startswith("https://") or not str(jev_votes).isdigit():
+        raise SystemExit("--jev-url must be the https endpoint and --jev-votes a number")
     git = subprocess.run(["git", "-C", f"{T}/prose-auto", "rev-parse", "HEAD"], capture_output=True,
                          text=True).stdout.strip()
     dirty = subprocess.run(["git", "-C", f"{T}/prose-auto", "status", "--short"], capture_output=True,
                            text=True).stdout.strip()
-    if dirty:
+    if allow_dirty and OUT == f"{ACC}/FREEZE.md":
+        raise SystemExit("--allow-dirty is for dry runs only (PROSE_AUTO_FREEZE elsewhere)")
+    if dirty and not allow_dirty:
         raise SystemExit("the prose-auto clone has uncommitted changes: commit before the freeze")
     pip = subprocess.run([f"{T}/env/bin/pip", "freeze"], capture_output=True, text=True).stdout
     pf = f"{H}/pip_freeze.txt"
@@ -87,7 +93,8 @@ def init(container, jev_model):
                                     (BUNDLES["FileConverter (mirror recipe, Thermo)"], "bin/FileConverter"),
                                     (BUNDLES["mzpeak-convert 0.18.0"], "mzpeak-convert"))]
     head = ["# FREEZE: prose-auto 0.1.12 held-out benchmark (PREREG §10)", "",
-            f"- prose-auto commit: {git}", f"- Jev model: {jev_model}",
+            f"- prose-auto commit: {git}", f"- Jev model: {jev_model}", f"- Jev endpoint: {jev_url}",
+            f"- Jev votes: {jev_votes}",
             f"- BinAC2 container image (SHA-256, measured on BinAC2): {container}",
             f"- pip freeze: {pf}", ""]
     body = section("Step 2: scoring, scenario, draw, power and harness code, manifests, snapshots",
@@ -112,6 +119,7 @@ def append(title, paths):
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a[0] == "init":
-        init(a[a.index("--container") + 1], a[a.index("--jev-model") + 1])
+        init(*(a[a.index(f"--{k}") + 1] for k in ("container", "jev-model", "jev-url", "jev-votes")),
+             allow_dirty="--allow-dirty" in a)
     else:
         append(a[1], a[2:])

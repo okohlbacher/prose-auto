@@ -9,7 +9,9 @@
 #   sbatch --array=1-N%40 heldout.slurm STAGE        STAGE: verify | windows | task | scenario
 #   sbatch --array=1-N%16 --mem=1000gb --time=2-00:00:00 heldout.slurm best_psm   (high-memory nodes: ~900 GB peak)
 # A dry run sets HELDOUT_DRY=<file of KEY=VALUE lines> (PROSE_AUTO_H, _RUNS, _WRONGDB, _FREEZE, HELDOUT_NO_JEV)
-# A rerun asks for twice the memory and time: sbatch --mem=256gb --time=12:00:00 --array=I heldout.slurm STAGE
+# A task that exits 1 has a unit due its rerun (§10.1): resubmit those indices once with twice the memory and time,
+#   sbatch --mem=256gb --time=12:00:00 --array=I,J heldout.slurm STAGE   (B2: --mem=2000gb --time=4-00:00:00)
+# a unit failing again is final (missing, <unit>.failed). Outputs return to $PROJ/h/ at their paths under H.
 # The frozen IBMI tree is mirrored in the workspace (<ws>/ceph -> /ceph inside the container); --cpus-per-task counts
 # hyperthreads, so the threads are half of it. Each task checks the container image against FREEZE.md, the harness
 # checks every executable and FASTA, and a mismatch fails the task.
@@ -28,11 +30,17 @@ for kv in "${DRY[@]}"; do [ "${kv%%=*}" = PROSE_AUTO_FREEZE ] && FREEZE_MD=$W${k
 want=$(grep -o 'BinAC2 container image (SHA-256, measured on BinAC2): [0-9a-f]*' "$FREEZE_MD" | awk '{print $NF}')
 have=$(sha256sum "$SIF" | cut -d' ' -f1)
 [ "$want" = "$have" ] || { echo "container image $have is not the frozen $want"; exit 3; }
+PUB=$TMPDIR/publish.list
+rc=0
 apptainer exec --bind "$W/ceph:/ceph" --bind "$TMPDIR:$TMPDIR" "$SIF" env -i HOME="$HOME" PATH=/usr/bin:/bin \
-  TMPDIR_HELDOUT="$TMPDIR" HELDOUT_THREADS=$TH OMP_NUM_THREADS=$TH OPENBLAS_NUM_THREADS=$TH MKL_NUM_THREADS=$TH "${DRY[@]}" \
-  "$T/env/bin/python" "$ACC/heldout/harness.py" "$STAGE" --index "$SLURM_ARRAY_TASK_ID"
-mkdir -p "$PROJ/out"
+  TMPDIR_HELDOUT="$TMPDIR" HELDOUT_PUBLISH="$PUB" HELDOUT_THREADS=$TH OMP_NUM_THREADS=$TH OPENBLAS_NUM_THREADS=$TH \
+  MKL_NUM_THREADS=$TH "${DRY[@]}" \
+  "$T/env/bin/python" "$ACC/heldout/harness.py" "$STAGE" --index "$SLURM_ARRAY_TASK_ID" || rc=$?
+# publish exactly this task's outputs (harness.PUBLISH, relative to H), also after a failure: the attempt counts
 OUTH=$T/v0112/heldout
 for kv in "${DRY[@]}"; do [ "${kv%%=*}" = PROSE_AUTO_H ] && OUTH=${kv#*=}; done
-rsync -a "$W$OUTH/out/" "$PROJ/out$([ -n "${HELDOUT_DRY:-}" ] && echo _dry)/"
-echo "TASK_OK $STAGE $SLURM_ARRAY_TASK_ID"
+DEST=$PROJ/h$([ -n "${HELDOUT_DRY:-}" ] && echo _dry)
+mkdir -p "$DEST"
+[ -s "$PUB" ] && rsync -a -r --files-from="$PUB" "$W$OUTH/" "$DEST/"
+echo "TASK_END $STAGE $SLURM_ARRAY_TASK_ID rc=$rc"
+exit $rc

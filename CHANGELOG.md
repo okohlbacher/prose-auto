@@ -63,6 +63,12 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
   counts of the vendor file (FASTag) against the mzML. best_psm: unspecific cleavage only in the final search (label and Cys chosen under the best specific
   protease), in its own array B2 on 1 TB nodes; `fast_0110` gets auto's
   `--organism`. Dry run on two development runs (IBMI and BinAC2) passed end to end.
+- Short review of the harness (Codex, Kimi): stopped auto runs released and scored stopped; comparator spectra from
+  the adjudicated acquisition; Jev pinned to FREEZE.md's model, endpoint and votes; ion-trap wide window 0.6 Da;
+  reruns once per unit, then missing (exit 1 while a rerun is due); best_psm selects only with every candidate
+  resolved; final-only verification, the points-to round of §3.1; inputs and pseudo-spectra hashed and checked;
+  tasks publish only their own outputs; `harness.py seal` gates analysis and the top-up; annotator isolation;
+  `score.py` requires and validates `scenario_counts.tsv`.
 
 ## 0.1.11 (2026-11-20)
 

@@ -6,11 +6,20 @@ model families, A (Claude) and B (Codex; Kimi as the fallback), one reconciliati
     python annotate.py reconcile A|B OUT          the disputed runs: each annotator sees the other's answer and evidence
     python annotate.py final OUT                  reference_A.tsv, reference_B.tsv, reconciled_*.tsv, adjudicated.tsv,
                                                   agreement.tsv, log.json
+    python annotate.py points-to OUT POINTS_TSV   §3.1 "another organism": both annotators (their round-1 provider) see
+                                                  the verification finding (harness.py points-to); agreed -> that
+                                                  organism is the reference (adjudicated.tsv updated, the earlier one
+                                                  kept as adjudicated_before_points_to.tsv); otherwise the organism is
+                                                  disputed (not verified). refdb.py, harness.py fasta and verify then
+                                                  run again for those runs.
 
 Blindness: each annotator gets one run's sheet inside its prompt (PRIDE project texts, the SDRF rows of that file,
-the raw-data indicators) and nothing else; it runs from an empty folder with every tool disabled (Claude) or a
-read-only sandbox (Codex, Kimi), and never sees prose-auto's output, an arm, or the other annotator before the
-reconciliation round. The rule below uses no arm value.
+the raw-data indicators) and nothing else; it runs from an empty temporary folder that holds only its prompt, with
+every tool disabled (Claude) or a read-only sandbox (Codex); Kimi runs only with a tool-free agent file
+(ANNOTATE_KIMI_AGENT_FILE), else it is refused (fail closed). annotate.py refuses to run where the held-out outputs
+are reachable (the IBMI tree): the annotators run on the author's laptop, which holds only the prompts. No annotator
+sees prose-auto's output, an arm, or the other annotator before the reconciliation round, which reuses the provider
+that answered round 1. The rule below uses no arm value.
 
 The rule: a field the two agree on (after normalisation: score.canon_label for labels, species names, the vocabulary
 below) is the reference. A field still disputed after the reconciliation round is "not annotated":
@@ -49,9 +58,23 @@ VOCAB = {
 }
 FIELDS = ["organisms", "class"] + [f for f in VOCAB if f != "class"]
 SDRF_FIELDS = ["label", "protease", "cys", "prec_window", "prec_unit", "frag_window", "frag_unit"]
+def _kimi(p):
+    f = os.environ.get("ANNOTATE_KIMI_AGENT_FILE")
+    if not f or not os.path.isfile(f):
+        raise RuntimeError("Kimi refused: no tool-free agent file (ANNOTATE_KIMI_AGENT_FILE)")
+    return ["kimi", "--agent-file", f, "-p", p]
+
+
 CLIS = {"claude": lambda p: ["claude", "-p", p, "--output-format", "text", "--tools", ""],
         "codex": lambda p: ["codex", "exec", "-s", "read-only", "--skip-git-repo-check", "--color", "never", p],
-        "kimi": lambda p: ["kimi", "-p", p]}
+        "kimi": _kimi}
+HELDOUT_TREE = "/ceph/ibmi/abi/oliver/prose-auto-20261029/v0112/heldout"
+
+
+def isolated():
+    """the annotators never run where the held-out outputs are reachable"""
+    if os.path.exists(HELDOUT_TREE):
+        raise SystemExit(f"{HELDOUT_TREE} is reachable here: run the annotators on the laptop with the prompts only")
 DEFAULT_CLI = {"A": "claude", "B": "codex"}
 FALLBACK = {"codex": "kimi"}
 
@@ -189,17 +212,23 @@ def agreement(A, B):
 # ---- the agent calls -------------------------------------------------------------------------------------------------
 
 def call(cli, text, timeout=1800):
-    """one agent call from an empty folder; returns the reply text"""
+    """one agent call from an empty temporary folder that holds only its prompt; returns the reply text ('' when the
+    provider is refused or fails)"""
     with tempfile.TemporaryDirectory(prefix="annot_") as d:
-        r = subprocess.run(CLIS[cli](text), cwd=d, capture_output=True, text=True, timeout=timeout,
-                           stdin=subprocess.DEVNULL)
+        open(f"{d}/prompt.txt", "w").write(text)
+        try:
+            cmd = CLIS[cli](text)
+        except RuntimeError as e:
+            print(e, flush=True)
+            return ""
+        r = subprocess.run(cmd, cwd=d, capture_output=True, text=True, timeout=timeout, stdin=subprocess.DEVNULL)
     return r.stdout
 
 
-def answer(cli, text, raw_path):
+def answer(cli, text, raw_path, fallback=True):
     """an agent's parsed answer; one retry, then the fallback CLI (Codex -> Kimi), recorded in raw_path"""
     tries = []
-    for c in [cli, cli] + ([FALLBACK[cli]] if cli in FALLBACK else []):
+    for c in [cli, cli] + ([FALLBACK[cli]] if fallback and cli in FALLBACK else []):
         out = call(c, text)
         tries.append({"cli": c, "reply": out})
         js = parse(out)
@@ -211,6 +240,7 @@ def answer(cli, text, raw_path):
 
 
 def run(who, out, workers, cli):
+    isolated()
     os.makedirs(f"{out}/{who}", exist_ok=True)
     todo = [p for p in sorted(glob.glob(f"{out}/prompts/*.json"))
             if not os.path.exists(f"{out}/{who}/{os.path.basename(p)}")]
@@ -230,6 +260,7 @@ def answers(out, who):
 
 
 def reconcile(who, out, cli):
+    isolated()
     other = "B" if who == "A" else "A"
     mine, theirs = answers(out, who), answers(out, other)
     os.makedirs(f"{out}/{who}_reconciled", exist_ok=True)
@@ -244,9 +275,10 @@ def reconcile(who, out, cli):
         strip = lambda x: {a: b for a, b in x.items() if not a.startswith("_")}
         text = RECONCILE.format(mine=json.dumps(strip(mine[k]), indent=1), theirs=json.dumps(strip(theirs[k]), indent=1),
                                 fields=", ".join(d), sheet=json.dumps(job["sheet"], indent=1))
-        js = answer(cli, text, dst + ".raw")
+        prov = mine[k].get("_cli") or cli   # the provider that answered round 1 (Kimi when it was the fallback)
+        js = answer(prov, text, dst + ".raw", fallback=False)
         json.dump({"run": k, "answer": js}, open(dst, "w"), indent=1)
-        print(who, "reconciled", k, flush=True)
+        print(who, "reconciled", k, prov, flush=True)
 
 
 def prompts(sheets, out):
@@ -259,12 +291,11 @@ def prompts(sheets, out):
 
 
 def sdrf_rows(paths, file):
-    """the SDRF rows of this raw file (all rows when none names it), as dicts"""
+    """the SDRF rows that name this raw file, as dicts (none when no row names it: unrelated rows never stand in)"""
     out = []
     for p in paths:
         rs = list(csv.DictReader(open(p, encoding="utf-8", errors="replace"), delimiter="\t"))
-        hit = [r for r in rs if any(os.path.basename(str(v)) == file for v in r.values())]
-        out += hit or rs[:5]
+        out += [r for r in rs if any(os.path.basename(str(v)) == file for v in r.values())]
     return out
 
 
@@ -303,6 +334,59 @@ def final(out):
                         "B": sorted({v.get("_cli") for v in B1.values()})}}, open(f"{out}/log.json", "w"), indent=1)
 
 
+POINTS_TO = """You annotated the run below. The spectra were then checked against your organism (§3.1 of the
+benchmark: a ProSE search of 5,000 spectra against the stated proteome(s) plus human, mouse, yeast, E. coli and
+Arabidopsis): they do NOT support it, and most of the PSMs not explained by contaminants fall on another organism.
+
+Your organisms: {organisms}
+The verification: {finding}
+
+Using the same material (no tools, files or web pages), record the organism(s) of this run. Answer with one JSON
+object {{"organisms": [binomial names], "evidence": "one sentence"}} and nothing else.
+
+THE RUN
+{sheet}
+"""
+
+
+def points_to(out, tsv):
+    """§3.1 "another organism": the annotators record it; agreed -> the reference, else disputed (not verified)"""
+    isolated()
+    if os.path.exists(f"{out}/adjudicated_before_points_to.tsv"):
+        raise SystemExit("points-to ran already: one round only")
+    rows_ = list(csv.DictReader(open(tsv), delimiter="\t"))
+    adj_p = f"{out}/adjudicated.tsv"
+    adj = list(csv.DictReader(open(adj_p), delimiter="\t"))
+    by = {f"{r['accession']}/{r['file']}": r for r in adj}
+    first = {"A": answers(out, "A"), "B": answers(out, "B")}
+    jobs = {json.load(open(p))["run"]: json.load(open(p)) for p in glob.glob(f"{out}/prompts/*.json")}
+    os.makedirs(f"{out}/points_to", exist_ok=True)
+    log = []
+    for r in rows_:
+        k = r["run"]
+        if k not in by or k not in jobs:
+            continue
+        got = {}
+        for who in ("A", "B"):
+            prov = (first[who].get(k) or {}).get("_cli") or DEFAULT_CLI[who]
+            text = POINTS_TO.format(organisms=by[k]["organisms"], finding=json.dumps(r), sheet=json.dumps(
+                jobs[k]["sheet"], indent=1))
+            js = answer(prov, text, f"{out}/points_to/{k.replace('/', '__')}.{who}.raw", fallback=False)
+            got[who] = species((js or {}).get("organisms"))
+        agreed = got["A"] and got["A"] == got["B"]
+        log.append({"run": k, "A": got["A"], "B": got["B"], "agreed": bool(agreed)})
+        if agreed:
+            by[k]["organisms"] = "; ".join(got["A"])
+        else:
+            by[k]["organism_disputed"] = "yes"
+            by[k]["disputed"] = ",".join(x for x in [by[k].get("disputed"), "organisms (points to)"] if x)
+    os.replace(adj_p, f"{out}/adjudicated_before_points_to.tsv")
+    with open(adj_p, "w") as fh:
+        cols = list(adj[0].keys())
+        fh.write("\t".join(cols) + "\n" + "".join("\t".join(x.get(c) or "" for c in cols) + "\n" for x in adj))
+    json.dump(log, open(f"{out}/points_to/log.json", "w"), indent=1)
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     opt = lambda n, d=None: a[a.index(n) + 1] if n in a else d
@@ -314,3 +398,5 @@ if __name__ == "__main__":
         reconcile(a[1], a[2], opt("--cli", DEFAULT_CLI[a[1]]))
     elif a[0] == "final":
         final(a[1])
+    elif a[0] == "points-to":
+        points_to(a[1], a[2])

@@ -152,11 +152,71 @@ def sha256(path):
 
 
 def frozen_hashes():
-    """{path: sha256} of FREEZE.md (lines '<sha256>  <path>')"""
+    """{path: sha256} of FREEZE.md (lines '<sha256>  <path>'); a path listed twice with two digests stops (a later
+    section never silently supersedes an earlier one)"""
     p = FREEZE
     if not os.path.exists(p):
         return {}
-    return {m.group(2): m.group(1) for m in re.finditer(r"^([0-9a-f]{64})  (\S.*)$", open(p).read(), re.M)}
+    out = {}
+    for m in re.finditer(r"^([0-9a-f]{64})  (\S.*)$", open(p).read(), re.M):
+        if out.setdefault(m.group(2), m.group(1)) != m.group(1):
+            raise SystemExit(f"FREEZE.md lists {m.group(2)} with two digests")
+    return out
+
+
+def frozen_tree(path):
+    """stop unless the tree hash of a directory equals FREEZE.md's 'tree <sha256>  <path>' line"""
+    import freeze
+    m = re.search(rf"^tree ([0-9a-f]{{64}})  {re.escape(path)}\b", open(FREEZE).read(), re.M)
+    if not m or m.group(1) != freeze.tree_hash(path):
+        raise SystemExit(f"{path} differs from its FREEZE.md tree hash")
+
+
+def files_of(path):
+    """the files of a spectra input (an mzML, or every file of a .d folder)"""
+    if os.path.isdir(path):
+        return sorted(os.path.join(d, f) for d, _, fs in os.walk(path) for f in fs)
+    return [path]
+
+
+def child_import_origin(e, code=None):
+    """the prose_auto a child 'python -m prose_auto.cli' imports with environment e is the frozen tree"""
+    code = code or CODE
+    out = subprocess.run([TOOLS["python"], "-c", "import prose_auto, os; print(os.path.realpath(prose_auto.__file__))"],
+                         env=e, cwd=X, capture_output=True, text=True).stdout.strip()
+    if os.path.dirname(out) != os.path.realpath(f"{code}/prose_auto"):
+        raise SystemExit(f"a child imports prose_auto from {out}, not {code}/prose_auto")
+
+
+# §10.1 reruns: a failed unit (search, check, analysis, verification, conversion) is rerun once, then missing. Attempts
+# are counted in <dir>/<unit>.attempts across reruns of the stage or Slurm task (a killed task counts: the attempt is
+# written before the run). A stage with a unit left to rerun exits 1, so Slurm records the task failed and the rerun
+# (2x memory and time) is due; a unit out of attempts is final (missing, <unit>.failed names the step).
+ATTEMPTS = 2
+FAILED = []      # units of this process that failed and may be rerun
+PUBLISH = []     # paths under H this process wrote (heldout.slurm copies only these back)
+
+
+def run_unit(d, unit, fn):
+    """'ok', 'retry' or 'missing'; fn() returns True on success"""
+    os.makedirs(d, exist_ok=True)
+    f = f"{d}/{unit}.attempts"
+    n = int(open(f).read()) if os.path.exists(f) else 0
+    if n >= ATTEMPTS:
+        return "missing"
+    open(f, "w").write(f"{n + 1}\n")
+    try:
+        ok = fn()
+    except Exception as e:   # noqa: BLE001 (the unit's failure, recorded)
+        print(f"{unit} {d}: {e!r}"[:300], flush=True)
+        ok = False
+    if ok:
+        return "ok"
+    if n + 1 >= ATTEMPTS:
+        open(f"{d}/{unit}.failed", "w").write(f"{unit}\n")
+        return "missing"
+    FAILED.append(f"{unit} {d}")
+    return "retry"
 
 
 def check_frozen(paths):
@@ -176,13 +236,32 @@ def no_jev():
     return True
 
 
+JEV_FIELDS = {"JEV_MODEL": "Jev model", "JEV_URL": "Jev endpoint", "PROSE_AUTO_JEV_VOTES": "Jev votes"}
+
+
+def jev_frozen():
+    """the Jev model, endpoint and vote count FREEZE.md records ('- Jev model: X' ...)"""
+    txt = open(FREEZE).read() if os.path.exists(FREEZE) else ""
+    out = {}
+    for var, label in JEV_FIELDS.items():
+        m = re.search(rf"^- {label}: (\S+)\s*$", txt, re.M)
+        if not m:
+            raise SystemExit(f"FREEZE.md records no {label}")
+        out[var] = m.group(1)
+    if "latest" in out["JEV_MODEL"]:
+        raise SystemExit("FREEZE.md's Jev model is not pinned (*latest*)")
+    return out
+
+
 def jev_env():
-    m = os.environ.get("JEV_MODEL", "")
-    if not m or "latest" in m:
-        raise SystemExit("JEV_MODEL must name a pinned Jev model (recorded in FREEZE.md), never *latest*")
+    """the frozen Jev model, endpoint and votes; an environment that names others stops"""
+    fz = jev_frozen()
+    for var, v in fz.items():
+        if os.environ.get(var) not in (None, "", v):
+            raise SystemExit(f"{var}={os.environ[var]} differs from FREEZE.md ({v})")
     if not (os.environ.get("JEV_API_KEY") or os.environ.get("TYPESAFE_API_KEY")):
         raise SystemExit("no Jev key in the environment (it comes over ssh stdin only)")
-    return {"JEV_MODEL": m}
+    return fz
 
 
 def env(extra=None):
@@ -405,11 +484,19 @@ def convert_one(r):
         return k, "failed", "", repr(e)[:200], None, None
 
 
+PXD_TOOLS = os.path.expanduser("~/.claude/skills/pride/tools.json")
+STEP3 = "Step 3: the converted inputs (mzML, unpacked .d)"
+
+
 def convert(workers):
+    """the conversions, each tried at most ATTEMPTS times (§10.1); once every run is final, the inputs' SHA-256 are
+    appended to FREEZE.md (step 3) and checked again before every use"""
+    check_frozen([TOOLS["fastag"], PXD_TOOLS])
     out = CONV
     os.makedirs(os.path.dirname(out), exist_ok=True)
     done = {x["run"]: x for x in rows(out)} if os.path.exists(out) else {}
-    todo = [r for r in all_runs() if done.get(key(r), {}).get("status") != "ok"]
+    todo = [r for r in all_runs() if done.get(key(r), {}).get("status") != "ok"
+            and int(done.get(key(r), {}).get("attempts") or 0) < ATTEMPTS]
     res = dict(done)
     with ProcessPoolExecutor(workers) as ex:
         for f in as_completed([ex.submit(convert_one, r) for r in todo]):
@@ -418,11 +505,27 @@ def convert(workers):
             res[k] = {"run": k, "status": st, "input": inp, "note": note, "ms2_converted": conv, "ms2_vendor": ven,
                       "attempts": int(prev.get("attempts") or 0) + 1}
             print("convert", k, st, note, flush=True)
+            if st != "ok" and res[k]["attempts"] < ATTEMPTS:
+                FAILED.append(f"convert {k}")
     with open(out + ".part", "w") as fh:
         cols = ["run", "status", "input", "note", "ms2_converted", "ms2_vendor", "attempts"]
         fh.write("\t".join(cols) + "\n" + "".join("\t".join(str(v.get(c, "") if v.get(c) is not None else "")
                                                              for c in cols) + "\n" for v in res.values()))
     os.replace(out + ".part", out)
+    if not FAILED and STEP3 not in (open(FREEZE).read() if os.path.exists(FREEZE) else ""):
+        freeze_append(STEP3, [f for v in inputs().values() for f in files_of(v)])
+
+
+def conversions_final():
+    """stop while a conversion may still be rerun (§10.1)"""
+    open_ = [x["run"] for x in rows(CONV) if x["status"] != "ok" and int(x.get("attempts") or 0) < ATTEMPTS]
+    if open_:
+        raise SystemExit(f"{len(open_)} conversions are due a rerun (harness.py convert): {open_[:3]}")
+
+
+def check_inputs(paths):
+    """the converted inputs (and pseudo-spectra) before use: their SHA-256 as appended to FREEZE.md"""
+    check_frozen([f for p in paths for f in files_of(p)])
 
 
 def inputs():
@@ -466,11 +569,12 @@ def indicators(path):
 
 
 def sheet():
+    conversions_final()
     os.makedirs(f"{H}/annotation/sheets", exist_ok=True)
     inp = inputs()
     for r in all_runs():
         dst = f"{H}/annotation/sheets/{fname(key(r))}.json"
-        if os.path.exists(dst) or key(r) not in inp:
+        if os.path.exists(dst):
             continue
         try:
             with urllib.request.urlopen(f"https://www.ebi.ac.uk/pride/ws/archive/v3/projects/{r['accession']}",
@@ -482,8 +586,10 @@ def sheet():
         except Exception as e:
             txt = {"error": repr(e)}
         sdrf = sorted(glob.glob(f"{MIRROR}/{r['accession']}/raw/*sdrf*"))
-        json.dump({"run": key(r), "input": inp[key(r)], "pride": txt, "sdrf": sdrf,
-                   "indicators": indicators(inp[key(r)])}, open(dst, "w"), indent=1)
+        # a run whose conversion failed is annotated from its texts (adjudicated.tsv needs a row for every run, §3)
+        ind = indicators(inp[key(r)]) if key(r) in inp else {"conversion": "failed: no raw-data indicators"}
+        json.dump({"run": key(r), "input": inp.get(key(r)), "pride": txt, "sdrf": sdrf, "indicators": ind},
+                  open(dst, "w"), indent=1)
         print("sheet", key(r), flush=True)
 
 
@@ -599,28 +705,45 @@ def verify(i):
     k = drawn()[i - 1]
     a, rd = adj[k], ref[k]
     o = f"{H}/annotation/verify/{fname(k)}"
-    if os.path.exists(f"{o}/verify.json") or a["class"] != "bottom-up" or rd["class"] != "bottom-up" \
-            or a.get("organism_disputed") == "yes":
+    if os.path.exists(f"{o}/verify.json") or not needs_verification(k, a, rd):
         return
-    os.makedirs(o, exist_ok=True)
+    PUBLISH.append(o)
     ups = [u.strip() for u in rd["proteomes"].split(";") if u.strip()]
     src = inputs()[k]
-    if str(a.get("acquisition") or "").startswith("DIA"):   # DIA: DIAspeXtract's pseudo-spectra, as the arms search
-        sys.path.insert(0, CODE)
-        from prose_auto import external as ext
-        ps = f"{X}/pseudo/{fname(k)}.pseudo.mzML"
-        if not os.path.exists(ps):
-            os.makedirs(os.path.dirname(ps), exist_ok=True)
-            ext.diaspextract(TOOLS["diaspextract"], src, ps, threads=THREADS, log=lambda *x: None)
-        src = ps
-    sub = subset_mzml(src, f"{X}/subset/{fname(k)}.mzML")
-    db = labelled_db(ups, f"{X}/db/verify_{'+'.join(ups)}.fasta")
+    check_inputs([src])
     cli = A.settings_cli(a)
-    idx = f"{X}/verify/{fname(k)}.idXML"
-    os.makedirs(os.path.dirname(idx), exist_ok=True)
-    rc = prose_run(A.prose_cmd(TOOLS["prose"], sub, db, idx, cli, THREADS), f"{o}/prose.log")
-    res = verify_verdict(psm_labels(idx), [f"stated{j}" for j in range(len(ups))]) if rc == 0 else {"error": rc}
-    json.dump({"run": k, "proteomes": ups, "cli": cli, **res}, open(f"{o}/verify.json", "w"), indent=1)
+
+    def go():
+        sp = src
+        if str(a.get("acquisition") or "").startswith("DIA"):   # DIA: DIAspeXtract's pseudo-spectra, as the arms
+            sp = pseudo_spectra(src, f"{X}/pseudo/{fname(k)}.pseudo.mzML")
+        sub = subset_mzml(sp, f"{X}/subset/{fname(k)}.mzML")
+        db = labelled_db(ups, f"{X}/db/verify_{'+'.join(ups)}.fasta")
+        idx = f"{X}/verify/{fname(k)}.idXML"
+        os.makedirs(os.path.dirname(idx), exist_ok=True)
+        if prose_run(A.prose_cmd(TOOLS["prose"], sub, db, idx, cli, THREADS), f"{o}/prose.log"):
+            return False
+        res = verify_verdict(psm_labels(idx), [f"stated{j}" for j in range(len(ups))])
+        json.dump({"run": k, "proteomes": ups, "cli": cli, **res}, open(f"{o}/verify.json", "w"), indent=1)
+        return True
+    if run_unit(o, "verify", go) == "missing":   # final: the run is missing, never 'not verified'
+        json.dump({"run": k, "proteomes": ups, "cli": cli, "error": "the verification search failed twice"},
+                  open(f"{o}/verify.json", "w"), indent=1)
+
+
+def needs_verification(k, a, rd):
+    """§3.1 runs on the adjudicated bottom-up runs with a reference proteome and an undisputed organism"""
+    return a["class"] == "bottom-up" and rd["class"] == "bottom-up" and a.get("organism_disputed") != "yes"
+
+
+def pseudo_spectra(src, dst):
+    """DIAspeXtract's pseudo-spectra of a DIA input (the frozen DIAspeXtract)"""
+    if not os.path.exists(dst):
+        from prose_auto import external as ext
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        ext.diaspextract(TOOLS["diaspextract"], src, dst + ".part.mzML", threads=THREADS, log=lambda *x: None)
+        os.replace(dst + ".part.mzML", dst)
+    return dst
 
 
 STD = {"orbitrap": (10.0, (20.0, "ppm")), "astral": (10.0, (20.0, "ppm")), "tof": (20.0, (40.0, "ppm")),
@@ -634,10 +757,12 @@ def windows(i):
     k = drawn()[i - 1]
     a = adj[k]
     o = f"{H}/annotation/windows/{fname(k)}.json"
-    if os.path.exists(o) or a["class"] != "bottom-up":
+    if os.path.exists(o) or a["class"] != "bottom-up" or k not in inputs():
         return
     os.makedirs(os.path.dirname(o), exist_ok=True)
+    PUBLISH.append(o)
     p = inputs()[k]
+    check_inputs([p])
     if a.get("instrument_class") not in STD:   # disputed (§3): no reference windows, the arms take ProSE's defaults
         res = {"prec_window": "", "prec_unit": "", "frag_window": "", "frag_unit": "", "source": "instrument class disputed"}
     elif not p.endswith(".mzML") or a.get("acquisition", "DDA") != "DDA":
@@ -670,8 +795,17 @@ def refwin(p, a, db):
     run = load_mzml(p, max_ms2=20000)
     scans = ts.select_scans(run, SUBSET, "random", SUBSET_SEED)
     peaks = [ts.prepare_peaks(s) for s in scans]
-    idx = ts.index_for("ref_" + re.sub(r"\W+", "_", "+".join(map(os.path.basename, db))), db[0], mods, enz)
-    pw, fw = 50.0, (50.0 if hr2 else 1.0)
+    name = "ref_" + re.sub(r"\W+", "_", "+".join(map(os.path.basename, db)))
+    union = f"{X}/db/{name}.fasta"   # every proteome of the manifest (a mixture's, too)
+    if not os.path.exists(union):
+        os.makedirs(os.path.dirname(union), exist_ok=True)
+        with open(union + ".part", "w") as fo:
+            for f in db:
+                txt = open(f).read()
+                fo.write(txt if txt.endswith("\n") else txt + "\n")
+        os.replace(union + ".part", union)
+    idx = ts.index_for(name, union, mods, enz)
+    pw, fw = 50.0, (50.0 if hr2 else 0.6)   # §3.3: 50 ppm, fragments 50 ppm (high resolution) or 0.6 Da (ion trap)
     ok = ts.fdr_filter(ts.score_search(scans, idx, pw, fw, hr2, mods, peaks=peaks))[0]
     pe = np.array([x[4] for x in ok])
     fe = fragment_errors(scans, peaks, ok, mods, fw, hr2)
@@ -685,6 +819,27 @@ def refwin(p, a, db):
     fwin = abs(g[0]) + 4 * g[1] if g else STD[cls][1][0]
     return {"prec_window": round(abs(med) + 4 * sd, 3), "prec_unit": "ppm", "frag_window": round(fwin, 4),
             "frag_unit": "ppm" if hr2 else "Da", "source": f"wide search, {pe.size} PSMs"}
+
+
+PANEL_SPECIES = {"human": "Homo sapiens", "mouse": "Mus musculus", "yeast": "Saccharomyces cerevisiae",
+                 "ecoli": "Escherichia coli", "arabidopsis": "Arabidopsis thaliana"}
+
+
+def points_to():
+    """§3.1 "another organism": the runs whose verification failed and points to a panel organism ->
+    H/annotation/points_to.tsv for annotate.py points-to; their verify.json is set aside (verify_first.json), so verify
+    runs again once refdb.tsv is rebuilt from the updated adjudicated.tsv (one round)"""
+    rows_ = []
+    for f in sorted(glob.glob(f"{H}/annotation/verify/*/verify.json")):
+        v = json.load(open(f))
+        if not v.get("verified") and v.get("points_to") in PANEL_SPECIES:
+            rows_.append({"run": v["run"], "points_to": PANEL_SPECIES[v["points_to"]],
+                          "stated_share": round(v["stated_share"], 3), "psms": v["psms"]})
+            os.replace(f, f.replace("verify.json", "verify_first.json"))
+    with open(f"{H}/annotation/points_to.tsv", "w") as fh:
+        fh.write("run\tpoints_to\tstated_share\tpsms\n" + "".join(
+            f"{r['run']}\t{r['points_to']}\t{r['stated_share']}\t{r['psms']}\n" for r in rows_))
+    print(len(rows_), "runs point to another organism")
 
 
 REF_COLS = ["run", "class", "organism_verified", "label", "protease", "cys", "reporter_ions", "prec_window",
@@ -702,6 +857,8 @@ def reference_rows(adj, ref, ver, win, conv_ok):
         cls = "bottom-up" if disputed else a["class"] if ref.get(k, {}).get("class", "bottom-up") == "bottom-up" \
             else "no-proteome"
         v = ver.get(k, {})
+        if v.get("error"):   # a verification that failed twice: the run is missing (no row), never 'not verified'
+            continue
         w = win.get(k, {})
         out.append({"run": k, "class": cls,
                     "organism_verified": "yes" if v.get("verified") and not disputed else "no",
@@ -715,16 +872,23 @@ def reference():
     ver = {json.load(open(f))["run"]: json.load(open(f)) for f in glob.glob(f"{H}/annotation/verify/*/verify.json")}
     win = {json.load(open(f))["run"]: json.load(open(f)) for f in glob.glob(f"{H}/annotation/windows/*.json")}
     d = set(drawn())
+    ok = set(inputs())
+    open_ = [k for k in sorted(d & ok) if (needs_verification(k, adj[k], ref[k]) and k not in ver)
+             or (adj[k]["class"] == "bottom-up" and k not in win)]
+    if open_:   # only final results count (§10.1): an unfinished verification never becomes 'not verified'
+        raise SystemExit(f"{len(open_)} runs lack a final verification or windows (array A): {open_[:3]}")
     rs = [r for r in reference_rows(adj, ref, ver, win, set(inputs())) if r["run"] in d]
     with open(f"{H}/annotation/reference.tsv", "w") as fh:
         fh.write("\t".join(REF_COLS) + "\n" + "".join("\t".join(str(r[c]) for c in REF_COLS) + "\n" for r in rs))
 
 
 def topup_count():
-    """the conditional top-up's inputs (§2.1), the drawn runs only: H/annotation/topup/{reference,conversion}.tsv
+    """(refused once any arm has run) the conditional top-up's inputs (§2.1), the drawn runs only: H/annotation/topup/{reference,conversion}.tsv
     (a drawn run without a reference row and an ok conversion is listed failed when its conversion failed), and
     score.eligible_before_arms on them"""
     import score as SC
+    if glob.glob(f"{H}/runs/*/*/*/*.auto.json"):
+        raise SystemExit("topup-count refused: an arm has run (the top-up comes before any arm)")
     d, o = set(drawn()), f"{H}/annotation/topup"
     os.makedirs(o, exist_ok=True)
     ref = [r for r in rows(f"{H}/annotation/reference.tsv") if r["run"] in d]
@@ -788,21 +952,57 @@ def analyze_one(j):
         cmd += ["--fast"]
         e["PYTHONPATH"] = CODE_0110
     json.dump(cmd, open(f"{j['out']}/cmd_analyze.json", "w"))
-    t = time.time()
-    with open(f"{j['out']}/run.log", "w") as fh:
-        rc = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT, cwd=j["out"], env=e).returncode
-    open(f"{j['out']}/seconds", "w").write(f"{time.time() - t:.1f}\n")
-    if rc:
+
+    def go():
+        t = time.time()
+        with open(f"{j['out']}/run.log", "w") as fh:
+            rc = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT, cwd=j["out"], env=e).returncode
+        open(f"{j['out']}/seconds", "w").write(f"{time.time() - t:.1f}\n")
+        return rc == 0 and bool(glob.glob(f"{j['out']}/*.auto.json"))
+    st = run_unit(j["out"], "analyze", go)
+    if st == "missing":
         open(f"{j['out']}/status", "w").write("missing\n")
-    return j["out"], f"rc={rc}"
+    return j["out"], st
+
+
+SEALED = "Step 4: the annotation sealed"
+
+
+def sealed():
+    return os.path.exists(FREEZE) and SEALED in open(FREEZE).read()
+
+
+def seal():
+    """§10 step 4 ends: every conversion, verification and window is final, the top-up is settled (no batch due), and
+    the annotation files are hashed into FREEZE.md; analyze refuses to start before this, and a top-up batch after"""
+    if sealed():
+        raise SystemExit("sealed already")
+    conversions_final()
+    reference()   # refuses while array A is unfinished
+    import score as SC
+    n = topup_count()
+    dry = os.environ.get("HELDOUT_DRY_SEAL") == "1" and FREEZE != f"{ACC}/FREEZE.md"   # a 2-run dry run only
+    if n < SC.MIN_ELIGIBLE and len(drawn()) < 500 and not dry:
+        raise SystemExit("a top-up batch is due (draw_topup.py --batch K H/annotation/topup), then rerun step 3-4")
+    freeze_append(SEALED, sorted(f for f in glob.glob(f"{H}/annotation/**", recursive=True) if os.path.isfile(f)))
+    print("sealed", flush=True)
 
 
 def analyze(workers):
+    if not sealed():
+        raise SystemExit("analyze refused: the annotation and the top-up are not sealed (harness.py seal)")
     check_frozen([TOOLS[t] for t in FROZEN_TOOLS] + [TOOLS_0110["fastag"]])
+    frozen_tree(CODE_0110)
+    child_import_origin(env())
+    child_import_origin(dict(env(), PYTHONPATH=CODE_0110), CODE_0110)
     jobs = analyze_jobs()
+    check_inputs(sorted({j["spectra"] for j in jobs}))
     with ProcessPoolExecutor(workers) as ex:
         for f in as_completed([ex.submit(analyze_one, j) for j in jobs]):
-            print("analyze", *f.result(), flush=True)
+            d, st = f.result()
+            print("analyze", d, st, flush=True)
+            if st == "retry":
+                FAILED.append(f"analyze {d}")
     freeze_append("Step 5a: the analyses (IBMI), before the transfer",
                   sorted(glob.glob(f"{H}/runs/*/*/*/*.json") + glob.glob(f"{H}/scenarios/*/*/*/*.json")))
 
@@ -821,21 +1021,23 @@ def spectra_of(rep, fallback):
     return i["pseudo_spectra"] if dia and i.get("pseudo_spectra") else fallback
 
 
-def run_plan(k, adj_row, ref_row, win, reports, spectra):
+def run_plan(k, adj_row, ref_row, win, reports, spectra, arm_spectra=None):
     """the searches of one eligible run: auto and each ablation whose ProSE command differs from auto's (§7),
     reference, sdrf, defaults, best_psm (dynamic: the task searches its subset candidates); all against the run's
-    reference database (refdb proteomes + cRAP + entrapment)"""
+    reference database (refdb proteomes + cRAP + entrapment). spectra: the comparators' input (from the adjudicated
+    acquisition, never from auto's decision); arm_spectra: each prose-auto arm's own (its report's pseudo-spectra).
+    A stopped auto (no_digest; also a stopped ablation) is listed in 'stopped' (0 PSMs, noncompliant in P3, §2.2/§6)
+    and the other arms still run"""
     ups = [u.strip() for u in ref_row["proteomes"].split(";") if u.strip()]
     rep = reports["auto"]
     if rep is None:
         return {"run": k, "missing": "auto analysis"}
-    if "no_digest" in rep:
-        return {"run": k, "stopped": True}
+    stopped = [a for a in ["auto", *A.ABLATIONS] if reports.get(a) and "no_digest" in reports[a]]
     prec = (win["prec_window"], win["prec_unit"]) if win.get("prec_window") not in (None, "") else None
     frag = (win["frag_window"], win["frag_unit"]) if win.get("frag_window") not in (None, "") else None
     sdrf = json.loads(adj_row["sdrf_settings"]) if adj_row.get("sdrf_settings") else {}
     ref_set = {c: adj_row.get(c) for c in ("label", "protease", "cys", "enrichment")}
-    searches = {"auto": rep["prose_cli"],
+    searches = {**({"auto": rep["prose_cli"]} if "auto" not in stopped else {}),
                 "reference": A.settings_cli(ref_set, prec, frag),
                 "sdrf": A.settings_cli(sdrf, (sdrf["prec_window"], sdrf["prec_unit"]) if sdrf.get("prec_window")
                                        else None,
@@ -843,20 +1045,47 @@ def run_plan(k, adj_row, ref_row, win, reports, spectra):
                 "defaults": list(A.DEFAULTS)}
     for arm in A.ABLATIONS:
         r = reports.get(arm)
-        if r and "prose_cli" in r and r["prose_cli"] != rep["prose_cli"]:
+        if r and "prose_cli" in r and r["prose_cli"] != rep.get("prose_cli"):
             searches[arm] = r["prose_cli"]
     settings = {"reference": {**ref_set, "prec_window": prec[0] if prec else None, "prec_unit": prec[1] if prec else None,
                               "frag_window": frag[0] if frag else None, "frag_unit": frag[1] if frag else None},
                 "sdrf": {c: sdrf.get(c) for c in ("label", "protease", "cys", "prec_window", "prec_unit",
                                                   "frag_window", "frag_unit")},
                 "defaults": dict(A.DEFAULT_SETTINGS)}
-    return {"run": k, "spectra": spectra, "proteomes": ups, "searches": searches, "settings": settings,
+    return {"run": k, "spectra": spectra, "arm_spectra": {a: v for a, v in (arm_spectra or {}).items() if a in searches},
+            "stopped": stopped, "proteomes": ups, "searches": searches, "settings": settings,
             "best_psm": {"start": {c: ref_set.get(c) or "" for c in ("protease", "label", "cys")},
                          "enrichment": ref_set.get("enrichment"), "prec": prec, "frag": frag},
             "reports": {arm: glob.glob(f"{H}/runs/{k}/{arm}/*.auto.json") for arm in reports if reports[arm]}}
 
 
+def comparator_spectra(k, adj_row, src):
+    """the comparators' spectra from the adjudicated acquisition: DIA -> DIAspeXtract's pseudo-spectra, built here
+    (independent of auto's decision) and hashed with the plans; else the converted input"""
+    if str(adj_row.get("acquisition") or "").startswith("DIA"):
+        return pseudo_spectra(src, f"{H}/pseudo/{fname(k)}.pseudo.mzML")
+    return src
+
+
+def report_db_matches(rep, proteomes):
+    """§3.1 binding: the FASTA sources auto searched (its report's search_database.fasta; a union is built from them)
+    are the run's manifest proteomes, by SHA-256"""
+    used = ((rep or {}).get("search_database") or {}).get("fasta") or []
+    return all(os.path.exists(f) for f in used) and \
+        sorted(sha256(f) for f in used) == sorted(sha256(f"{H}/db/{u}.fasta") for u in proteomes)
+
+
+def copy_report(src_dir, o, stopped):
+    os.makedirs(o, exist_ok=True)
+    for f in glob.glob(f"{src_dir}/*.auto.json"):
+        shutil.copy(f, o)
+    if stopped:
+        open(f"{o}/status", "w").write("stopped\n")
+
+
 def plan():
+    if not sealed():
+        raise SystemExit("plan refused: the annotation is not sealed")
     adj, ref = adjudicated()
     win = {json.load(open(f))["run"]: json.load(open(f)) for f in glob.glob(f"{H}/annotation/windows/*.json")}
     inp = inputs()
@@ -864,9 +1093,19 @@ def plan():
     release = []
     for k, arms in sorted(eligible_runs().items()):
         reports = {arm: _report(f"{H}/runs/{k}/{arm}") for arm in arms}
-        if arms == ("auto",):   # top-down: the auto arm's analysis is all (S8)
+        if arms == ("auto",):   # top-down: the auto report goes into the scoring tree (S8); no search
+            rep = reports["auto"]
+            copy_report(f"{H}/runs/{k}/auto", f"{H}/out/runs/{k}/auto", bool(rep and "no_digest" in rep))
             continue
-        p = run_plan(k, adj[k], ref[k], win[k], reports, spectra_of(reports["auto"], inp[k]))
+        rep = reports["auto"]
+        ups = [u.strip() for u in ref[k]["proteomes"].split(";") if u.strip()]
+        if rep and "no_digest" not in rep and not report_db_matches(rep, ups):
+            raise SystemExit(f"{k}: auto searched a database other than its manifest proteomes {ups}")
+        own = {a: spectra_of(reports.get(a), inp[k]) for a in ["auto", *A.ABLATIONS] if reports.get(a)}
+        p = run_plan(k, adj[k], ref[k], win[k], reports, comparator_spectra(k, adj[k], inp[k]), own)
+        if p.get("missing"):   # auto's analysis failed twice: the run's auto arm is missing in the scoring tree
+            os.makedirs(f"{H}/out/runs/{k}/auto", exist_ok=True)
+            open(f"{H}/out/runs/{k}/auto/status", "w").write("missing\n")
         if "spectra" in p:
             p["db"] = search_db(p["proteomes"])
         json.dump(p, open(f"{H}/plan/{fname(k)}.json", "w"), indent=1)
@@ -894,62 +1133,112 @@ def plan():
             search_db(sorted({os.path.basename(f).split(".")[0] for f in s_["fasta"] or []}))
     json.dump(by_run, open(f"{H}/plan/scenarios.json", "w"), indent=1)
     open(f"{H}/plan/scenario_release.txt", "w").write("".join(f"{k}\n" for k in sorted(by_run)))
-    freeze_append("Step 5: the plans and search databases, before the release",
-                  sorted(glob.glob(f"{H}/plan/*")) + sorted(glob.glob(f"{H}/db/search/*.fasta")))
+    spectra = sorted({x for f in glob.glob(f"{H}/plan/*__*.json") for x in plan_spectra(json.load(open(f)))} |
+                     {s_["spectra"] for ss in by_run.values() for s_ in ss if s_.get("spectra")})
+    freeze_append("Step 5: the plans, search databases and the spectra they read, before the release",
+                  sorted(glob.glob(f"{H}/plan/*")) + sorted(glob.glob(f"{H}/db/search/*.fasta")) +
+                  [f for x in spectra if x not in set(inp.values()) for f in files_of(x)])
+
+
+def plan_spectra(p):
+    return [x for x in [p.get("spectra"), *(p.get("arm_spectra") or {}).values()] if x]
 
 
 # ---- BinAC2 tasks (arrays B and C) -----------------------------------------------------------------------------------
 
+def _cmd_key(cmd):
+    """a search's identity: its command without the thread count (the inputs are named in it and hashed in FREEZE.md)"""
+    c = list(cmd)
+    if "-threads" in c:
+        i = c.index("-threads")
+        del c[i:i + 2]
+    return c
+
+
 def search(spectra, db, cli, o, name):
-    """one ProSE search into o: cmd.json, log, eval.json (entrap.evaluate + corpus.proteins); the idXML stays in o"""
-    sys.path.insert(0, T)
-    sys.path.insert(0, f"{T}/corpus_ids")
-    import corpus as C
-    import entrap
+    """one ProSE search into o: cmd.json, log, eval.json (entrap.evaluate + corpus.proteins); the idXML stays in o.
+    A result is reused only for the same command (_cmd_key); a failed search is rerun once (run_unit), then o/status
+    says missing. None when there is no result (yet)"""
     os.makedirs(o, exist_ok=True)
     js, idx = f"{o}/eval.json", f"{o}/{name}.idXML"
-    if os.path.exists(js):
-        return json.load(open(js))
     cmd = A.prose_cmd(TOOLS["prose"], spectra, db, idx, cli, THREADS)
-    json.dump(cmd, open(f"{o}/cmd.json", "w"))
-    t = time.time()
-    if prose_run(cmd, f"{o}/log") or not os.path.exists(idx):
+    if os.path.exists(js):
+        old = json.load(open(f"{o}/cmd.json")) if os.path.exists(f"{o}/cmd.json") else None
+        if old is not None and _cmd_key(old) == _cmd_key(cmd):
+            return json.load(open(js))
+        os.replace(js, js + ".stale")   # another command's result: never reused
+    if os.path.exists(f"{o}/status"):
         return None
-    entrap.evaluate(js + ".part", db, [idx])
-    e = json.load(open(js + ".part"))
-    e["protein"] = C.proteins(idx, db)
-    e["seconds"] = round(time.time() - t, 1)
-    json.dump(e, open(js + ".part", "w"), indent=1)
-    os.replace(js + ".part", js)
-    return e
+
+    def go():
+        sys.path.insert(0, T)
+        sys.path.insert(0, f"{T}/corpus_ids")
+        import corpus as C
+        import entrap
+        json.dump(cmd, open(f"{o}/cmd.json", "w"))
+        t = time.time()
+        if prose_run(cmd, f"{o}/log") or not os.path.exists(idx):
+            return False
+        entrap.evaluate(js + ".part", db, [idx])
+        e = json.load(open(js + ".part"))
+        e["protein"] = C.proteins(idx, db)
+        e["seconds"] = round(time.time() - t, 1)
+        json.dump(e, open(js + ".part", "w"), indent=1)
+        os.replace(js + ".part", js)
+        return True
+    st = run_unit(o, "search", go)
+    if st == "missing":
+        open(f"{o}/status", "w").write("missing\n")
+    return json.load(open(js)) if st == "ok" else None
 
 
 def check(spectra, idxml, fasta, report, o):
-    """prose-auto check into o (<stem>.check.json) and its wall time (check_seconds)"""
-    t = time.time()
-    rc = subprocess.run(A.check_cmd(TOOLS, spectra, idxml, fasta, report, o, THREADS), env=env(),
-                        stdout=open(f"{o}/check.log", "w"), stderr=subprocess.STDOUT).returncode
-    open(f"{o}/check_seconds", "w").write(f"{time.time() - t:.1f}\n")
-    return rc
+    """prose-auto check into o (<stem>.check.json) and its wall time (check_seconds); its exit code counts: a failed
+    check is rerun once (run_unit 'check'), then the check is missing (no .check.json; the search stays)"""
+    if glob.glob(f"{o}/*.check.json"):
+        return "ok"
+
+    def go():
+        t = time.time()
+        rc = subprocess.run(A.check_cmd(TOOLS, spectra, idxml, fasta, report, o, THREADS), env=env(),
+                            stdout=open(f"{o}/check.log", "w"), stderr=subprocess.STDOUT).returncode
+        open(f"{o}/check_seconds", "w").write(f"{time.time() - t:.1f}\n")
+        if rc:
+            for f in glob.glob(f"{o}/*.check.json"):
+                os.remove(f)
+        return rc == 0 and bool(glob.glob(f"{o}/*.check.json"))
+    return run_unit(o, "check", go)
 
 
 def best_psm(p, o):
-    """§4 best_psm: on the 5,000-MS2 subset, one factor at a time (arms.BEST_PSM_FACTORS), then the full run"""
+    """§4 best_psm: on the 5,000-MS2 subset, one factor at a time (arms.BEST_PSM_FACTORS), then the full run. A step
+    selects only when every candidate has a result: a failed one is rerun first (the task exits 1), and one out of
+    attempts leaves best_psm missing (never scored 0 nor dropped)"""
     os.makedirs(o, exist_ok=True)
+    if os.path.exists(f"{o}/status"):
+        return None
     sub = subset_mzml(p["spectra"], f"{X}/subset/{fname(p['run'])}.mzML")
     cur = dict(p["best_psm"]["start"])
     steps, under = [], None      # under: the specific protease of the label and Cys steps when unspecific won
     for factor, cands in A.BEST_PSM_FACTORS:
-        scores = {}
+        scores, pending = {}, False
         for v in dict.fromkeys([cur[factor]] + list(cands)):
             s = {**cur, factor: v, "enrichment": p["best_psm"]["enrichment"]}
             if under and factor != "protease":
                 s["protease"] = under
             tag = re.sub(r'[^A-Za-z0-9]+', '_', v or 'none') + (f"__{re.sub(r'[^A-Za-z0-9]+', '_', under)}" if s.get(
                 "protease") == under and under else "")
-            ev = search(sub, p["db"], A.settings_cli(s, p["best_psm"]["prec"], p["best_psm"]["frag"]),
-                        f"{o}/subset/{factor}/{tag}", "subset")
+            d = f"{o}/subset/{factor}/{tag}"
+            ev = search(sub, p["db"], A.settings_cli(s, p["best_psm"]["prec"], p["best_psm"]["frag"]), d, "subset")
+            if ev is None:
+                if os.path.exists(f"{d}/status"):   # out of attempts: the ladder is unresolved, best_psm missing
+                    open(f"{o}/status", "w").write("missing\n")
+                    open(f"{o}/best_psm.failed", "w").write(f"subset search {factor} = {v}\n")
+                    return None
+                pending = True
             scores[v] = A.subset_psms(ev)
+        if pending:   # no selection before every candidate has a result (the rerun is due)
+            return None
         new = A.best_psm_step(cur[factor], scores)
         steps.append({"factor": factor, "scores": scores, "from": cur[factor], "to": new})
         if factor == "protease" and new == A.UNSPECIFIC:
@@ -978,19 +1267,23 @@ def task(i):
     k = open(f"{H}/plan/release.txt").read().split()[i - 1]
     p = json.load(open(f"{H}/plan/{fname(k)}.json"))
     check_frozen([p["db"]] + [f"{H}/db/{u}.fasta" for u in p["proteomes"]])
+    check_inputs(plan_spectra(p))
+    child_import_origin(env())
     base = f"{H}/out/runs/{k}"
+    PUBLISH.extend([base, f"{H}/out/natural/{k}"])
+    for arm in p.get("stopped", []):   # §2.2/§6: a stopped arm has 0 PSMs (noncompliant in P3); the others still run
+        copy_report(f"{H}/runs/{k}/{arm}", f"{base}/{arm}", True)
+    sp = lambda arm: (p.get("arm_spectra") or {}).get(arm, p["spectra"])
     evals = {}
     for arm, cli in p["searches"].items():
         o = f"{base}/{arm}"
-        evals[arm] = search(p["spectra"], p["db"], cli, o, "run")
+        evals[arm] = search(sp(arm), p["db"], cli, o, "run")
         for f in p["reports"].get(arm, []):
             shutil.copy(f, o)
         if arm in p["settings"]:
             json.dump(p["settings"][arm], open(f"{o}/settings.json", "w"))
-        if evals[arm] is None:
-            open(f"{o}/status", "w").write("missing\n")
     if evals.get("auto"):
-        check(p["spectra"], f"{base}/auto/run.idXML", [p["db"]], (p["reports"].get("auto") or [None])[0],
+        check(sp("auto"), f"{base}/auto/run.idXML", [p["db"]], (p["reports"].get("auto") or [None])[0],
               f"{base}/auto")
     for arm in natural_arms(evals):
         o = f"{H}/out/natural/{k}/{arm}"
@@ -1006,9 +1299,10 @@ def best_psm_task(i):
     k = open(f"{H}/plan/release.txt").read().split()[i - 1]
     p = json.load(open(f"{H}/plan/{fname(k)}.json"))
     check_frozen([p["db"]] + [f"{H}/db/{u}.fasta" for u in p["proteomes"]])
+    check_inputs([p["spectra"]])
     o = f"{H}/out/runs/{k}/best_psm"
-    if best_psm(p, o) is None:
-        open(f"{o}/status", "w").write("missing\n")
+    PUBLISH.append(o)
+    best_psm(p, o)
     print("BEST_PSM_DONE", k, flush=True)
 
 
@@ -1016,10 +1310,14 @@ def scenario(i):
     """array C: every scenario of wrong-database run i: its search on the scenario database (with cRAP and
     entrapment), the post-search check with that FASTA and the scenario's report"""
     check_frozen([TOOLS[t] for t in FROZEN_TOOLS])
+    child_import_origin(env())
     k = open(f"{H}/plan/scenario_release.txt").read().split()[i - 1]
+    PUBLISH.append(f"{H}/out/scenarios/{k}")
     for s in json.load(open(f"{H}/plan/scenarios.json"))[k]:
         ups = sorted({os.path.basename(f).split(".")[0] for f in s["fasta"] or []})
         db = search_db(ups)
+        check_frozen([db])
+        check_inputs([s["spectra"]])
         o = f"{H}/out/scenarios/{k}/{s['kind']}"
         os.makedirs(o, exist_ok=True)
         for f in glob.glob(f"{s['dir']}/*.auto.json"):
@@ -1027,7 +1325,6 @@ def scenario(i):
                 shutil.copy(f, o)
         ev = search(s["spectra"], db, s["cli"], o, "run")
         if ev is None:
-            open(f"{o}/status", "w").write("missing\n")
             continue
         check(s["spectra"], f"{o}/run.idXML", [db], (glob.glob(f"{s['dir']}/*.auto.json") or [None])[0], o)
     print("SCENARIO_DONE", k, flush=True)
@@ -1046,7 +1343,8 @@ def tree():
                 os.makedirs(o, exist_ok=True)
                 for f in glob.glob(f"{src}/*.auto.json"):
                     shutil.copy(f, o)
-            if os.path.isdir(o) and not os.path.exists(f"{o}/eval.json") and arm != "fast_0110":
+            if os.path.isdir(o) and not os.path.exists(f"{o}/eval.json") and not os.path.exists(f"{o}/status") \
+                    and arm != "fast_0110":
                 open(f"{o}/status", "w").write("missing\n")
 
 
@@ -1055,9 +1353,17 @@ if __name__ == "__main__":
     opt = lambda name, d=None: args[args.index(name) + 1] if name in args else d
     stage = args[0]
     frozen_prose_auto(stage)
+    if stage in ("verify", "windows", "task", "best_psm", "scenario"):
+        conversions_final()
     {"setup": setup, "fasta": lambda: fasta(args[1:]), "get": get, "convert": lambda: convert(int(opt("--workers", 4))),
      "sheet": sheet, "verify": lambda: verify(int(opt("--index"))), "windows": lambda: windows(int(opt("--index"))),
      "reference": reference, "topup-count": topup_count, "analyze": lambda: analyze(int(opt("--workers", 8))), "plan": plan,
      "task": lambda: task(int(opt("--index"))),
      "best_psm": lambda: best_psm_task(int(opt("--index"))), "scenario": lambda: scenario(int(opt("--index"))),
-     "tree": tree}[stage]()
+     "tree": tree, "seal": seal, "points-to": points_to}[stage]()
+    if os.environ.get("HELDOUT_PUBLISH"):   # heldout.slurm copies back exactly these (relative to H)
+        open(os.environ["HELDOUT_PUBLISH"], "w").write("".join(f"{os.path.relpath(x, H)}\n" for x in PUBLISH
+                                                               if os.path.exists(x)))
+    if FAILED:
+        print(f"{len(FAILED)} units failed and are due their rerun (§10.1):", *FAILED[:10], sep="\n  ", flush=True)
+        sys.exit(1)

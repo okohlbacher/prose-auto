@@ -36,8 +36,8 @@ def paths():
         p = json.load(open(f))
         for s in (p.values() if isinstance(p, dict) and "run" not in p else [p]):
             for x in (s if isinstance(s, list) else [s]):
-                if isinstance(x, dict) and x.get("spectra"):
-                    out.append(x["spectra"])
+                if isinstance(x, dict):
+                    out += HN.plan_spectra(x)   # the comparators' and each prose-auto arm's own spectra
     out += [v for v in HN.inputs().values()]
     files = []
     for p in dict.fromkeys(out):

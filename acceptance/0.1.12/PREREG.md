@@ -330,9 +330,12 @@ mirror.
 - **The annotators:** A and B are two independent agent sessions on different model families: A is Claude, B is
   Codex, with Kimi as B's fallback when Codex gives no answer twice. No human annotates, adjudicates or reviews.
 - **What each one sees:** one run's annotation sheet at a time, inside its prompt (`harness.py sheet`): the PRIDE
-  project texts, the SDRF rows of that file and the raw-data indicators. It runs from an empty folder, with every tool
-  disabled (Claude) or in a read-only sandbox (Codex, Kimi). It never sees prose-auto's output, an arm, or the other
-  annotator's answer before the reconciliation round.
+  project texts, the SDRF rows that name that file (none when no row names it) and the raw-data indicators. It runs
+  from an empty temporary folder holding only its prompt, with every tool disabled (Claude) or in a read-only sandbox
+  (Codex); Kimi runs only with a tool-free agent profile, else it is refused. The annotators run on the author's
+  laptop, which holds only the prompts; `annotate.py` refuses to run where the held-out outputs are reachable. It never
+  sees prose-auto's output, an arm, or the other annotator's answer before the reconciliation round, which goes to
+  the provider that answered round 1.
 - **The output:** each fills `reference_A.tsv` or `reference_B.tsv` in a fixed vocabulary (`annotate.VOCAB`).
 - **The raw-data check of §3.2:** this is the measured indicators (reporter-ion shares in 200 MS2/MS3 spectra, MS
   levels, analyser prefixes, Bruker frame types). No annotator inspects spectra by eye.
@@ -404,7 +407,9 @@ first, then `adjudicated.tsv`, `agreement.tsv` and `reference.tsv`, all before t
 ## 4. Arms
 
 Every arm searches the same run with the reference database (§3.1), cRAP and entrapment. The entrapment database is a
-shuffled twin of every target, seed 0; the decoys are reversed. The ProSE build and protocol are those of §1.
+shuffled twin of every target, seed 0. The decoys are ProSE's own (`-Search:decoys generate`, keep_termini, as in
+the pilot and the corpus): ProSE removes the reversed decoys written into the database and regenerates them
+(amendment 2026-11-22c). The ProSE build and protocol are those of §1.
 
 | Arm | Settings |
 |---|---|
@@ -1006,4 +1011,31 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    - **best_psm runs in its own array (B2) on high-memory nodes** (`--mem=1000gb`, 2 days per task): the unspecific
      subset candidate of every run, and the final search where it wins, need about 900 GB;
    - **`fast_0110`** gets the same `--organism` as auto: 0.1.10 fast mode refuses to run without it.
+3. **Fixes from the short review of the harness** (Codex and Kimi, 2026-11-22):
+   - **a stopped auto** (no_digest) is released: auto is scored stopped (0 PSMs, noncompliant in P3, §2.2/§6) and the
+     comparators still run; the auto reports of top-down runs enter the scoring tree (S8);
+   - **the comparators' spectra** come from the adjudicated acquisition (DIA: DIAspeXtract's pseudo-spectra, built
+     by the harness and hashed with the plans), never from auto's decision; each prose-auto arm searches its own;
+   - **Jev** must equal the model id, endpoint and vote count in `FREEZE.md` (`freeze.py init --jev-model ID
+     --jev-url URL --jev-votes N`; ID is the concrete model jev-latest resolves to at the freeze);
+   - **the ion-trap wide window** of §3.3 is 0.6 Da (the harness had the pilot's 1.0 Da); the DDA window search
+     uses every manifest proteome of a mixture;
+   - **reruns (§10.1)** are counted per unit (search, check, analysis, verification, conversion) across reruns of a
+     stage or Slurm task; a unit due its rerun makes the task exit 1, a unit failing twice is missing and names its
+     step; a check's exit code counts; conversions are tried at most twice;
+   - **best_psm** selects a step only when every candidate has a result; a candidate out of attempts leaves best_psm
+     missing. A search result is reused only for the same command;
+   - **verification:** only final results count. A verification that fails twice makes the run missing, never "not
+     verified"; `reference.tsv` is not written while one is open. A run whose spectra point to a panel organism goes
+     to both annotators once more (`harness.py points-to`, `annotate.py points-to`, §3.1 "another organism"): agreed,
+     that organism is the reference and the run is verified again; otherwise the organism is disputed;
+   - **freeze coverage:** the converted inputs are hashed into `FREEZE.md` at step 3 and the pseudo-spectra with the
+     plans, and every task checks them before use; a path listed twice with two digests stops; the converter
+     registry, FASTag, the 0.1.10 tree and the prose_auto a child process imports are checked; the auto report's
+     FASTA sources must be the run's manifest proteomes;
+   - **outputs:** each Slurm task copies back exactly the paths it wrote (array A's verification and windows too);
+   - **stage order:** `harness.py seal` ends step 4 (all conversions, verifications and windows final, no top-up
+     due) and hashes the annotation; analyze and plan refuse before it, and a top-up batch after it or after any arm;
+   - **score.py** requires `scenario_counts.tsv` when scenarios were built, with unique (run, kind) rows covering
+     every built scenario; a failed conversion still gets an annotation sheet (from the texts).
 
