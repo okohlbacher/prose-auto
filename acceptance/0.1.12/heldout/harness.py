@@ -1155,36 +1155,51 @@ def _cmd_key(cmd):
     return c
 
 
+def evaluate(js, db, idx, seconds):
+    """eval.json of one search: entrap.evaluate + corpus.proteins, the search's seconds and the evaluator's SHA-256;
+    both modules are the frozen ones (FREEZE.md step 2)"""
+    check_frozen([f"{T}/entrap.py", f"{T}/corpus_ids/corpus.py"])
+    sys.path.insert(0, T)
+    sys.path.insert(0, f"{T}/corpus_ids")
+    import corpus as C
+    import entrap
+    t = time.time()
+    entrap.evaluate(js + ".part", db, [idx])
+    e = json.load(open(js + ".part"))
+    e["protein"] = C.proteins(idx, db)
+    e["seconds"], e["eval_seconds"] = seconds, round(time.time() - t, 1)
+    e["entrap_sha256"] = sha256(f"{T}/entrap.py")
+    json.dump(e, open(js + ".part", "w"), indent=1)
+    os.replace(js + ".part", js)
+
+
 def search(spectra, db, cli, o, name):
-    """one ProSE search into o: cmd.json, log, eval.json (entrap.evaluate + corpus.proteins); the idXML stays in o.
-    A result is reused only for the same command (_cmd_key); a failed search is rerun once (run_unit), then o/status
-    says missing. None when there is no result (yet)"""
+    """one ProSE search into o: cmd.json, log, eval.json (evaluate); the idXML stays in o. A result is reused only
+    for the same command (_cmd_key); one counted by another entrap.py is counted again from its idXML. A failed
+    search is rerun once (run_unit), then o/status says missing. None when there is no result (yet)"""
     os.makedirs(o, exist_ok=True)
     js, idx = f"{o}/eval.json", f"{o}/{name}.idXML"
     cmd = A.prose_cmd(TOOLS["prose"], spectra, db, idx, cli, THREADS)
     if os.path.exists(js):
         old = json.load(open(f"{o}/cmd.json")) if os.path.exists(f"{o}/cmd.json") else None
         if old is not None and _cmd_key(old) == _cmd_key(cmd):
-            return json.load(open(js))
-        os.replace(js, js + ".stale")   # another command's result: never reused
+            e = json.load(open(js))
+            if e.get("entrap_sha256") == sha256(f"{T}/entrap.py"):
+                return e
+            if os.path.exists(idx):   # amendment 2026-11-22c: the same search, counted by the frozen entrap.py
+                os.replace(js, js + ".entrap_old")
+                evaluate(js, db, idx, e.get("seconds"))
+                return json.load(open(js))
+        os.replace(js, js + ".stale")   # another command's result (or no idXML to count again): never reused
     if os.path.exists(f"{o}/status"):
         return None
 
     def go():
-        sys.path.insert(0, T)
-        sys.path.insert(0, f"{T}/corpus_ids")
-        import corpus as C
-        import entrap
         json.dump(cmd, open(f"{o}/cmd.json", "w"))
         t = time.time()
         if prose_run(cmd, f"{o}/log") or not os.path.exists(idx):
             return False
-        entrap.evaluate(js + ".part", db, [idx])
-        e = json.load(open(js + ".part"))
-        e["protein"] = C.proteins(idx, db)
-        e["seconds"] = round(time.time() - t, 1)
-        json.dump(e, open(js + ".part", "w"), indent=1)
-        os.replace(js + ".part", js)
+        evaluate(js, db, idx, round(time.time() - t, 1))
         return True
     st = run_unit(o, "search", go)
     if st == "missing":

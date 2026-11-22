@@ -69,6 +69,9 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
   resolved; final-only verification, the points-to round of §3.1; inputs and pseudo-spectra hashed and checked;
   tasks publish only their own outputs; `harness.py seal` gates analysis and the top-up; annotator isolation;
   `score.py` requires and validates `scenario_counts.tsv`.
+- Entrapment (`entrap.py`, corpus protocol): PSMs classified by their source proteins and r computed for the
+  search's own enzyme and missed cleavages (unspecific: distinct 7–40 windows); before, both used Trypsin/P peptide sets
+  for every search. 9 of the pilot's 68 searches were non-tryptic and keep their earlier counts (idXML deleted).
 
 ## 0.1.11 (2026-11-20)
 

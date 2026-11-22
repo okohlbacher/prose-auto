@@ -409,7 +409,8 @@ first, then `adjudicated.tsv`, `agreement.tsv` and `reference.tsv`, all before t
 Every arm searches the same run with the reference database (§3.1), cRAP and entrapment. The entrapment database is a
 shuffled twin of every target, seed 0. The decoys are ProSE's own (`-Search:decoys generate`, keep_termini, as in
 the pilot and the corpus): ProSE removes the reversed decoys written into the database and regenerates them
-(amendment 2026-11-22c). The ProSE build and protocol are those of §1.
+(amendment 2026-11-22c). Entrapment is counted by each PSM's source proteins, with the entrapment ratio r of the
+search's own enzyme (`entrap.py`, amendment 2026-11-22c item 4). The ProSE build and protocol are those of §1.
 
 | Arm | Settings |
 |---|---|
@@ -1038,4 +1039,32 @@ The 300-run draw, its seed and both P3 gates are unchanged.
      due) and hashes the annotation; analyze and plan refuse before it, and a top-up batch after it or after any arm;
    - **score.py** requires `scenario_counts.tsv` when scenarios were built, with unique (run, kind) rows covering
      every built scenario; a failed conversion still gets an annotation sheet (from the texts).
+4. **Entrapment counted by source protein and the search's own enzyme** (the author's decision: "Fix it,
+   enzyme-aware"). Until now `entrap.py` (the corpus protocol, frozen at step 2) classified every target PSM by
+   Trypsin/P peptide sets and took r from them, whatever enzyme the search used. A non-tryptic search then counted
+   most of its PSMs as neither target nor entrapment, and its FDP was not measured: in the BinAC2 best_psm test
+   unspecific cleavage won the protease step at 0.46 % FDP, counted on its tryptic PSMs only. Now:
+   - a target PSM is entrapment when all its source proteins (the idXML's protein references) are entrapment twins,
+     and target when any is a target (Wen et al. 2025);
+   - r and the N-terminal r are those of the enzyme and missed cleavages in the idXML's search parameters, with the
+     cleavage rules of the frozen ProSE build (`Enzymes.xml`). For unspecific cleavage r counts the distinct peptide
+     windows of length 7–40 (64-bit hashes, one length at a time). For the human database (99 M residues) this
+     takes about 1 h and 14 GB per unspecific search, within B2's tasks, and gives r = 6.32 (Trypsin/P: 6.16);
+   - an enzyme `entrap.py` does not know stops the evaluation;
+   - each `eval.json` records the SHA-256 of the `entrap.py` that counted it. A search counted by another version
+     is counted again from its idXML, not searched again. Every count checks `entrap.py` and `corpus.py` against
+     `FREEZE.md` first (until now they were frozen but not checked).
+   On the 13 tryptic searches of the dry run the counts are unchanged, except 2–3 PSMs per search that the earlier
+   peptide sets left unclassified; the PSM FDP moved by at most 0.11 percentage points. The dry run's one Glu-C
+   search (wrong_protease, 0 PSMs at 1 % FDR) now has its accepted peptides counted. The earlier version stays next
+   to it as `entrap_pre22c.py` (SHA-256 `bfa9dc5b…62164a0`); `entrap.py` is now `d259efe7…080d4e`.
+   **The pilot** counted with the earlier version. 9 of its 68 searches (17 runs × 4 arms) were non-tryptic, in 3
+   runs:
+   - PXD012418 G-1-5: auto Lys-C, reference and sdrf Glu-C. All 474 Glu-C PSMs were unclassified, so the FDP read 0;
+   - PXD024383 rep4C09: Lys-C in auto, reference and sdrf, at 1.02, 1.51 and 1.49 % FDP. The reference was just
+     above the 1.5 % P3 limit;
+   - PXD052359 (chymotrypsin): 0 PSMs in every arm, so nothing changes.
+   The pilot's idXML files are deleted, so these searches cannot be recounted. The power estimate (`power.txt`,
+   `power_decision.txt`) stands as counted: the P3 comparison of at most 2 of the 19 scored pilot runs rests on an
+   FDP not measured for its enzyme.
 

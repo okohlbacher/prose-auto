@@ -378,12 +378,21 @@ def test_failed_search_is_rerun_then_missing_and_best_psm_waits(tmp_path, monkey
 
 def test_search_reuses_only_the_same_command(tmp_path, monkeypatch):
     monkeypatch.setattr(HN, "FAILED", [])
+    monkeypatch.setattr(HN, "sha256", lambda p: "frozen")
     o = tmp_path / "s"
     o.mkdir()
-    (o / "eval.json").write_text(json.dumps({"psm": {"accepted": 7}}))
+    (o / "eval.json").write_text(json.dumps({"psm": {"accepted": 7}, "entrap_sha256": "frozen"}))
     cmd = A.prose_cmd(HN.TOOLS["prose"], "x.mzML", "db", str(o / "run.idXML"), ["-Search:enzyme", "Trypsin"], 99)
     (o / "cmd.json").write_text(json.dumps(cmd))                         # other thread count: the same search
     assert HN.search("x.mzML", "db", ["-Search:enzyme", "Trypsin"], str(o), "run")["psm"]["accepted"] == 7
+    # counted by another entrap.py: counted again from the idXML, never searched again
+    (o / "eval.json").write_text(json.dumps({"psm": {"accepted": 7}, "entrap_sha256": "pre22c", "seconds": 5}))
+    (o / "run.idXML").write_text("")
+    monkeypatch.setattr(HN, "prose_run", lambda cmd, log: pytest.fail("searched again"))
+    monkeypatch.setattr(HN, "evaluate", lambda js, db, idx, sec: open(js, "w").write(
+        json.dumps({"psm": {"accepted": 8}, "seconds": sec, "entrap_sha256": "frozen"})))
+    e = HN.search("x.mzML", "db", ["-Search:enzyme", "Trypsin"], str(o), "run")
+    assert e["psm"]["accepted"] == 8 and e["seconds"] == 5 and (o / "eval.json.entrap_old").exists()
     monkeypatch.setattr(HN, "prose_run", lambda cmd, log: 1)
     assert HN.search("x.mzML", "db", ["-Search:enzyme", "Lys-C"], str(o), "run") is None   # another command
     assert (o / "eval.json.stale").exists()
@@ -415,3 +424,60 @@ def test_stage_order_gates(tmp_path, monkeypatch):
         dt.batch(1, str(H / "annotation" / "topup"))
     (tmp_path / "FREEZE.md").write_text("# FREEZE\n## Step 4: the annotation sealed (x)\n")
     assert HN.sealed()
+
+
+def _entrap():
+    f = os.path.join(HN.T, "entrap.py")
+    if not os.path.exists(f):
+        pytest.skip("entrap.py (corpus protocol) not here")
+    spec = importlib.util.spec_from_file_location("entrap", f)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
+def test_entrapment_non_tryptic_search_by_protein_and_own_enzyme(tmp_path):
+    """amendment 2026-11-22c: a Glu-C search's PSMs are classified by their source proteins (Trypsin/P peptide sets
+    called all of them unclassified) and r is that of Glu-C; unspecific has r from its distinct windows"""
+    E = _entrap()
+    src, db = tmp_path / "src.fasta", tmp_path / "db.fasta"
+    src.write_text(">sp|P1|A target one\nMSTAGHLVNPWADKLMNPQSTWVYHGLKSTAPLMNGHE\n"
+                   ">sp|P2|B target two\nMGHTPLKNWYSAVDRQLMPTHGSWNYEKLPTGAMNWE\n")
+    E.makedb(str(src), str(db), 0)
+    ent = {h.split()[0]: s for h, s in E.read_fasta(str(db)) if h.startswith("ENTRAP_")}
+    tgt = {h.split()[0]: s for h, s in E.read_fasta(str(db)) if not h.startswith(("ENTRAP_", "DECOY_"))}
+
+    def idxml(enzyme, path):
+        prots = [("PH_0", "sp|P1|A"), ("PH_1", "sp|P2|B"), ("PH_2", "ENTRAP_sp|P1|A"), ("PH_3", "DECOY_sp|P1|A")]
+        hits = [("0.001", tgt["sp|P1|A"][14:30], "PH_0", "14", "target"),          # target
+                ("0.002", tgt["sp|P2|B"][0:15], "PH_1", "0", "target"),            # target, protein N-term
+                ("0.003", ent["ENTRAP_sp|P1|A"][3:20], "PH_2", "3", "target"),     # entrapment only
+                ("0.004", ent["ENTRAP_sp|P1|A"][3:20], "PH_0 PH_2", "3 3", "target"),  # shared: target
+                ("0.005", "KDAWPNVLHGATS", "PH_3", "1", "decoy")]
+        body = "".join(f'<PeptideIdentification score_type="q-value">\n<PeptideHit score="{q}" sequence="{s}" charge="2" '
+                       f'start="{st}" protein_refs="{r}" >\n<UserParam type="string" name="target_decoy" value="{td}"/>'
+                       f'\n<UserParam type="float" name="percolator_score" value="{9 - i}"/>\n</PeptideHit>\n'
+                       f'</PeptideIdentification>\n' for i, (q, s, r, st, td) in enumerate(hits))
+        path.write_text(f'<IdXML>\n<SearchParameters id="SP_0" db="{db}" enzyme="{enzyme}" missed_cleavages="2" >\n'
+                        '</SearchParameters>\n<ProteinIdentification>\n' +
+                        "".join(f'<ProteinHit id="{i}" accession="{a}" score="0.0" sequence="" >\n</ProteinHit>\n'
+                                for i, a in prots) + f'</ProteinIdentification>\n{body}</IdXML>\n')
+        return str(path)
+
+    out = tmp_path / "e.json"
+    E.evaluate(str(out), str(db), [idxml("glutamyl endopeptidase", tmp_path / "gluc.idXML")])
+    ev = json.loads(out.read_text())
+    assert ev["enzyme"] == "glutamyl endopeptidase" and ev["classification"] == "protein"
+    assert (ev["psm"]["N_T"], ev["psm"]["N_E"], ev["psm"]["N_U"]) == (3, 1, 0)
+    assert ev["psm_nterm"]["N_T"] == 1
+    r_glu = E.ratio(list(tgt.values()), list(ent.values()), "glutamyl endopeptidase", 2)
+    assert ev["r"] == pytest.approx(r_glu[0]) and ev["r"] != pytest.approx(E.ratio(list(tgt.values()), list(ent.values()), "trypsin/p", 2)[0])
+    # the old Trypsin/P sets know none of these Glu-C peptides
+    t, _ = E.peptides(tgt.values())
+    assert not any(E.strip(tgt["sp|P1|A"][14:30]) == p for p in t)
+    E.evaluate(str(out), str(db), [idxml("unspecific cleavage", tmp_path / "unspec.idXML")])
+    ev = json.loads(out.read_text())
+    r_un = E.ratio(list(tgt.values()), list(ent.values()), "unspecific cleavage", 0)
+    assert ev["enzyme"] == "unspecific cleavage" and ev["r"] == pytest.approx(r_un[0]) and ev["psm"]["N_E"] == 1
+    with pytest.raises(SystemExit):
+        E.evaluate(str(out), str(db), [idxml("pepsin", tmp_path / "x.idXML")])
