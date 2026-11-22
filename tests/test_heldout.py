@@ -10,6 +10,8 @@ import zipfile
 
 import pytest
 
+pytestmark = pytest.mark.skipif(sys.platform == "win32", reason="held-out harness runs on Linux only")
+
 D = os.path.join(os.path.dirname(__file__), "..", "acceptance", "0.1.12", "heldout")
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, D)
