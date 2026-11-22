@@ -31,7 +31,7 @@ ACC_FILES = ["PREREG.md", "SHA256SUMS", "extract.py", "score.py", "scenarios.py"
              "power.py", "power.txt", "power_grid.txt", "power_decision.py", "power_decision.txt", "draw_sets.py",
              "draw_topup.py", "exclude.txt", "heldout.tsv", "topup.tsv", "wrongdb.tsv", "candidates.tsv",
              "topup_candidates.tsv", "scenarios.tsv", "refdb_draw.tsv", "power_inputs", "uniprot", "uniprot_heldout",
-             "heldout"]
+             "heldout", "corpus"]
 BUNDLES = {"FASTag 1.15.3": "/ceph/ibmi/abi/oliver/opt/fastag-1.15.3/FASTag",
            "FASTag 1.10.0 (fast_0110)": "/ceph/ibmi/abi/oliver/opt/fastag-1.10.0/FASTag",
            "ProSE (corpus build)": "/ceph/ibmi/abi/oliver/opt/prose-check-20261028/pr",

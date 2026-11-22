@@ -75,8 +75,8 @@ def test_best_psm_rule():
     assert A.best_psm_step("Trypsin", {"Trypsin": 1000, "Lys-C": 1050, "Glu-C": 1200}) == "Glu-C"
     assert A.best_psm_step("Trypsin", {"Trypsin": 0, "Lys-C": 10}) == "Lys-C"
     assert A.best_psm_step("Trypsin", {"Trypsin": 1000, "Lys-C": None}) == "Trypsin"
-    assert A.subset_psms({"psm": {"accepted": 500, "combined": 1.2}}) == 0
-    assert A.subset_psms({"psm": {"accepted": 500, "combined": 0.8}}) == 500 and A.subset_psms(None) is None
+    assert A.subset_psms({"psm": {"accepted": 5000, "N_E": 50, "combined": 1.2}}) == 0
+    assert A.subset_psms({"psm": {"accepted": 500, "N_E": 3, "combined": 0.8}}) == 500 and A.subset_psms(None) is None
     assert [f for f, _ in A.BEST_PSM_FACTORS] == ["protease", "label", "cys"]
     assert len([p for p in A.BEST_PSM_FACTORS[0][1] if p not in ("Trypsin", "unspecific cleavage")]) == 5
 
@@ -282,7 +282,7 @@ def test_best_psm_unspecific_only_in_final(tmp_path, monkeypatch):
         calls.append((name, enz, o))
         n = {v: k for k, v in __import__("prose_auto.prose_params", fromlist=["x"]).ENZYME_NAMES.items()}
         base = PSMS[n.get(enz, enz)]
-        return {"psm": {"accepted": base + (100 if "TMT6plex (K)" in fixed else 0), "combined": 0.5}}
+        return {"psm": {"accepted": base + (100 if "TMT6plex (K)" in fixed else 0), "N_E": 3, "combined": 0.5}}
 
     monkeypatch.setattr(HN, "search", fake_search)
     monkeypatch.setattr(HN, "subset_mzml", lambda s, out: out)
@@ -296,8 +296,60 @@ def test_best_psm_unspecific_only_in_final(tmp_path, monkeypatch):
     later = [c for c in calls if c[0] == "subset" and ("/label/" in c[2] or "/cys/" in c[2])]
     assert later and all(c[1] == "Trypsin" for c in later)
     assert j["result"] == {"protease": "unspecific cleavage", "label": "TMT6plex", "cys": "Carbamidomethyl (C)"}
-    assert calls[-1][0] == "run" and calls[-1][1] == "unspecific cleavage"
     assert A.best_specific("Trypsin", PSMS) == "Trypsin"
+    # amendment 2026-11-22c item 6: B2 leaves the final unspecific search (> 1 TB) to a 2.2 TB IBMI node
+    assert not [c for c in calls if c[0] == "run"] and (tmp_path / "bp" / "himem_due").exists()
+
+
+def test_final_unspecific_search_runs_on_a_himem_node(tmp_path, monkeypatch):
+    """amendment 2026-11-22c item 6: harness.py himem runs the searches B2 left on a 2.2 TB node, after the hash checks, one process"""
+    H = tmp_path / "H"
+    monkeypatch.setattr(HN, "H", str(H))
+    k = "PXD1/a.raw"
+    o = H / "out" / "runs" / k / "best_psm"
+    o.mkdir(parents=True)
+    (o / "himem_due").write_text("x\n")
+    (o / "best_psm.json").write_text(json.dumps({"steps": [], "result": {
+        "protease": "unspecific cleavage", "label": "label free", "cys": "Carbamidomethyl (C)"}}))
+    (H / "out" / "runs" / "PXD2" / "b.raw" / "best_psm").mkdir(parents=True)   # B2 searched it: not due
+    p = {"run": k, "spectra": "a.mzML", "db": "db.fasta", "proteomes": ["UP1"], "best_psm": {
+        "start": {}, "enrichment": "none", "prec": [10, "ppm"], "frag": [20, "ppm"]}}
+    (H / "plan").mkdir()
+    (H / "plan" / "release.txt").write_text(f"{k}\nPXD2/b.raw\n")
+    (H / "plan" / "PXD1__a.raw.json").write_text(json.dumps(p))
+    checked, ran = [], []
+    monkeypatch.setattr(HN, "check_frozen", lambda paths: checked.extend(paths))
+    monkeypatch.setattr(HN, "check_inputs", lambda paths: checked.extend(paths))
+    monkeypatch.setattr(HN, "search", lambda sp, db, cli, oo, n: ran.append((n, A._vals(cli, "-Search:enzyme")[0], oo)))
+    import socket
+    monkeypatch.setattr(socket, "gethostname", lambda: "ibminode05")
+    with pytest.raises(SystemExit, match="not one of the 2.2 TB"):
+        HN.himem()
+    monkeypatch.setattr(socket, "gethostname", lambda: "kim.informatik.uni-tuebingen.de")
+    monkeypatch.setattr(HN, "mem_available_gb", lambda: 900)
+    with pytest.raises(SystemExit, match="run it later"):   # shared node: no search without the memory
+        HN.himem()
+    assert ran == []
+    monkeypatch.setattr(HN, "mem_available_gb", lambda: 2000)
+    HN.himem()
+    assert ran == [("run", "unspecific cleavage", str(o))]
+    assert HN.TOOLS["prose"] in checked and "db.fasta" in checked and "a.mzML" in checked
+    assert json.load(open(o / "settings.json"))["protease"] == "unspecific cleavage"
+    assert (o / "node").read_text() == "kim\n"
+    import fcntl
+    with open(H / "out" / "himem.lock", "w") as lk:   # one at a time: a second himem process stops
+        fcntl.flock(lk, fcntl.LOCK_EX)
+        with pytest.raises(BlockingIOError):
+            HN.himem()
+
+
+def test_best_psm_fdp_veto_needs_min_entrapment():
+    """amendment 2026-11-22c item 5: PSMs at 1 % FDR; 0 only when the FDP exceeds 1 % on >= 20 entrapment PSMs"""
+    ev = lambda n, ne, f: {"psm": {"accepted": n, "N_E": ne, "combined": f}}
+    assert A.subset_psms(ev(824, 10, 1.41)) == 824     # the BinAC2 test's trypsin candidate (scored 0 before)
+    assert A.subset_psms(ev(2400, 20, 1.2)) == 0
+    assert A.subset_psms(ev(2400, 25, 0.9)) == 2400
+    assert A.subset_psms(None) is None
 
 
 def test_stopped_auto_is_released_and_scored_stopped(tmp_path, monkeypatch):
@@ -481,3 +533,36 @@ def test_entrapment_non_tryptic_search_by_protein_and_own_enzyme(tmp_path):
     assert ev["enzyme"] == "unspecific cleavage" and ev["r"] == pytest.approx(r_un[0]) and ev["psm"]["N_E"] == 1
     with pytest.raises(SystemExit):
         E.evaluate(str(out), str(db), [idxml("pepsin", tmp_path / "x.idXML")])
+
+
+def test_evaluators_are_in_the_repository():
+    """the corpus protocol is in acceptance/0.1.12/corpus, byte-identical to the copies the harness checks"""
+    import freeze
+    assert "corpus" in freeze.ACC_FILES
+    acc = os.path.join(D, "..")
+    for f in ("entrap.py", "entrap_pre22c.py", "corpus.py"):
+        assert os.path.exists(os.path.join(acc, "corpus", f))
+    for t, r in HN.EVALUATORS.items():
+        if os.path.exists(t):
+            assert HN.sha256(t) == HN.sha256(r)
+
+
+def test_subset_search_reused_across_tmpdirs(tmp_path, monkeypatch):
+    """a B2 rerun in another job (another $TMPDIR) reuses the subset searches of the same run, size and seed"""
+    monkeypatch.setattr(HN, "FAILED", [])
+    monkeypatch.setattr(HN, "sha256", lambda p: "frozen")
+    o = tmp_path / "s"
+    o.mkdir()
+    cli = ["-Search:enzyme", "Trypsin"]
+    job1 = f"{tmp_path}/scratch/111/subset/PXD1__a.raw.mzML"
+    (o / "cmd.json").write_text(json.dumps(A.prose_cmd(HN.TOOLS["prose"], job1, "db", str(o / "subset.idXML"), cli, 16)))
+    (o / "eval.json").write_text(json.dumps({"psm": {"accepted": 7}, "entrap_sha256": "frozen"}))
+    monkeypatch.setattr(HN, "prose_run", lambda cmd, log: pytest.fail("searched again"))
+    job2 = f"{tmp_path}/scratch/222/subset/PXD1__a.raw.mzML"
+    assert HN.search(job2, "db", cli, str(o), "subset")["psm"]["accepted"] == 7
+    other = f"{tmp_path}/scratch/222/subset/PXD1__b.raw.mzML"   # another run's subset: never reused
+    monkeypatch.setattr(HN, "prose_run", lambda cmd, log: 1)
+    assert HN.search(other, "db", cli, str(o), "subset") is None and (o / "eval.json.stale").exists()
+    k0 = HN._cmd_key(A.prose_cmd("p", job1, "db", "x", cli, 1))
+    monkeypatch.setattr(HN, "SUBSET_SEED", 1)                     # another seed: another subset, not reused
+    assert HN._cmd_key(A.prose_cmd("p", job1, "db", "x", cli, 1)) != k0

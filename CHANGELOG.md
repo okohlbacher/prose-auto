@@ -72,6 +72,10 @@ Preregistration (`acceptance/0.1.12/`, was `acceptance/0.1.11/`)
 - Entrapment (`entrap.py`, corpus protocol): PSMs classified by their source proteins and r computed for the
   search's own enzyme and missed cleavages (unspecific: distinct 7–40 windows); before, both used Trypsin/P peptide sets
   for every search. 9 of the pilot's 68 searches were non-tryptic and keep their earlier counts (idXML deleted).
+- best_psm: a subset candidate scores its PSMs at 1 % FDR and is vetoed (0) only when its entrapment FDP exceeds 1 %
+  on at least 20 entrapment PSMs. A final unspecific search (> 1 TB) runs on a 2.2 TB IBMI node (`harness.py
+  himem`, one at a time), no longer in B2. A subset search is reused by its run, size and seed, not by its `$TMPDIR`
+  path, so a B2 rerun in another job does not repeat it.
 
 ## 0.1.11 (2026-11-20)
 

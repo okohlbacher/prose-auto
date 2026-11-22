@@ -8,6 +8,8 @@
 # PREREG 0.1.12 §10.1, arrays A (verify, windows), B (task), B2 (best_psm) and C (scenario) on BinAC2:
 #   sbatch --array=1-N%40 heldout.slurm STAGE        STAGE: verify | windows | task | scenario
 #   sbatch --array=1-N%16 --mem=1000gb --time=2-00:00:00 heldout.slurm best_psm   (high-memory nodes: ~900 GB peak)
+#   a final unspecific best_psm search (> 1 TB) is not run here: B2 leaves best_psm/himem_due, and once the outputs
+#   are back on Ceph, `harness.py himem` runs them on a 2.2 TB IBMI node, one at a time, under a lease
 # A dry run sets HELDOUT_DRY=<file of KEY=VALUE lines> (PROSE_AUTO_H, _RUNS, _WRONGDB, _FREEZE, HELDOUT_NO_JEV)
 # A task that exits 1 has a unit due its rerun (§10.1): resubmit those indices once with twice the memory and time,
 #   sbatch --mem=256gb --time=12:00:00 --array=I,J heldout.slurm STAGE   (B2: --mem=2000gb --time=4-00:00:00)

@@ -1147,18 +1147,32 @@ def plan_spectra(p):
 # ---- BinAC2 tasks (arrays B and C) -----------------------------------------------------------------------------------
 
 def _cmd_key(cmd):
-    """a search's identity: its command without the thread count (the inputs are named in it and hashed in FREEZE.md)"""
+    """a search's identity: its command without the thread count (the inputs are named in it and hashed in FREEZE.md).
+    A subset input (subset_mzml, under the job's own $TMPDIR) counts by its run, size and seed, not by its path, so a
+    rerun in another job reuses the subset searches"""
     c = list(cmd)
     if "-threads" in c:
         i = c.index("-threads")
         del c[i:i + 2]
+    if "-in" in c:
+        i = c.index("-in") + 1
+        if os.path.basename(os.path.dirname(c[i])) == "subset":
+            c[i] = f"subset n={SUBSET} seed={SUBSET_SEED} {os.path.basename(c[i])}"
     return c
+
+
+# the corpus protocol the searches are counted with, and its byte-identical copies in the repository (reproducible
+# from the tag; SHA256SUMS covers them)
+EVALUATORS = {f"{T}/entrap.py": f"{ACC}/corpus/entrap.py", f"{T}/corpus_ids/corpus.py": f"{ACC}/corpus/corpus.py"}
 
 
 def evaluate(js, db, idx, seconds):
     """eval.json of one search: entrap.evaluate + corpus.proteins, the search's seconds and the evaluator's SHA-256;
     both modules are the frozen ones (FREEZE.md step 2)"""
-    check_frozen([f"{T}/entrap.py", f"{T}/corpus_ids/corpus.py"])
+    check_frozen(list(EVALUATORS))
+    bad = [t for t, r in EVALUATORS.items() if sha256(t) != sha256(r)]
+    if bad:
+        raise SystemExit(f"differs from its copy in the repository (acceptance/0.1.12/corpus): {', '.join(bad)}")
     sys.path.insert(0, T)
     sys.path.insert(0, f"{T}/corpus_ids")
     import corpus as C
@@ -1260,11 +1274,56 @@ def best_psm(p, o):
             under = steps[-1]["label_cys_under"] = A.best_specific(cur[factor], scores)
         cur[factor] = new
     json.dump({"steps": steps, "result": cur}, open(f"{o}/best_psm.json", "w"), indent=1)
+    return final_search(p, o, cur)
+
+
+def final_search(p, o, cur, here=False):
+    """best_psm's full-run search with the ladder's result cur. An unspecific one needs more than 1 TB: B2 leaves
+    o/himem_due and himem() runs it on a 2.2 TB IBMI node (amendment 2026-11-22c item 6)"""
     final = {**cur, "enrichment": p["best_psm"]["enrichment"]}
     pr, fr = p["best_psm"]["prec"] or (None, None), p["best_psm"]["frag"] or (None, None)
     json.dump({**final, "prec_window": pr[0], "prec_unit": pr[1], "frag_window": fr[0], "frag_unit": fr[1]},
               open(f"{o}/settings.json", "w"))
+    if final["protease"] == A.UNSPECIFIC and not here:
+        open(f"{o}/himem_due", "w").write("the final unspecific search runs on a 2.2 TB IBMI node: harness.py himem\n")
+        return None
     return search(p["spectra"], p["db"], A.settings_cli(final, p["best_psm"]["prec"], p["best_psm"]["frag"]), o, "run")
+
+
+HIMEM_NODES = ("spock", "kim", "dax", "data")   # the 2.2 TB IBMI nodes
+HIMEM_MIN_GB = 1300   # MemAvailable before a final unspecific search (B2's 1,000 GB were too few)
+
+
+def mem_available_gb():
+    return int(next(x for x in open("/proc/meminfo") if x.startswith("MemAvailable")).split()[1]) / 2 ** 20
+
+
+def himem():
+    """§10.1: the final unspecific best_psm searches B2 left (himem_due), after the B2 outputs are back on Ceph, on
+    one of the 2.2 TB IBMI nodes under a lease; one at a time (one process, the lock), with the same hash checks as
+    B2; the node is recorded (best_psm/node)"""
+    import fcntl
+    import socket
+    node = socket.gethostname().split(".")[0]
+    if node not in HIMEM_NODES:
+        raise SystemExit(f"{node} is not one of the 2.2 TB IBMI nodes {HIMEM_NODES}")
+    check_frozen([TOOLS[t] for t in FROZEN_TOOLS])
+    os.makedirs(f"{H}/out", exist_ok=True)
+    with open(f"{H}/out/himem.lock", "w") as lk:
+        fcntl.flock(lk, fcntl.LOCK_EX | fcntl.LOCK_NB)   # a second himem process stops here
+        for k in open(f"{H}/plan/release.txt").read().split():
+            o = f"{H}/out/runs/{k}/best_psm"
+            if not os.path.exists(f"{o}/himem_due") or os.path.exists(f"{o}/status"):
+                continue
+            p = json.load(open(f"{H}/plan/{fname(k)}.json"))
+            check_frozen([p["db"]] + [f"{H}/db/{u}.fasta" for u in p["proteomes"]])
+            check_inputs([p["spectra"]])
+            if mem_available_gb() < HIMEM_MIN_GB:   # the node is shared: wait, never push its other users out
+                raise SystemExit(f"{node} has {mem_available_gb():.0f} GB available (< {HIMEM_MIN_GB}): "
+                                 "run it later or on another node")
+            open(f"{o}/node", "w").write(f"{node}\n")
+            final_search(p, o, json.load(open(f"{o}/best_psm.json"))["result"], here=True)
+            print("HIMEM_DONE", k, node, flush=True)
 
 
 def natural_arms(evals):
@@ -1308,8 +1367,8 @@ def task(i):
 
 
 def best_psm_task(i):
-    """array B2: best_psm of release run i, on a high-memory node (>= 1 TB: the unspecific subset candidate and, when
-    it wins, the final full search peak at about 900 GB) and its own walltime"""
+    """array B2: best_psm of release run i, on a high-memory node (1 TB: the unspecific subset candidate peaks at
+    about 900 GB) and its own walltime; a final unspecific search is left to himem()"""
     check_frozen([TOOLS[t] for t in FROZEN_TOOLS])
     k = open(f"{H}/plan/release.txt").read().split()[i - 1]
     p = json.load(open(f"{H}/plan/{fname(k)}.json"))
@@ -1368,14 +1427,14 @@ if __name__ == "__main__":
     opt = lambda name, d=None: args[args.index(name) + 1] if name in args else d
     stage = args[0]
     frozen_prose_auto(stage)
-    if stage in ("verify", "windows", "task", "best_psm", "scenario"):
+    if stage in ("verify", "windows", "task", "best_psm", "scenario", "himem"):
         conversions_final()
     {"setup": setup, "fasta": lambda: fasta(args[1:]), "get": get, "convert": lambda: convert(int(opt("--workers", 4))),
      "sheet": sheet, "verify": lambda: verify(int(opt("--index"))), "windows": lambda: windows(int(opt("--index"))),
      "reference": reference, "topup-count": topup_count, "analyze": lambda: analyze(int(opt("--workers", 8))), "plan": plan,
      "task": lambda: task(int(opt("--index"))),
      "best_psm": lambda: best_psm_task(int(opt("--index"))), "scenario": lambda: scenario(int(opt("--index"))),
-     "tree": tree, "seal": seal, "points-to": points_to}[stage]()
+     "himem": himem, "tree": tree, "seal": seal, "points-to": points_to}[stage]()
     if os.environ.get("HELDOUT_PUBLISH"):   # heldout.slurm copies back exactly these (relative to H)
         open(os.environ["HELDOUT_PUBLISH"], "w").write("".join(f"{os.path.relpath(x, H)}\n" for x in PUBLISH
                                                                if os.path.exists(x)))

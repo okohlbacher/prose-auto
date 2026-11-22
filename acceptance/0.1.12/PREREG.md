@@ -418,7 +418,7 @@ search's own enzyme (`entrap.py`, amendment 2026-11-22c item 4). The ProSE build
 | **reference** | the adjudicated annotation (§3.2) with the measured windows (§3.3) |
 | **SDRF** | the authors' settings as stated: the submitted or curated SDRF if one exists, else the methods as transcribed by the annotators. A field nobody states takes the ProSE default, never auto's |
 | **defaults** | ProSE defaults plus the organism: Trypsin/P, Carbamidomethyl (C) fixed, Oxidation (M) variable, ProSE's default windows and charges |
-| **best_psm** (comparator, not truth) | on the subset, one factor at a time from the reference settings:<br>• protease (trypsin, the five non-tryptic proteases, unspecific);<br>• label (none, TMT, TMTpro, iTRAQ4/8, SILAC);<br>• Cys alkylation (CAM, none, propionamide, NEM, methylthio, carboxymethyl).<br>A candidate is kept when it beats the current value by ≥ 5 % in PSMs at 1 % entrapment FDP. If unspecific wins the protease step, label and Cys are chosen under the best specific protease (amendment 2026-11-22c). The full run is then searched with the result |
+| **best_psm** (comparator, not truth) | on the subset, one factor at a time from the reference settings:<br>• protease (trypsin, the five non-tryptic proteases, unspecific);<br>• label (none, TMT, TMTpro, iTRAQ4/8, SILAC);<br>• Cys alkylation (CAM, none, propionamide, NEM, methylthio, carboxymethyl).<br>A candidate is kept when it beats the current value by ≥ 5 % in PSMs at 1 % FDR; a candidate whose entrapment FDP exceeds 1 % on at least 20 entrapment PSMs scores 0 (amendment 2026-11-22c item 5). If unspecific wins the protease step, label and Cys are chosen under the best specific protease (amendment 2026-11-22c). The full run is then searched with the result; a final unspecific search runs on a 2.2 TB IBMI node (item 6) |
 
 **Wrong-database and wrong-settings searches (S6).** Every scenario (§2.3) is searched on its own database:
 1. **Pre-search:** prose-auto analyze runs with the auto flags, with the scenario database given as `--fasta` instead of
@@ -700,7 +700,7 @@ On development data (`v0112/dev_inputs.py`, in-sample), `score.py` runs end to e
 | 4. Annotators A and B, reconciliation (`annotate.py`) | the author's laptop, where the agent CLIs (Claude, Codex, Kimi) run; the sheets are copied there and the answers back | two agent calls per run, a third and fourth for each disputed run |
 | 4. Verification and window searches (`harness.py verify`, `windows`) | BinAC2, array A | 300 tasks, one subset search and one mini-search each |
 | 5a. Every prose-auto `analyze`: the auto arm, the ablations of §7, the S6 pre-search analyses | IBMI, on a claimed node, 8 at a time with 8 threads | about 2,000 analyses at a median 145 s (pilot): about 10 h. They call Jev, whose key reaches only IBMI and only over ssh stdin, so they do not run on BinAC2 |
-| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2, 6 h), B2 (its best_psm, on high-memory nodes: 1,000 GB, 2 days) and C (one task per scenario run of `wrongdb.tsv`) | about 30 searches per run and 213 scenario searches |
+| 5b. Every ProSE search: auto, reference, SDRF, defaults, best_psm (subset and full), the ablation searches where the command changes, the S6 scenario searches | BinAC2, arrays B (one task per verified bottom-up held-out run, §2.2, 6 h), B2 (its best_psm, on high-memory nodes: 1,000 GB, 2 days) and C (one task per scenario run of `wrongdb.tsv`). A final unspecific best_psm search (> 1 TB) runs on a 2.2 TB IBMI node (spock, kim, dax or data) after B2's outputs are back on Ceph: `harness.py himem`, one at a time, under a lease (amendment 2026-11-22c item 6) | about 30 searches per run and 213 scenario searches |
 | 5c. Post-search checks (`prose-auto check`, which runs FASTag) | BinAC2, in the task of their search | — |
 | 6. `extract.py`, `score.py` | IBMI | minutes |
 
@@ -1010,7 +1010,8 @@ The 300-run draw, its seed and both P3 gates are unchanged.
      MS2, human + entrapment, 8 threads) one unspecific subset search peaked at 900 GB RAM and took about 4.5 h,
      and a run where unspecific wins needed about 12 of them;
    - **best_psm runs in its own array (B2) on high-memory nodes** (`--mem=1000gb`, 2 days per task): the unspecific
-     subset candidate of every run, and the final search where it wins, need about 900 GB;
+     subset candidate of every run needs about 900 GB. The final search where unspecific wins needs more than 1 TB
+     and runs on a 2.2 TB IBMI node (item 6);
    - **`fast_0110`** gets the same `--organism` as auto: 0.1.10 fast mode refuses to run without it.
 3. **Fixes from the short review of the harness** (Codex and Kimi, 2026-11-22):
    - **a stopped auto** (no_digest) is released: auto is scored stopped (0 PSMs, noncompliant in P3, §2.2/§6) and the
@@ -1057,7 +1058,10 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    On the 13 tryptic searches of the dry run the counts are unchanged, except 2–3 PSMs per search that the earlier
    peptide sets left unclassified; the PSM FDP moved by at most 0.11 percentage points. The dry run's one Glu-C
    search (wrong_protease, 0 PSMs at 1 % FDR) now has its accepted peptides counted. The earlier version stays next
-   to it as `entrap_pre22c.py` (SHA-256 `bfa9dc5b…62164a0`); `entrap.py` is now `d259efe7…080d4e`.
+   to it as `entrap_pre22c.py` (SHA-256 `bfa9dc5b…62164a0`); `entrap.py` is now `d259efe7…080d4e`. Byte-identical
+   copies of `entrap.py`, `entrap_pre22c.py` and `corpus.py` are in the repository (`acceptance/0.1.12/corpus/`,
+   covered by `SHA256SUMS` and `FREEZE.md`), so the counts can be reproduced from the tag; every count also checks
+   that the copies it runs hash the same.
    **The pilot** counted with the earlier version. 9 of its 68 searches (17 runs × 4 arms) were non-tryptic, in 3
    runs:
    - PXD012418 G-1-5: auto Lys-C, reference and sdrf Glu-C. All 474 Glu-C PSMs were unclassified, so the FDP read 0;
@@ -1067,4 +1071,43 @@ The 300-run draw, its seed and both P3 gates are unchanged.
    The pilot's idXML files are deleted, so these searches cannot be recounted. The power estimate (`power.txt`,
    `power_decision.txt`) stands as counted: the P3 comparison of at most 2 of the 19 scored pilot runs rests on an
    FDP not measured for its enzyme.
+5. **best_psm: PSMs at 1 % FDR, with the FDP veto only from 20 entrapment PSMs** (the author's decision: "PSMs +
+   cap with min N_E"). A subset candidate scores its PSMs at 1 % FDR. It scores 0 only when its entrapment FDP
+   exceeds 1 % on at least 20 entrapment PSMs (`arms.BEST_PSM_MIN_NE`); until now any FDP above 1 % scored 0.
+   The reason: on a 5,000-MS2 subset the FDP rests on a few entrapment PSMs. In the BinAC2 best_psm test the trypsin
+   candidate (824 PSMs) read 1.41 % on 10 entrapment PSMs and scored 0, so the protease step compared the other
+   candidates only. The minimum follows from the Poisson noise of N_E (worst case over subset sizes):
+   - a candidate whose true FDP is half the limit (0.5 %) is vetoed with probability 9.6 % at a minimum of 5,
+     2.8 % at 10, 0.92 % at 15 and 0.31 % at 20;
+   - a candidate at twice the limit (2 %) is vetoed with probability 53 %, 87 % and 98 % when it expects 20, 25 and
+     30 entrapment PSMs, at a minimum of 20.
+   20 is the smallest round minimum that keeps false vetoes below 1 %. Below it an inflated candidate is not vetoed.
+   Dry run (2026-11-22, kim, B2 `best_psm` of PXD000561 Adult_Heart_bRP_Velos_6_f04 again): the 20 subset searches
+   of the BinAC2 test were reused, none repeated, and counted again by `entrap.py` d259efe7. Protease step: trypsin
+   824 PSMs (11 entrapment PSMs, FDP 1.55 %, no longer vetoed), Lys-C 165, Arg-C 124, unspecific 971 (7, 0.84 %);
+   unspecific is kept. Label and Cys are now chosen under trypsin: label free (824; SILAC 818) and carbamidomethyl
+   (824). Before this item they were chosen under Lys-C, and the result was SILAC (Lys8/Arg10).
+6. **The final unspecific best_psm searches run on a 2.2 TB IBMI node** (the author's decision: "spock (2.2 TB)";
+   kim, dax and data are the same class). In the BinAC2 best_psm test the final unspecific full search ran out of
+   memory at 1,000 GB (job 6775944; PXD000561; the subset's unspecific search peaked at 900 GB). Now:
+   - B2 stops before that search and leaves `best_psm/himem_due` (`harness.final_search`). All other best_psm
+     searches stay in B2 on BinAC2;
+   - once B2's outputs are back on Ceph, `harness.py himem` runs these searches on spock, kim, dax or data
+     (`harness.HIMEM_NODES`, 2.2 TB RAM each), whichever has at least 1,300 GB available (`MemAvailable`,
+     `harness.HIMEM_MIN_GB`; B2's 1,000 GB were too few). It runs under a lease on that node, one search at a time
+     (one process, holding `out/himem.lock`), with `HELDOUT_THREADS`, `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS` and
+     `MKL_NUM_THREADS` set to 32, and records the node in `best_psm/node`;
+   - each search passes the same hash checks as in B2: ProSE and the other frozen tools, the run's FASTA files and
+     spectra, `entrap.py` and `corpus.py`. A failed search is rerun once; then best_psm is missing (§10.1);
+   - the nodes are shared, and a lease reserves no memory: below 1,300 GB available the stage stops and is started
+     again later, or on another of the four nodes. On 2026-11-22 spock had 913 GB available.
+7. **A subset search is reused by its run, subset size and seed**, not by the path of the subset mzML. The subset is
+   written to the job's own `$TMPDIR`, which changes from job to job, so a B2 task rerun in a new job matched none
+   of its subset searches and repeated them (the unspecific one takes about 4.5 h). `harness._cmd_key` now names a
+   subset input by run, size (5,000 MS2) and seed (0).
+   Dry run (2026-11-22): the B2 rerun of PXD000561 Adult_Heart_bRP_Velos_6_f04 in a new job reused all 20 subset
+   searches (item 7) and left `himem_due`. `harness.py himem` then ran the final unspecific search on kim (2,349 GB
+   available, 32 threads, leased): 1 h 33 min, peak resident memory 1,025 GiB (BinAC2's 1,000 GB were too few), 1,547
+   PSMs at 1 % FDR, 13 entrapment PSMs, combined FDP 0.97 %; `best_psm/node` reads kim. The minimum of 1,300 (GiB, as `MemAvailable` is read) leaves about 27 %
+   above that peak.
 

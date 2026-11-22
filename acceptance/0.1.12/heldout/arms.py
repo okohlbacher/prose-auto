@@ -29,7 +29,8 @@ BEST_PSM_FACTORS = (
     ("cys", ("Carbamidomethyl (C)", "none (free Cys)", "Propionamide (C)", "Nethylmaleimide (C)", "Methylthio (C)",
              "Carboxymethyl (C)")))
 BEST_PSM_GAIN = 1.05       # a candidate is kept when it beats the current value by >= 5 % in PSMs
-BEST_PSM_FDP = 1.0         # ... counted at 1 % entrapment FDP: a candidate above it scores 0
+BEST_PSM_FDP = 1.0         # ... at 1 % FDR; a candidate above 1 % entrapment FDP scores 0,
+BEST_PSM_MIN_NE = 20       # but only on >= 20 entrapment PSMs (amendment 2026-11-22c item 5: below, the FDP is noise)
 
 
 def _vals(c, key):
@@ -143,9 +144,9 @@ def check_cmd(tools, spectra, idxml, fasta, report, out, threads=8):
 
 
 def best_psm_step(current, scores):
-    """one factor of best_psm: scores maps each candidate value (the current one included) to its subset PSMs at
-    1 % entrapment FDP (or None when the search failed or the FDP exceeds 1 %). The best candidate replaces the
-    current value only when it beats it by >= 5 %; ties go to the earlier candidate"""
+    """one factor of best_psm: scores maps each candidate value (the current one included) to its subset score
+    (subset_psms; None when the search failed). The best candidate replaces the current value only when it beats it
+    by >= 5 %; ties go to the earlier candidate"""
     base = scores.get(current) or 0
     best, val = current, base
     for v, s in scores.items():
@@ -165,7 +166,9 @@ def best_specific(current, scores):
 
 
 def subset_psms(ev):
-    """a subset search's score from its eval.json: PSMs at 1 % FDR, 0 when the entrapment FDP exceeds 1 %"""
+    """a subset search's score from its eval.json: PSMs at 1 % FDR; 0 when the entrapment FDP exceeds 1 % on at
+    least BEST_PSM_MIN_NE entrapment PSMs"""
     if not ev:
         return None
-    return ev["psm"]["accepted"] if float(ev["psm"]["combined"]) <= BEST_PSM_FDP else 0
+    p = ev["psm"]
+    return 0 if float(p["combined"]) > BEST_PSM_FDP and p["N_E"] >= BEST_PSM_MIN_NE else p["accepted"]
